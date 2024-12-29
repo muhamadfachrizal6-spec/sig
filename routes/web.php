@@ -9,6 +9,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnalyzeController;
 use App\Http\Controllers\AnalyzeDashboardController;
+use App\Http\Controllers\SpreadsheetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,7 @@ use App\Http\Controllers\AnalyzeDashboardController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 
 Route::middleware('auth', 'verified')->group(function () {
     Route::get('/logout', [AnalyzeController::class, 'logout'])->name('logout');
@@ -45,31 +47,6 @@ Route::get('/forgot-password', [AnalyzeController::class, 'forgotPassword'])->na
 Route::post('/forgot-password', [AnalyzeController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{token}', [AnalyzeController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [AnalyzeController::class, 'resetPassword'])->name('password.update');
-
-Route::prefix('admin_analyze')->group(function () {
-    Route::get('index', [AnalyzeDashboardController::class, 'index'])->name('admin_analyze.emiten.dashboard');
-    Route::get('create', [AnalyzeDashboardController::class, 'create'])->name('admin_analyze.emiten.create');
-    Route::post('store', [AnalyzeDashboardController::class, 'store'])->name('admin_analyze.emiten.store');
-    Route::get('{id}/edit', [AnalyzeDashboardController::class, 'edit'])->name('admin_analyze.emiten.edit');
-    Route::put('{id}', [AnalyzeDashboardController::class, 'update'])->name('admin_analyze.emiten.update');
-    Route::delete('{id}', [AnalyzeDashboardController::class, 'destroy'])->name('admin_analyze.emiten.destroy');
-
-    Route::get('user/index', [AnalyzeDashboardController::class, 'showUsers'])->name('admin_analyze.user.index');
-
-    Route::get('{companyId}/key_statistics/{id}/edit', [AnalyzeDashboardController::class, 'edit_key_statistics'])->name('admin_analyze.key_statistics.edit');
-    Route::put('{companyId}/key_statistics/update', [AnalyzeDashboardController::class, 'update_key_statistics'])->name('admin_analyze.key_statistics.update');
-    Route::get('{companyId}/key_ratio/{id}/edit', [AnalyzeDashboardController::class, 'edit_key_ratio'])->name('admin_analyze.key_ratio.edit');
-    Route::put('{companyId}/key_ratio/update', [AnalyzeDashboardController::class, 'update_key_ratio'])->name('admin_analyze.key_ratio.update');
-    Route::post('/years', [AnalyzeDashboardController::class, 'storeYear'])->name('years.store');
-
-    Route::get('/settings', [AnalyzeDashboardController::class, 'index_setting'])->name('admin_analyze.setting.index');
-    Route::post('/settings', [AnalyzeDashboardController::class, 'store_setting'])->name('admin_analyze.setting.store');
-    Route::get('/settings/{id}/edit', [AnalyzeDashboardController::class, 'edit_setting'])->name('admin_analyze.setting.edit');
-    Route::put('/settings/{id}', [AnalyzeDashboardController::class, 'update_setting'])->name('admin_analyze.setting.update');
-    Route::delete('/settings/{id}', [AnalyzeDashboardController::class, 'destroy_setting'])->name('admin_analyze.setting.destroy');
-
-    Route::get('/data-order', [AnalyzeDashboardController::class, 'data_order'])->name('admin_analyze.data_order');
-});
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/about', [HomeController::class, 'aboutus'])->name('about');
@@ -111,4 +88,35 @@ Route::middleware([
     Route::get('/admin/voucher/edit/{id}', [AdminController::class, 'editvoucher'])->name('editvoucher');
     Route::put('/admin/voucher/edit/update/{id}', [AdminController::class, 'updatevoucher'])->name('updatevoucher');
     Route::delete('/admin/voucher/delete/{id}', [AdminController::class, 'destroyVoucher'])->name('destroyVoucher');
+
+
+    Route::prefix('admin_analyze')->group(function () {
+        Route::get('index', [AnalyzeDashboardController::class, 'index'])->name('admin_analyze.emiten.dashboard');
+        Route::get('create', [AnalyzeDashboardController::class, 'create'])->name('admin_analyze.emiten.create');
+        Route::post('store', [AnalyzeDashboardController::class, 'store'])->name('admin_analyze.emiten.store');
+        Route::get('{id}/edit', [AnalyzeDashboardController::class, 'edit'])->name('admin_analyze.emiten.edit');
+        Route::put('{id}', [AnalyzeDashboardController::class, 'update'])->name('admin_analyze.emiten.update');
+        Route::delete('{id}', [AnalyzeDashboardController::class, 'destroy'])->name('admin_analyze.emiten.destroy');
+        Route::get('spreadsheet', [SpreadsheetController::class, 'index'])->name('spreadsheet.index');
+
+        Route::get('user/index', [AnalyzeDashboardController::class, 'showUsers'])->name('admin_analyze.user.index');
+
+        Route::get('{companyId}/key_statistics/{id}/edit', [AnalyzeDashboardController::class, 'edit_key_statistics'])->name('admin_analyze.key_statistics.edit');
+        Route::put('{companyId}/key_statistics/update', [AnalyzeDashboardController::class, 'update_key_statistics'])->name('admin_analyze.key_statistics.update');
+        Route::get('{companyId}/key_ratio/{id}/edit', [AnalyzeDashboardController::class, 'edit_key_ratio'])->name('admin_analyze.key_ratio.edit');
+        Route::put('{companyId}/key_ratio/update', [AnalyzeDashboardController::class, 'update_key_ratio'])->name('admin_analyze.key_ratio.update');
+        Route::post('/years', [AnalyzeDashboardController::class, 'storeYear'])->name('years.store');
+
+        Route::get('/settings', [AnalyzeDashboardController::class, 'index_setting'])->name('admin_analyze.setting.index');
+        Route::post('/settings', [AnalyzeDashboardController::class, 'store_setting'])->name('admin_analyze.setting.store');
+        Route::get('/settings/{id}/edit', [AnalyzeDashboardController::class, 'edit_setting'])->name('admin_analyze.setting.edit');
+        Route::put('/settings/{id}', [AnalyzeDashboardController::class, 'update_setting'])->name('admin_analyze.setting.update');
+        Route::delete('/settings/{id}', [AnalyzeDashboardController::class, 'destroy_setting'])->name('admin_analyze.setting.destroy');
+
+        Route::get('/data-order', [AnalyzeDashboardController::class, 'data_order'])->name('admin_analyze.data_order');
+    });
+});
+
+Route::fallback(function () {
+    return response()->view('404', [], 404);
 });

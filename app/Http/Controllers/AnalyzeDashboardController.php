@@ -11,6 +11,7 @@ use App\Models\ProfitabilityRatioData;
 use App\Models\RelativeRatioData;
 use App\Models\RevenueData;
 use App\Models\UserAnalyze;
+use App\Services\StockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +25,7 @@ class AnalyzeDashboardController extends Controller
         $companies = Company::when($search, function ($query, $search) {
             return $query->where('name', 'like', '%' . $search . '%')
                 ->orWhere('ticker', 'like', '%' . $search . '%');
-        })->paginate(5)->appends(['search' => $search]);
+        })->paginate(10)->appends(['search' => $search]);
 
         $orderCount = DB::table('user_analyze')
         ->where('user_type', '!=', 'free')
@@ -621,5 +622,25 @@ class AnalyzeDashboardController extends Controller
 
         // Kirim hasil hitungan ke view
         return view('admin_analyze.data_order', ['orderCount' => $orderCount], compact('totalEmiten', 'totalUser', 'orderCount'));
+    }
+
+    protected $stockService;
+
+    public function __construct(StockService $stockService)
+    {
+        $this->stockService = $stockService;
+    }
+
+    public function showStock($symbol)
+    {
+        $priceData = $this->stockService->getStockPrice($symbol);
+
+        // Jika ada error dari API
+        if (isset($priceData['error'])) {
+            return view('admin_analyze.getData')->with(['error' => $priceData['error']]);
+        }
+
+        // Mengirimkan data harga saham ke view
+        return view('admin_analyze.getData', compact('priceData', 'symbol'));
     }
 }

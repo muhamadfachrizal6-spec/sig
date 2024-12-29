@@ -1,5 +1,6 @@
 :root {
-    --primary-color: #43654C; /* Warna utama */
+    --primary-color: #43654C;
+    /* Warna utama */
 }
 
 .custom-th {
@@ -32,82 +33,86 @@
     border-color: var(--primary-color);
 }
 
-.primary-color{
+.primary-color {
     background-color: #43654C;
 }
 
-.primary-color-text{
+.primary-border{
+    border: 2px solid #43654C !important;
+}
+
+.primary-color-text {
     color: #43654C;
 }
 
-.secondary-bg{
+.secondary-bg {
     background-color: #C0F2C0;
 }
 
-.third-bg{
+.third-bg {
     background-color: #f8f9fa;
 }
 
-.secondary-color{
+.secondary-color {
     color: #043300;
 }
 
-.w-80{
+.w-80 {
     width: 80%;
 }
 
-.w-90{
+.w-90 {
     width: 90%;
 }
 
-.w-70{
+.w-70 {
     width: 70%;
 }
 
-.text-justify{
+.text-justify {
     text-align: justify;
 }
 
-.text-item-nav{
+.text-item-nav {
     color: black;
     text-decoration: none;
 }
 
-.text-item-nav:hover{
+.text-item-nav:hover {
     color: #43654C !important;
 }
 
-.img-logo{
+.img-logo {
     max-height: 150px;
     width: auto;
 }
 
-.signin-logo-img{
+.signin-logo-img {
     max-height: 50px;
     width: auto;
 }
 
-.signup-logo-img{
+.signup-logo-img {
     max-height: 100px;
     width: auto;
 }
 
-.signin-image img{
+.signin-image img {
     max-height: 70vh;
     width: auto;
 }
 
-.btn-custom:hover{
+.btn-custom:hover {
     background-color: #43654C !important;
     color: white;
 }
 
-.btn-custom2{
+.btn-custom2 {
     background-color: #43654C !important;
     color: white;
 }
 
-.btn-custom2:hover{
+.btn-custom2:hover {
     background-color: white !important;
     color: #43654C;
 }
@@ -140,7 +145,7 @@
     right: 0;
     bottom: 0;
     height: 2px;
-    background-color: green;
+    background-color: white;
     transition: width 0.3s;
 }
 
@@ -181,8 +186,8 @@
     padding: 0;
 }
 
-.navbar{
-    border-bottom : 1px solid #c7c7c797;
+.navbar {
+    border-bottom: 1px solid #c7c7c797;
 }
 
 .navbar-profile img {
@@ -190,4 +195,126 @@
     object-fit: cover;
     width: 40px;
     height: 40px;
+}
+
+#loadingSpinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lds-dual-ring {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+}
+
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 5px solid #43654C;
+    border-color: #43654C transparent #43654C transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+
+.category-container {
+    display: inline-flex;
+    /* Or flex for a vertical layout */
+}
+
+.category-item {
+    padding: 3px 15px;
+    /* Adjust spacing as needed */
+    border-radius: 20px;
+    /* Adjust as needed for rounded corners */
+    background-color: #858585 !important;
+    /* Adjust background color */
+    color: white;
+    /* Adjust text color */
+    display: flex;
+    align-items: center;
+    /* Vertically center the icon and text */
+}
+
+.auto {
+    background-color: #858585;
+}
+
+.tech {
+    background-color: #eee;
+}
+
+.energy {
+    background-color: #fff;
+}
+
+/* Add more styles as needed for specific categories */
+
+.category-item i {
+    margin-right: 5px;
+    /* Adjust spacing between icon and text */
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.custom-modal-chart{
+    max-width: 100% !important;
+}
+
+.custom-nav-tabs {
+    display: flex;
+    justify-content: start;
+    flex-wrap: nowrap;
+    gap: 15px;
+}
+
+.custom-nav-tabs .nav-item {
+    text-align: start;
+}
+
+.custom-nav-tabs .nav-link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 10px 5px;
+}
+
+.custom-nav-tabs .nav-link.active {
+    background-color: #43654C;
+    color: white;
+}
+
+.detail-navbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+    .custom-nav-tabs {
+        gap: 5px;
+        padding: 0 5px;
+        justify-content: space-between;
+    }
 }

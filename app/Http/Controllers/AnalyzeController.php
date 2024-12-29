@@ -52,7 +52,7 @@ class AnalyzeController extends Controller
             }
             FacadesAuth::login($user);
             if ($user->role === 'admin') {
-                return redirect()->route('admin.dashboard');
+                return redirect()->route('admin_analyze.emiten.dashboard');
             } else {
                 return redirect()->route('dashboard-core');
             }

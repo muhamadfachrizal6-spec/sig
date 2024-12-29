@@ -7,13 +7,15 @@
     "require": {
         "php": "^8.0.2",
         "diglactic/laravel-breadcrumbs": "^9.0",
-        "guzzlehttp/guzzle": "^7.2",
+        "google/apiclient": "^2.18",
+        "guzzlehttp/guzzle": "^7.8",
         "laravel/framework": "^9.19",
         "laravel/jetstream": "^3.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.11",
-        "midtrans/midtrans-php": "^2.5"
+        "midtrans/midtrans-php": "^2.5",
+        "sheetdb/sheetdb-php": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

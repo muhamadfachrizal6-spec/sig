@@ -94,8 +94,13 @@ class DashboardCore extends Component
 
     public function render()
     {
-        // Ambil semua perusahaan untuk ditampilkan di dropdown
-        $companies = Company::all();
+        if (auth()->check() && auth()->user()->user_type == 'free') {
+            // Ambil 3 perusahaan teratas, Anda bisa menyesuaikan kriteria pengurutan sesuai kebutuhan
+            $companies = Company::whereIn('ticker', ['ASII', 'TLKM', 'ACES'])->get();
+        } else {
+            // Jika bukan user 'free', ambil semua perusahaan
+            $companies = Company::all();
+        }
 
         return view('livewire.dashboard-core', [
             'companies' => $companies,

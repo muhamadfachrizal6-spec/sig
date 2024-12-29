@@ -52,4 +52,9 @@ class Company extends Model
     {
         return $this->hasMany(LiquidityRatioData::class);
     }
+
+    public function marketShares()
+    {
+        return $this->hasMany(MarketShare::class);
+    }
 }

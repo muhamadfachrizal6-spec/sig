@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/mainstyle.css') }}">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/logo/logo.png">
     <link rel="stylesheet" href="{{ asset('assets/css/font-awesome-pro.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
     <meta name="description" content>
     <title>SIG Institute</title>
     @livewireStyles
@@ -35,6 +36,7 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="{{ asset('assets/js/addons.js') }}"></script>
 </body>
 

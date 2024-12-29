@@ -16,6 +16,10 @@ class GeneralInformation extends Component
     public $profitabilityRatioData = [];
     public $relativeRatioData = [];
     public $liquidityRatioData = [];
+    public $marketShare = [];
+    public $growthNetProfit = null;
+    public $marketCap = null;
+    public $price = null;
     public $years = [];
 
     protected $listeners = ['companyChanged' => 'updateCompany'];
@@ -23,109 +27,117 @@ class GeneralInformation extends Component
     public function mount($company)
     {
         if (is_array($company)) {
-            $this->company = Company::with(['revenues', 'financialPositions', 'dividends', 'profitabilityRatios', 'relativeRatios', 'liquidityRatios'])->findOrFail($company['id']);
+            $this->company = Company::with(['revenues', 'financialPositions', 'dividends', 'profitabilityRatios', 'relativeRatios', 'liquidityRatios', 'marketShares'])->findOrFail($company['id']);
         } else {
             $this->company = $company;
         }
 
         $this->updateCompany($this->company);
+        $this->emitSelf('refresh');
     }
 
     public function updateCompany($company)
     {
+
+        $currentYear = now()->year;
+        $currentQuarter = "Q" . intdiv(now()->month - 1, 3) + 1;
+        // dd($currentQuarter);
+        $threeYearsAgo = $currentYear - 2;
         if (is_array($company)) {
-            $company = Company::with(['revenues', 'financialPositions', 'dividends', 'profitabilityRatios', 'relativeRatios', 'liquidityRatios'])->findOrFail($company['id']);
+            $company = Company::with([
+                'dividends' => function ($query) use ($threeYearsAgo) {
+                    $query->where('year', '>=', $threeYearsAgo);
+                },
+                'revenues' => function ($query) use ($threeYearsAgo) {
+                    $query->where('year', '>=', $threeYearsAgo);
+                },
+                'financialPositions' => function ($query) use ($threeYearsAgo) {
+                    $query->where('year', '>=', $threeYearsAgo);
+                },
+            ])->findOrFail($company['id']);
         }
     
         $this->company = $company;
 
-        $currentYear = now()->year;
-        $threeYearsAgo = $currentYear - 2;
-
-        // Mengambil tahun-tahun yang tersedia secara dinamis
-        $years = $company->dividends
-            ->where('year', '>=', $threeYearsAgo)
-            ->pluck('year')
-            ->unique()
-            ->sortDesc()
-            ->values()
-            ->all();
-
-        $this->years = $years;
+        $this->years = collect(range($threeYearsAgo, $currentYear))->sortDesc()->values()->all();
 
         $this->revenueData = $company->revenues
-            ->where('year', '>=', $threeYearsAgo)
             ->groupBy('quarter')
-            ->map(function ($revenues) use ($years) {
-                return $revenues->pluck('revenue', 'year')->only($years);
+            ->map(function ($revenues) {
+                return $revenues->pluck('revenue', 'year')->only($this->years);
             });
 
         $this->grossProfitData = $company->revenues
-            ->where('year', '>=', $threeYearsAgo)
             ->groupBy('quarter')
-            ->map(function ($revenues) use ($years) {
-                return $revenues->pluck('gross_profit', 'year')->only($years);
+            ->map(function ($revenues) {
+                return $revenues->pluck('gross_profit', 'year')->only($this->years);
             });
 
         $this->netProfitData = $company->revenues
-            ->where('year', '>=', $threeYearsAgo)
             ->groupBy('quarter')
-            ->map(function ($revenues) use ($years) {
-                return $revenues->pluck('net_profit', 'year')->only($years);
+            ->map(function ($revenues) {
+                return $revenues->pluck('net_profit', 'year')->only($this->years);
             });
 
         $this->financialPositionData = $company->financialPositions
-            ->where('year', '>=', $threeYearsAgo)
             ->groupBy('quarter')
-            ->map(function ($positions) use ($years) {
+            ->map(function ($positions) {
                 return [
-                'asset' => $positions->pluck('asset', 'year')->only($years),
-                'liability' => $positions->pluck('liability', 'year')->only($years),
-                'equality' => $positions->pluck('equality', 'year')->only($years),
+                'asset' => $positions->pluck('asset', 'year')->only($this->years),
+                'liability' => $positions->pluck('liability', 'year')->only($this->years),
+                'equality' => $positions->pluck('equality', 'year')->only($this->years),
             ];
             });
 
         $this->dividendData = $company->dividends
-            ->where('year', '>=', $threeYearsAgo)
             ->groupBy('quarter')
-            ->map(function ($dividends) use ($years) {
-                return $dividends->pluck('dividend_per_sheet', 'year')->only($years);
+            ->map(function ($dividends) {
+                return [
+                    'dividend_per_sheet' => $dividends->pluck('dividend_per_sheet', 'year')->only($this->years),
+                    'yield' => $dividends->pluck('yield', 'year')->only($this->years),
+                ];
             });
 
         $this->profitabilityRatioData = $company->profitabilityRatios
-            ->where('year', '>=', $threeYearsAgo)
             ->groupBy('quarter')
-            ->map(function ($ratios) use ($years) {
+            ->map(function ($ratios) {
                 return [
-                'ROE' => $ratios->pluck('ROE', 'year')->only($years),
-                'GPM' => $ratios->pluck('GPM', 'year')->only($years),
-                'NPM' => $ratios->pluck('NPM', 'year')->only($years),
+                'ROE' => $ratios->pluck('ROE', 'year')->only($this->years),
+                'GPM' => $ratios->pluck('GPM', 'year')->only($this->years),
+                'NPM' => $ratios->pluck('NPM', 'year')->only($this->years),
             ];
             });
 
         $this->relativeRatioData = $company->relativeRatios
-            ->where('year', '>=', $threeYearsAgo)
             ->groupBy('quarter')
-            ->map(function ($ratios) use ($years) {
+            ->map(function ($ratios) {
                 return [
-                'EPS' => $ratios->pluck('EPS', 'year')->only($years),
-                'PER' => $ratios->pluck('PER', 'year')->only($years),
-                'BVPS' => $ratios->pluck('BVPS', 'year')->only($years),
-                'PBV' => $ratios->pluck('PBV', 'year')->only($years),
+                'EPS' => $ratios->pluck('EPS', 'year')->only($this->years),
+                'PER' => $ratios->pluck('PER', 'year')->only($this->years),
+                'BVPS' => $ratios->pluck('BVPS', 'year')->only($this->years),
+                'PBV' => $ratios->pluck('PBV', 'year')->only($this->years),
             ];
             });
 
         $this->liquidityRatioData = $company->liquidityRatios
-            ->where('year', '>=', $threeYearsAgo)
             ->groupBy('quarter')
-            ->map(function ($ratios) use ($years) {
+            ->map(function ($ratios) {
                 return [
-                'DAR' => $ratios->pluck('DAR', 'year')->only($years),
-                'DER' => $ratios->pluck('DER', 'year')->only($years),
+                'DAR' => $ratios->pluck('DAR', 'year')->only($this->years),
+                'DER' => $ratios->pluck('DER', 'year')->only($this->years),
             ];
         });
-    }    
-    
+
+        $this->marketShare = $company->marketShares
+        ->where('year', $currentYear)
+        ->where('quarter', $currentQuarter)
+        ->first();
+
+        $this->growthNetProfit = $this->marketShare ? $this->marketShare['growth_net_profit'] : null;
+        $this->marketCap = $this->marketShare ? $this->marketShare['market_cap'] : null;
+        $this->price = $this->marketShare ? $this->marketShare['price'] : null;
+    }
+
     public function render()
     {
         return view('livewire.dashboard.general-information', [
@@ -138,6 +150,10 @@ class GeneralInformation extends Component
             'profitabilityRatioData' => $this->profitabilityRatioData,
             'relativeRatioData' => $this->relativeRatioData,
             'liquidityRatioData' => $this->liquidityRatioData,
+            'marketShare' => $this->marketShare,
+            'growthNetProfit' => $this->growthNetProfit,
+            'marketCap' => $this->marketCap,
+            'price' => $this->price,
             'years' => $this->years,
         ]);
     }

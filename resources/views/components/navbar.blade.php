@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-lg bg-white d-none d-lg-flex justify-content-center">
+<nav class="navbar navbar-expand-lg navbar-expand-md bg-white d-none d-lg-flex d-md-flex justify-content-center">
     <div class="navbar-box d-flex flex-row justify-content-between w-90 align-items-center">
-        <h2>{{ $title }}</h2>
+        <h2 class="primary-color-text">{{ $title }}</h2>
         <div class="navbar-profile" style="cursor: pointer">
             <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/img/profile-image-blank.png') }}"
                 alt="Profile Image" class="rounded-circle border border-dark" width="40" height="40">

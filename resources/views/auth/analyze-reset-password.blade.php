@@ -1,7 +1,7 @@
 @extends('layouts.bootstrap')
 @section('content')
     <div class="container-fluid d-flex flex-row min-vh-100 primary-color">
-        <div class="signin-content w-100 d-none d-md-block">
+        <div class="signin-content w-100 d-none d-xxl-block">
             <div class="signin-logo">
                 <img src="{{ asset('assets/img/logo/sig-white.png') }}" class="m-5 signin-logo-img" alt="">
             </div>
@@ -49,7 +49,7 @@
                     </div>
                 </div>                
 
-                <button type="submit" class="btn btn-custom2 border border-2 w-100 mt-4">Reset Password</button>
+                <button type="submit" class="btn btn-custom2 border-2 w-100 mt-4">Reset Password</button>
             </form>
         </div>
     </div>

@@ -2,10 +2,16 @@
 @section('title', 'Dashboard')
 
 @section('contents')
+    <div id="loadingSpinner" style="display: none;">
+        <div class="spinner">
+            <!-- Spinner Icon -->
+            <div class="lds-dual-ring"></div>
+        </div>
+    </div>
     <div class="container mt-4">
         <!-- Bagian Atas: Dashboard + Tambah Data + Search -->
         <div class="card primary-color-text align-items-center mb-4 p-2 max-w-fit">
-            <h4 class="fw-bold">Data Emitten</h4>     
+            <h4 class="fw-bold">Data Emitten</h4>
         </div>
 
         <!-- Header Statistik -->
@@ -38,7 +44,7 @@
                         <i class="bi bi-box fs-2 text-purple me-3"></i>
                         <div>
                             <h6 class="mb-0">Total Orders</h6>
-                            <h3 class="fw-bold">{{$orderCount}}</h3>
+                            <h3 class="fw-bold">{{ $orderCount }}</h3>
                         </div>
                     </div>
                 </div>
@@ -49,11 +55,18 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
-                    <div class="add-component">
+                    <div class="add-component d-inline-flex gap-1">
                         <a href="{{ route('admin_analyze.emiten.create') }}" class="btn btn-custom2">
-                            + Tambah Data
+                            <i class="fas fa-plus"></i> Tambah Data
                         </a>
+
+                        <div class="sync-data">
+                            <button type="button" id="syncButton" class="btn btn-custom2">
+                                <i class="fas fa-sync-alt"></i> Sync Data
+                            </button>
+                        </div>
                     </div>
+
                     <div class="d-flex">
                         <form action="{{ route('admin_analyze.emiten.dashboard') }}" method="GET">
                             <div class="input-group">
@@ -92,7 +105,7 @@
                                 <tr>
                                     <td>{{ $company->name }}</td>
                                     <td class="text-center">{{ $company->ticker }}</td>
-                                    <td class="text-center">
+                                    <td class="text-center align-items-center">
                                         <span class="badge bg-secondary">{{ $company->category }}</span>
                                     </td>
                                     <td class="text-center">{{ number_format((float) $company->market_cap) }}</td>
@@ -138,13 +151,13 @@
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                    
+
                             @for ($i = 1; $i <= $companies->lastPage(); $i++)
                                 <li class="page-item {{ $i == $companies->currentPage() ? 'active' : '' }}">
                                     <a class="page-link" href="{{ $companies->url($i) }}">{{ $i }}</a>
                                 </li>
                             @endfor
-                    
+
                             <li class="page-item {{ $companies->hasMorePages() ? '' : 'disabled' }}">
                                 <a class="page-link" href="{{ $companies->nextPageUrl() }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
@@ -156,4 +169,51 @@
             </div>
         </div>
     </div>
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <script>
+        document.getElementById('syncButton').addEventListener('click', function() {
+            document.getElementById('loadingSpinner').style.display = 'flex';
+
+            fetch('{{ route('spreadsheet.index') }}', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to sync data: ' + error.message);
+                })
+                .finally(() => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                });
+        });
+    </script>
 @endsection

@@ -1,6 +1,6 @@
 @extends('layouts.bootstrap')
 @section('content')
-    <div class="d-flex flex-column flex-shrink-0 p-3 primary-color" style="width: 250px; min-height: 100vh;">
+    <div class="d-flex flex-column flex-shrink-0 p-3 primary-color d-none d-lg-block" style="width: 250px; min-height: 100vh;">
         <div class="profile-admin w-100" style="min-height: 10vh">
             <a href="/" class="text-white text-decoration-none">
                 <span class="fs-5">Dashboard Admin</span>
@@ -42,11 +42,32 @@
             </li>
 
             <li>
-                <a href="#" class="nav-link text-white">
+                <a href="#" id="logoutLink" class="nav-link text-white">
                     <i class="bi bi-box-arrow-right"></i>
                     Keluar
                 </a>
             </li>
         </ul>
     </div>
+
+
+    <script>
+        document.getElementById('logoutLink').addEventListener('click', function(event) {
+            event.preventDefault();
+    
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, logout!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('logout') }}";
+                }
+            });
+        });
+    </script>
 @endsection
