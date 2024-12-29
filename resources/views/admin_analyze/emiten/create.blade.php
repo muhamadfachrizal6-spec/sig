@@ -41,24 +41,6 @@
                 </div>
             </div>
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="market_cap" class="form-label">Market Capitalization (e.g., 150T IDR)</label>
-                    <input type="text" class="form-control" id="market_cap" name="market_cap" placeholder="Enter market capitalization">
-                </div>
-                <div class="col-md-6">
-                    <label for="price" class="form-label">Price (e.g., 150)</label>
-                    <input type="text" class="form-control" id="price" name="price" placeholder="Enter the price in IDR or USD">
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="growth" class="form-label">Growth Net Profit (%)</label>
-                    <input type="text" class="form-control" id="growth" name="growth" placeholder="Enter growth percentage">
-                </div>
-            </div>
-
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea class="form-control" id="description" name="description" rows="3" placeholder="Additional details about the company"></textarea>

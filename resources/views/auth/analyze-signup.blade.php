@@ -75,8 +75,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-start mt-3">
-                    <button type="submit" class="btn btn-custom2 border-2 w-100 w-md-25">Sign up</button>
+                <div class="mt-3 text-center">
+                    <button type="submit" class="btn btn-custom2 border-2 w-50">Sign up</button>
                 </div>
             </div>
         </form>

@@ -2,7 +2,6 @@
 @section('content')
 
     <div class="container-fluid d-flex flex-row min-vh-100 primary-color">
-
         <div class="signin-content w-100 d-none d-xxl-block">
             <div class="signin-logo">
                 <img src="{{ asset('assets/img/logo/sig-white.png') }}" class="m-5 signin-logo-img" alt="">
@@ -16,6 +15,9 @@
         </div>
 
         <div class="signin-form d-flex flex-column justify-content-center bg-white w-100">
+            <a href="{{ route('signin') }}" class="ms-3 text-decoration-none d-xl-none d-md-block d-sm-block secondary-color mt-5">
+                <i class="fas fa-arrow-left fa-2x"></i>
+            </a>
             <form method="POST" action="{{ route('password.email') }}" class="w-70 m-auto">
                 <div class="signin-typography mb-5">
                     <h1>Forgot Password</h1>

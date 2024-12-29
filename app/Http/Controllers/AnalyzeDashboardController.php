@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\DividendData;
 use App\Models\FinancialPositionData;
 use App\Models\LiquidityRatioData;
+use App\Models\MarketShare;
 use App\Models\Pack;
 use App\Models\ProfitabilityRatioData;
 use App\Models\RelativeRatioData;
@@ -20,18 +21,25 @@ class AnalyzeDashboardController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $currentYear = now()->year;
+        $currentQuarter = "Q" . intdiv(now()->month - 1, 3) + 1;
 
-        // Filter companies based on the search query
-        $companies = Company::when($search, function ($query, $search) {
-            return $query->where('name', 'like', '%' . $search . '%')
-                ->orWhere('ticker', 'like', '%' . $search . '%');
-        })->paginate(10)->appends(['search' => $search]);
+        // Query untuk perusahaan beserta MarketShare terkait
+        $companies = Company::with(['marketShares' => function ($query) use ($currentYear, $currentQuarter) {
+            $query->where('year', $currentYear)
+                ->where('quarter', $currentQuarter);
+        }])
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('ticker', 'like', '%' . $search . '%');
+            })
+            ->orderBy('name', 'asc')
+            ->paginate(10)->appends(['search' => $search]);
 
         $orderCount = DB::table('user_analyze')
         ->where('user_type', '!=', 'free')
         ->count();
 
-        // Pass the filtered companies to the view
         return view('admin_analyze.emiten.dashboard', compact('companies', 'orderCount'))
             ->with('totalEmiten', Company::count())
             ->with('totalUser', UserAnalyze::count());
@@ -57,9 +65,6 @@ class AnalyzeDashboardController extends Controller
             'name' => 'required|string|max:255',   // Nama perusahaan maksimal 255 karakter
             'category' => 'required|string|max:255', // Kategori maksimal 255 karakter
             'address' => 'required|string',        // Alamat harus diisi
-            'market_cap' => 'required|string|max:50', // Kapitalisasi pasar maksimal 50 karakter
-            'price' => 'required|numeric',         // Harga harus angka
-            'growth' => 'required|numeric',        // Pertumbuhan harus angka (persentase)
             'description' => 'nullable|string',    // Deskripsi opsional
         ]);
 
@@ -69,9 +74,6 @@ class AnalyzeDashboardController extends Controller
             'name' => $request->input('name'),
             'category' => $request->input('category'),
             'address' => $request->input('address'),
-            'market_cap' => $request->input('market_cap'),
-            'price' => $request->input('price'),
-            'growth' => $request->input('growth'),
             'description' => $request->input('description'), // Opsional
         ]);
 
@@ -92,9 +94,6 @@ class AnalyzeDashboardController extends Controller
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'address' => 'required',
-            'market_cap' => 'required|string|max:50',
-            'price' => 'required|string|max:50',
-            'growth' => 'required|string|max:10',
             'description' => 'nullable|string',
         ]);
 
@@ -110,8 +109,13 @@ class AnalyzeDashboardController extends Controller
 
     public function destroy($id)
     {
+        // Hapus data terkait di tabel dividend_data
+        DividendData::where('company_id', $id)->delete();
+    
+        // Hapus data dari tabel company
         Company::destroy($id);
-        return redirect()->route('admin_analyze.emiten.dashboard')->with('success', 'Company deleted successfully.');
+
+        return redirect()->route('admin_analyze.emiten.dashboard')->with('success_delete', 'Company deleted successfully.');
     }
 
     public function storeYear(Request $request)
@@ -151,6 +155,15 @@ class AnalyzeDashboardController extends Controller
                     'net_profit' => null,
                 ]);
 
+                MarketShare::create([
+                    'year' => $request->year,
+                    'company_id' => $request->company_id,
+                    'quarter' => $quarter,
+                    'growth_net_profit' => null,
+                    'price' => null,
+                    'market_cap' => null,
+                ]);
+
                 // Simpan data tahun ke tabel profitability_ratio_data
                 ProfitabilityRatioData::create([
                     'year' => $request->year,
@@ -175,7 +188,7 @@ class AnalyzeDashboardController extends Controller
                     'year' => $request->year,
                     'company_id' => $request->company_id,
                     'quarter' => $quarter,
-                    'EPS' => null,  // Set nilai default atau null
+                    'EPS' => null,
                     'PER' => null,
                     'BVPS' => null,
                     'PBV' => null,
@@ -210,6 +223,38 @@ class AnalyzeDashboardController extends Controller
         // Jika company tidak ditemukan, redirect dengan error message
         if (!$company) {
             return redirect()->route('admin_analyze.emiten.dashboard')->with('error', 'Company not found.');
+        }
+
+        $allYears = MarketShare::where('company_id', $companyId)
+        ->select('year')
+        ->distinct()
+            ->orderBy(
+                'year',
+                'desc'
+            )
+            ->pluck('year')
+            ->toArray();
+
+        // Jika tidak ada filter, tampilkan 3 tahun terbaru
+        $years = $request->input('filter_years', array_slice($allYears, 0, 3));
+
+        // Tentukan quarters (Q1, Q2, Q3, Q4)
+        $quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+
+        $marketShareData = [];
+        foreach ($quarters as $quarter) {
+            foreach ($years as $year) {
+                $marketShare = MarketShare::where('company_id', $companyId)
+                ->where('year', $year)
+                ->where('quarter', $quarter)
+                ->first();
+
+                $marketShareData[$quarter][$year] = [
+                    'growth_net_profit' => $marketShare ? $marketShare->growth_net_profit : '-',
+                    'price' => $marketShare ? $marketShare->price : '-',
+                    'market_cap' => $marketShare ? $marketShare->market_cap : '-',
+                ];
+            }
         }
 
         // Ambil data semua tahun dari revenue
@@ -536,7 +581,7 @@ class AnalyzeDashboardController extends Controller
 
     public function showUsers()
     {
-        $users = UserAnalyze::all();
+        $users = UserAnalyze::paginate(10);
         $totalEmiten = Company::count();
         $totalUser = UserAnalyze::count();
         $orderCount = DB::table('user_analyze')

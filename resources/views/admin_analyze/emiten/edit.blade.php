@@ -9,7 +9,6 @@
 
         <!-- Card untuk Edit Company -->
         <div class="card shadow-sm border-light p-3">
-            <h2 class="mb-3">Edit Company</h2>
             <p class="text-muted">Edit the details of the company</p>
 
             <form action="{{ route('admin_analyze.emiten.update', $company->id) }}" method="POST">
@@ -52,24 +51,6 @@
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="market_cap" class="form-label">Market Capitalization (e.g., 150T IDR)</label>
-                        <input type="text" name="market_cap" class="form-control" id="market_cap"
-                            value="{{ $company->market_cap }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="price" class="form-label">Price ($)</label>
-                        <input type="text" name="price" class="form-control" id="price"
-                            value="{{ $company->price }}" required>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="growth" class="form-label">Growth Net Profit (%)</label>
-                        <input type="text" name="growth" class="form-control" id="growth"
-                            value="{{ $company->growth }}" required>
-                    </div>
                     <div class="col-md-6">
                         <label for="description" class="form-label">Description</label>
                         <textarea name="description" class="form-control" id="description" rows="3" required>{{ $company->description }}</textarea>

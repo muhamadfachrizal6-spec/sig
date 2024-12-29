@@ -16,6 +16,9 @@
 
         <div class="signin-form d-flex flex-column justify-content-center bg-white w-100">
             <form action="{{ route('signin') }}" method="POST" class="w-70 m-auto">
+                <div class="it-signup-thumb d-flex justify-content-center align-items-center text-center">
+                    <img src="{{ asset('assets/img/logo/logo.png') }}" alt="Logo" class="img-fluid">
+                </div>               
                 <div class="signin-typography mb-5">
                     <h1>Sign in</h1>
                     <p>Welcome back! Login with your data that you entered during registration</p>

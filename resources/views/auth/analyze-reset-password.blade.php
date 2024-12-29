@@ -15,6 +15,9 @@
 
         <div class="signin-form d-flex flex-column justify-content-center bg-white w-100">
             <form method="POST" action="{{ route('password.update') }}" class="w-70 m-auto">
+                <a href="{{ route('signin') }}" class="ms-3 text-decoration-none d-xl-none d-md-block d-sm-block secondary-color mt-5">
+                    <i class="fas fa-arrow-left fa-2x"></i>
+                </a>
                 <div class="signin-typography mb-5">
                     <h1>Reset Password</h1>
                     <p>Please enter your new password below.</p>

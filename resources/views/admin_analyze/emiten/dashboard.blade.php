@@ -8,7 +8,7 @@
             <div class="lds-dual-ring"></div>
         </div>
     </div>
-    <div class="container mt-4">
+    <div class="mt-4">
         <!-- Bagian Atas: Dashboard + Tambah Data + Search -->
         <div class="card primary-color-text align-items-center mb-4 p-2 max-w-fit">
             <h4 class="fw-bold">Data Emitten</h4>
@@ -16,7 +16,7 @@
 
         <!-- Header Statistik -->
         <div class="row mb-4">
-            <div class="col-md-4">
+            <div class="col-12 col-md-4 mb-3">
                 <div class="card shadow-sm border-light p-3">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-currency-bitcoin fs-2 text-warning me-3"></i>
@@ -27,7 +27,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4 mb-3">
                 <div class="card shadow-sm border-light p-3">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-people fs-2 text-success me-3"></i>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4 mb-3">
                 <div class="card shadow-sm border-light p-3">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-box fs-2 text-purple me-3"></i>
@@ -54,7 +54,7 @@
         <!-- Tabel Data Emiten -->
         <div class="card shadow-sm">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+                <div class="d-flex flex-row flex-wrap gap-3 justify-content-between align-items-center mb-4 mt-2">
                     <div class="add-component d-inline-flex gap-1">
                         <a href="{{ route('admin_analyze.emiten.create') }}" class="btn btn-custom2">
                             <i class="fas fa-plus"></i> Tambah Data
@@ -80,84 +80,102 @@
                     </div>
                 </div>
 
-                <!-- Conditional Display for Search Results -->
+                <!-- Tabel Data Emiten dengan class table-responsive -->
                 @if ($companies->isEmpty())
                     <p class="text-center">No results found for "{{ request()->get('search') }}".</p>
                 @else
-                    <!-- Tabel dengan Styling -->
-                    <table class="table table-bordered">
-                        <thead class="table-light custom-th">
-                            <tr class="text-center">
-                                <th>Nama Emiten</th>
-                                <th>Kode</th>
-                                <th>Category</th>
-                                <th>Kapitalisasi pasar (IDR)</th>
-                                <th>Volume rata-rata (jt)</th>
-                                <th>Price ($)</th>
-                                <th>Growth Net (%)</th>
-                                <th>Action</th>
-                                <th>Key Ratio</th>
-                                <th>Key Statistics</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($companies as $company)
-                                <tr>
-                                    <td>{{ $company->name }}</td>
-                                    <td class="text-center">{{ $company->ticker }}</td>
-                                    <td class="text-center align-items-center">
-                                        <span class="badge bg-secondary">{{ $company->category }}</span>
-                                    </td>
-                                    <td class="text-center">{{ number_format((float) $company->market_cap) }}</td>
-                                    <td class="text-center">{{ number_format((float) $company->volume_avg, 2) }}</td>
-                                    <td class="text-center">{{ number_format((float) $company->price, 2) }}</td>
-                                    <td class="text-center">{{ number_format((float) $company->growth, 2) }}%</td>
-                                    <td class="d-flex gap-2 justify-content-center">
-                                        <a href="{{ route('admin_analyze.emiten.edit', $company->id) }}"
-                                            class="btn btn-outline-success btn-sm">
-                                            <i class="btn-hover text-success bi bi-pencil"></i>
-                                        </a>
-                                        <form action="{{ route('admin_analyze.emiten.destroy', $company->id) }}"
-                                            method="POST" style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('admin_analyze.key_ratio.edit', ['companyId' => $company->id, 'id' => $company->id]) }}"
-                                            class="btn btn-outline-success btn-sm">
-                                            <i class="btn-hover text-success bi bi-pencil"></i>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('admin_analyze.key_statistics.edit', ['companyId' => $company->id, 'id' => $company->id]) }}"
-                                            class="btn btn-outline-success btn-sm">
-                                            <i class="btn-hover text-success bi bi-pencil"></i>
-                                        </a>
-                                    </td>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light custom-th">
+                                <tr class="text-center">
+                                    <th>Name Emiten</th>
+                                    <th>Ticker</th>
+                                    <th>Category</th>
+                                    <th>Market Cap</th>
+                                    <th>Price</th>
+                                    <th>Growth Net Profit (%)</th>
+                                    <th>Action</th>
+                                    <th>Key Ratio</th>
+                                    <th>Key Statistics</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($companies as $company)
+                                    <tr>
+                                        <td>{{ $company->name }}</td>
+                                        <td class="text-center">{{ $company->ticker }}</td>
+                                        <td class="text-center align-items-center">
+                                            <span class="badge bg-secondary">{{ $company->category }}</span>
+                                        </td>
+                                        @if ($company->marketShares->isNotEmpty())
+                                            @php
+                                                $marketShare = $company->marketShares->first();
+                                            @endphp
+                                            <td class="text-center">{{ $marketShare->market_cap }}</td>
+                                            <td class="text-center">{{ $marketShare->price }}</td>
+                                            <td class="text-center">{{ $marketShare->growth_net_profit }}%</td>
+                                        @else
+                                            <td class="text-center" colspan="3">No data available</td>
+                                        @endif
+                                        <td class="d-flex gap-2 justify-content-center">
+                                            <a href="{{ route('admin_analyze.emiten.edit', $company->id) }}"
+                                                class="btn btn-outline-success btn-sm">
+                                                <i class="btn-hover text-success bi bi-pencil"></i>
+                                            </a>
+                                            <form action="{{ route('admin_analyze.emiten.destroy', $company->id) }}"
+                                                method="POST" style="display:inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ route('admin_analyze.key_ratio.edit', ['companyId' => $company->id, 'id' => $company->id]) }}"
+                                                class="btn btn-outline-success btn-sm">
+                                                <i class="btn-hover text-success bi bi-pencil"></i>
+                                            </a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ route('admin_analyze.key_statistics.edit', ['companyId' => $company->id, 'id' => $company->id]) }}"
+                                                class="btn btn-outline-success btn-sm">
+                                                <i class="btn-hover text-success bi bi-pencil"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
                     <!-- Pagination -->
-                    <nav>
+                    <nav class="mt-4">
                         <ul class="pagination justify-content-center">
+                            <!-- Tombol Previous -->
                             <li class="page-item {{ $companies->onFirstPage() ? 'disabled' : '' }}">
                                 <a class="page-link" href="{{ $companies->previousPageUrl() }}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
 
+                            <!-- Logika Pagination -->
                             @for ($i = 1; $i <= $companies->lastPage(); $i++)
-                                <li class="page-item {{ $i == $companies->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ $companies->url($i) }}">{{ $i }}</a>
-                                </li>
+                                @if (
+                                    $i == 1 ||
+                                        $i == $companies->lastPage() ||
+                                        ($i >= $companies->currentPage() - 1 && $i <= $companies->currentPage() + 1))
+                                    <li class="page-item {{ $i == $companies->currentPage() ? 'active' : '' }}">
+                                        <a class="page-link" href="{{ $companies->url($i) }}">{{ $i }}</a>
+                                    </li>
+                                @elseif ($i == 2 && $companies->currentPage() > 4)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @elseif ($i == $companies->lastPage() - 1 && $companies->currentPage() < $companies->lastPage() - 3)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
                             @endfor
 
+                            <!-- Tombol Next -->
                             <li class="page-item {{ $companies->hasMorePages() ? '' : 'disabled' }}">
                                 <a class="page-link" href="{{ $companies->nextPageUrl() }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
@@ -174,6 +192,20 @@
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
+    @endif
+
+    @if (session('success_delete'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success_delete') }}',
+                    showConfirmButton: true, // Tampilkan tombol OK
+                    confirmButtonText: 'Confirm' // Teks tombol OK
+                });
+            });
+        </script>
     @endif
 
     @if (session('error'))

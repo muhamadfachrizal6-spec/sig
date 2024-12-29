@@ -1,7 +1,7 @@
 @extends('layouts.navigation-admin')
 
 @section('contents')
-    <div class="container mt-4">
+    <div>
         <!-- Bagian Atas: Dashboard + Tambah Data + Search -->
         <div class="card primary-color-text align-items-center mb-4 p-2 max-w-fit">
             <h4 class="fw-bold">Data Emitten</h4>
@@ -9,7 +9,8 @@
 
         <!-- Header Statistik -->
         <div class="row mb-4">
-            <div class="col-md-4">
+            <!-- Total Emiten -->
+            <div class="col-12 col-sm-6 col-md-4 mb-3">
                 <div class="card shadow-sm border-light p-3">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-currency-bitcoin fs-2 text-warning me-3"></i>
@@ -20,7 +21,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+
+            <!-- Total User -->
+            <div class="col-12 col-sm-6 col-md-4 mb-3">
                 <div class="card shadow-sm border-light p-3">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-people fs-2 text-success me-3"></i>
@@ -31,7 +34,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+
+            <!-- Total Orders -->
+            <div class="col-12 col-sm-6 col-md-4 mb-3">
                 <div class="card shadow-sm border-light p-3">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-box fs-2 text-purple me-3"></i>

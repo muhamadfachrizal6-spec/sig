@@ -23,6 +23,21 @@ class Company extends Model
 
     public $timestamps = false;
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($company) {
+            $company->dividends()->delete();
+            $company->financialPositions()->delete();
+            $company->marketShares()->delete();
+            $company->revenues()->delete();
+            $company->profitabilityRatios()->delete();
+            $company->relativeRatios()->delete();
+            $company->liquidityRatios()->delete();
+        });
+    }
+
     public function revenues()
     {
         return $this->hasMany(RevenueData::class);

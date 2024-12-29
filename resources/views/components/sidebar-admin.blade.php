@@ -44,7 +44,7 @@
             <li>
                 <a href="#" id="logoutLink" class="nav-link text-white">
                     <i class="bi bi-box-arrow-right"></i>
-                    Keluar
+                    Logout
                 </a>
             </li>
         </ul>

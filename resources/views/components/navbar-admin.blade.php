@@ -14,10 +14,65 @@
                     Admin
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                    <li class="nav-item">
+                        <a href="{{ url('/admin_analyze/index') }}"
+                            class="nav-link {{ Request::is('admin_analyze/index') ? 'bg-white' : 'primary-color-text' }}">
+                            <i class="bi bi-grid"></i>
+                            Data Emiten
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('/admin_analyze/user/index') }}"
+                            class="nav-link {{ Request::is('admin_analyze/user/index') ? 'bg-white' : 'primary-color-text' }}">
+                            <i class="bi bi-person"></i>
+                            Data User
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ url('/admin_analyze/data-order') }}" 
+                            class="nav-link {{ Request::is('admin_analyze/data-order') ? 'bg-white' : 'primary-color-text' }}">
+                            <i class="bi bi-cart"></i>
+                            Data Orders
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url('/admin_analyze/settings') }}" class="nav-link {{ Request::is('admin_analyze/settings') ? 'bg-white' : 'primary-color-text' }}">
+                            <i class="bi bi-gear"></i>
+                            Settings
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" id="logoutLink" class="nav-link primary-color-text">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Logout
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </nav>
+
+
+<script>
+    document.getElementById('logoutLink').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, logout!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{{ route('logout') }}";
+            }
+        });
+    });
+</script>
