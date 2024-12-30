@@ -84,7 +84,7 @@
                         <div class="col-xl-3 col-6">
                             <div class="it-header-2-right d-flex align-items-center justify-content-end">
                                 <div class="it-header-2-button d-none d-md-block">
-                                    <a class="it-btn" href="{{route('login')}}">
+                                    <a class="it-btn" href="{{route('signin')}}">
                                         <i class="fas fa-user" style="margin-right:10px"></i>
                                         <span>
                                             Login

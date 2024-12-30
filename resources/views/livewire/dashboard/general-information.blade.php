@@ -47,8 +47,8 @@
                 
                     <div class="row mb-2">  
                         <div class="col-6">  
-                            <p class="primary-color-text fw-bold">Volume Rata-rata</p>  
-                            <p>test Jt</p>  
+                            <p class="primary-color-text fw-bold">Company code</p>  
+                            <p>{{$company->ticker}}</p>  
                         </div>  
                         <div class="col-6">  
                             <p class="primary-color-text fw-bold">Growth Net (YoY)</p>  

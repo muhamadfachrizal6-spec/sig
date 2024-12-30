@@ -12,8 +12,7 @@ document
         }
     });
 
-
-    document
+document
     .getElementById("toggleConfirmPassword")
     .addEventListener("click", function () {
         const passwordField = document.getElementById("confirmpassword");

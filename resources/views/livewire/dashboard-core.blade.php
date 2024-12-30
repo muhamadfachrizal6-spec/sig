@@ -1,14 +1,14 @@
 <div class="mt-2">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="form-group">
-            <label for="companySelect">Select Company</label>
+        <div class="form-group d-flex flex column align-items-center gap-3">
+            <label class="primary-color-text" for="companySelect"><b>Select Company : </b></label>
             <select id="companySelect" class="form-control" wire:model="selectedCompany">
                 @foreach ($companies as $company)
                     <option value="{{ $company->ticker }}">{{ $company->ticker }}</option>
                 @endforeach
             </select>
         </div>
-        <button class="btn btn-outline-secondary">Download</button>
+        <button class="btn btn-outline-secondary d-none">Download</button>
     </div>
 
     <hr class="mt-3">

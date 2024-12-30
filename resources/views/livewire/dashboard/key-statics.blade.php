@@ -26,7 +26,8 @@
         </div>
     </div>
 
-    <div class="row d-flex flex-row justify-content-between nowrap g-3" style="cursor: pointer" data-bs-toggle="modal" data-bs-target="#dataModal">
+    <div class="row d-flex flex-row justify-content-between nowrap g-3" style="cursor: pointer" data-bs-toggle="modal"
+        data-bs-target="#dataModal">
         <div class="col-lg-5 card shadow p-3 border-0">
             @if (empty($profitData))
                 <p>No data available for the selected timeframe.</p>
@@ -202,6 +203,10 @@
                     },
                     xAxis: {
                         categories: formattedData.categories,
+                        labels: {
+                            rotation: -45, // Memutar label agar tidak bertumpuk
+                            step: 1 // Menampilkan setiap label
+                        }
                     },
                     yAxis: {
                         title: {
@@ -233,6 +238,10 @@
                     },
                     xAxis: {
                         categories: formattedData.categories,
+                        labels: {
+                            rotation: -45, // Memutar label agar tidak bertumpuk
+                            step: 1 // Menampilkan setiap label
+                        }
                     },
                     yAxis: {
                         title: {
@@ -240,8 +249,8 @@
                         }
                     },
                     tooltip: {
-                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>Rp.{point.y} Milyards</b><br/>'
-                },
+                        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>Rp.{point.y} Milyards</b><br/>'
+                    },
                     series: formattedData.series
                 });
             }

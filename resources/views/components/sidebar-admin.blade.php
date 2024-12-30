@@ -1,6 +1,7 @@
 @extends('layouts.bootstrap')
 @section('content')
-    <div class="d-flex flex-column flex-shrink-0 p-3 primary-color d-none d-lg-block" style="width: 250px; min-height: 100vh;">
+    <div class="d-flex flex-column flex-shrink-0 p-3 primary-color d-none d-lg-block"
+        style="width: 250px; min-height: 100vh;">
         <div class="profile-admin w-100" style="min-height: 10vh">
             <a href="/" class="text-white text-decoration-none">
                 <span class="fs-5">Dashboard Admin</span>
@@ -26,7 +27,7 @@
 
             <!-- Data Orders -->
             <li class="nav-item">
-                <a href="{{ url('/admin_analyze/data-order') }}" 
+                <a href="{{ url('/admin_analyze/data-order') }}"
                     class="nav-link {{ Request::is('admin_analyze/data-order') ? 'bg-white' : 'text-white' }}">
                     <i class="bi bi-cart"></i>
                     Data Orders
@@ -35,14 +36,15 @@
 
             <!-- Settings -->
             <li>
-                <a href="{{ url('/admin_analyze/settings') }}" class="nav-link {{ Request::is('admin_analyze/settings') ? 'bg-white' : 'text-white' }}">
+                <a href="{{ url('/admin_analyze/settings') }}"
+                    class="nav-link {{ Request::is('admin_analyze/settings') ? 'bg-white' : 'text-white' }}">
                     <i class="bi bi-gear"></i>
                     Settings
                 </a>
             </li>
 
             <li>
-                <a href="#" id="logoutLink" class="nav-link text-white">
+                <a href="#" id="logoutLinkz" class="nav-link text-white">
                     <i class="bi bi-box-arrow-right"></i>
                     Logout
                 </a>
@@ -50,24 +52,28 @@
         </ul>
     </div>
 
-
     <script>
-        document.getElementById('logoutLink').addEventListener('click', function(event) {
-            event.preventDefault();
-    
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, logout!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "{{ route('logout') }}";
-                }
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.getElementById('logoutLinkz');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    console.log('Logout link clicked')
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#43654C',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, logout!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "{{ route('logout') }}";
+                        }
+                    });
+                });
+            }
         });
     </script>
 @endsection

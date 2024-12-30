@@ -206,6 +206,10 @@
                     },
                     xAxis: {
                         categories: formattedData.categories,
+                        labels: {
+                            rotation: -45,
+                            step: 1
+                        }
                     },
                     yAxis: {
                         title: {
@@ -240,6 +244,10 @@
                     },
                     xAxis: {
                         categories: formattedData.categories,
+                        labels: {
+                            rotation: -45, // Memutar label agar tidak bertumpuk
+                            step: 1 // Menampilkan setiap label
+                        }
                     },
                     yAxis: {
                         title: {

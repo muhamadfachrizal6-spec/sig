@@ -4,7 +4,7 @@
     <div class="container-fluid d-flex flex-row min-vh-100 primary-color">
         <div class="signin-content w-100 d-none d-xxl-block">
             <div class="signin-logo">
-                <img src="{{ asset('assets/img/logo/sig-white.png') }}" class="m-5 signin-logo-img" alt="">
+                <img src="{{ asset('assets/img/logo/sig-white.png') }}" class="m-5 signin-logo-img" alt="SIG institute logo" style="cursor: pointer" onclick="window.location.href='{{ route('index') }}'">
             </div>
             <div class="signin-image text-center">
                 <img src="{{ asset('assets/img/icon/login.png') }}" class="img-fluid" alt="Login Image">
@@ -17,7 +17,7 @@
         <div class="signin-form d-flex flex-column justify-content-center bg-white w-100">
             <form action="{{ route('signin') }}" method="POST" class="w-70 m-auto">
                 <div class="it-signup-thumb d-flex justify-content-center align-items-center text-center">
-                    <img src="{{ asset('assets/img/logo/logo.png') }}" alt="Logo" class="img-fluid">
+                    <img src="{{ asset('assets/img/logo/logo.png') }}" alt="Logo" class="img-fluid" style="cursor: pointer" onclick="window.location.href='{{ route('index') }}'">
                 </div>               
                 <div class="signin-typography mb-5">
                     <h1>Sign in</h1>
