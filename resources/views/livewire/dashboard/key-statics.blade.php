@@ -28,76 +28,80 @@
 
     <div class="row d-flex flex-row justify-content-between nowrap g-3" style="cursor: pointer" data-bs-toggle="modal"
         data-bs-target="#dataModal">
-        <div class="col-lg-5 card shadow p-3 border-0">
-            @if (empty($profitData))
-                <p>No data available for the selected timeframe.</p>
-            @else
-                @foreach ($profitData as $year => $quarters)
-                    <h6>Growth Net Profit {{ $year }}</h6>
-                    @if (is_array($quarters) || is_object($quarters))
-                        @foreach ($quarters as $quarter => $data)
-                            @if (is_array($data) || is_object($data))
-                                @foreach ($data as $entry)
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between">
-                                                <span>{{ $quarter }}</span>
-                                                <span>{{ $entry['value'] }}%</span>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar"
-                                                    style="width: {{ $entry['value'] }}%;"
-                                                    aria-valuenow="{{ $entry['value'] }}" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
+        <div class="col-lg-6 border-0">
+            <div class="card p-3">
+                @if (empty($profitData))
+                    <p>No data available for the selected timeframe.</p>
+                @else
+                    @foreach ($profitData as $year => $quarters)
+                        <h6>Growth Net Profit {{ $year }}</h6>
+                        @if (is_array($quarters) || is_object($quarters))
+                            @foreach ($quarters as $quarter => $data)
+                                @if (is_array($data) || is_object($data))
+                                    @foreach ($data as $entry)
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between">
+                                                    <span>{{ $quarter }}</span>
+                                                    <span>{{ $entry['value'] }}%</span>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar"
+                                                        style="width: {{ $entry['value'] }}%;"
+                                                        aria-valuenow="{{ $entry['value'] }}" aria-valuemin="0"
+                                                        aria-valuemax="100"></div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <p>No data available for {{ $quarter }}.</p>
-                            @endif
-                        @endforeach
-                    @else
-                        <p>No data available for {{ $year }}.</p>
-                    @endif
-                @endforeach
-            @endif
+                                    @endforeach
+                                @else
+                                    <p>No data available for {{ $quarter }}.</p>
+                                @endif
+                            @endforeach
+                        @else
+                            <p>No data available for {{ $year }}.</p>
+                        @endif
+                    @endforeach
+                @endif
+            </div>
         </div>
 
-        <div class="col-lg-5 card shadow p-3 border-0">
-            @if (empty($priceData))
-                <p>No data available for the selected timeframe.</p>
-            @else
-                @foreach ($priceData as $year => $quarters)
-                    <h6>Price {{ $year }}</h6>
-                    @if (is_array($quarters) || is_object($quarters))
-                        @foreach ($quarters as $quarter => $data)
-                            @if (is_array($data) || is_object($data))
-                                @foreach ($data as $entry)
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between">
-                                                <span>{{ $quarter }}</span>
-                                                <span>{{ $entry['value'] }}</span>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar"
-                                                    style="width: {{ $entry['value'] }}"
-                                                    aria-valuenow="{{ $entry['value'] }}" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
+        <div class="col-lg-6 border-0">
+            <div class="card p-3">
+                @if (empty($priceData))
+                    <p>No data available for the selected timeframe.</p>
+                @else
+                    @foreach ($priceData as $year => $quarters)
+                        <h6>Price {{ $year }}</h6>
+                        @if (is_array($quarters) || is_object($quarters))
+                            @foreach ($quarters as $quarter => $data)
+                                @if (is_array($data) || is_object($data))
+                                    @foreach ($data as $entry)
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between">
+                                                    <span>{{ $quarter }}</span>
+                                                    <span>{{ $entry['value'] }}</span>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar"
+                                                        style="width: {{ $entry['value'] }}"
+                                                        aria-valuenow="{{ $entry['value'] }}" aria-valuemin="0"
+                                                        aria-valuemax="100"></div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <p>No data available for {{ $quarter }}.</p>
-                            @endif
-                        @endforeach
-                    @else
-                        <p>No data available for {{ $year }}.</p>
-                    @endif
-                @endforeach
-            @endif
+                                    @endforeach
+                                @else
+                                    <p>No data available for {{ $quarter }}.</p>
+                                @endif
+                            @endforeach
+                        @else
+                            <p>No data available for {{ $year }}.</p>
+                        @endif
+                    @endforeach
+                @endif
+            </div>
         </div>
     </div>
 
