@@ -18,10 +18,10 @@
             </select>
         </div>
         <div class="col-lg-4">
-            <label for="graphic" class="form-label">Periode :</label>
-            <select id="graphic" class="form-select" wire:model="graphic">
-                <option value="Annual">Annual</option>
-                <option value="Monthly">Quarterly</option>
+            <label for="periode" class="form-label">Periode:</label>
+            <select id="periode" class="form-select" wire:model="periode">
+                <option value="annual">Annual</option>
+                <option value="quarterly">Quarterly</option>
             </select>
         </div>
     </div>

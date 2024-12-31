@@ -16,6 +16,7 @@ class KeyRatio extends Component
 
     public $account = 'All';
     public $timeframe = '3 Years';
+    public $periode = 'quarterly';
 
     public $modalPopupData = [];
 

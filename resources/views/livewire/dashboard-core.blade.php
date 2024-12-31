@@ -1,10 +1,12 @@
 <div class="mt-2">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="form-group d-flex flex column align-items-center gap-3">
-            <label class="primary-color-text" for="companySelect"><b>Select Company : </b></label>
+        <div class="form-group gap-3">
+            <label for="companySelect" class="primary-color-text"><b>Select Company : </b></label>
             <select id="companySelect" class="form-control" wire:model="selectedCompany">
                 @foreach ($companies as $company)
-                    <option value="{{ $company->ticker }}">{{ $company->ticker }}</option>
+                    <option value="{{ $company->ticker }}" {{ $company->ticker == $selectedCompany ? 'selected' : '' }}>
+                        {{ $company->ticker }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -32,36 +34,33 @@
         @if ($activeTab === 'general-information')
             <livewire:dashboard.general-information :company="$companyData" />
         @elseif ($activeTab === 'key-statics')
-            <livewire:dashboard.key-statics :company="$companyData" :incomeStatementData="$incomeStatementData" :financialPositionData="$financialPositionData" :dividendData="$dividendData"
-                :profitData="$profitData" :priceData="$priceData" />
+            <livewire:dashboard.key-statics :company="$companyData"/>
         @elseif ($activeTab === 'key-ratio')
-            <livewire:dashboard.key-ratio :company="$companyData" :incomeStatementData="$incomeStatementData" :financialPositionData="$financialPositionData" :dividendData="$dividendData"
-                :profitData="$profitData" :priceData="$priceData" />
+            <livewire:dashboard.key-ratio :company="$companyData"/>
         @endif
     </div>
 </div>
+
 <script>
+    $(document).ready(function() {
+        $('#companySelect').select2({
+            placeholder: "Search and select a company",
+            allowClear: true,
+            width: '100%'
+        });
+
+        // Untuk Livewire integration
+        $('#companySelect').on('change', function(e) {
+            @this.set('selectedCompany', $(this).val());
+        });
+    });
+
+    // Reinitialize pada Livewire update
     document.addEventListener('livewire:load', function() {
-        initializeChoices();
+        $('#companySelect').select2();
     });
 
     document.addEventListener('livewire:update', function() {
-        initializeChoices();
+        $('#companySelect').select2();
     });
-
-    function initializeChoices() {
-        const element = document.getElementById('companySelect');
-        if (element) {
-            if (element.choices) {
-                element.choices.destroy();
-            }
-
-            new Choices(element, {
-                searchEnabled: true,
-                itemSelectText: '',
-                placeholderValue: 'Search and select a company',
-                removeItemButton: true,
-            });
-        }
-    }
 </script>

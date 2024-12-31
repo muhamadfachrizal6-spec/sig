@@ -51,7 +51,7 @@
                             <p>{{$company->ticker}}</p>  
                         </div>  
                         <div class="col-6">  
-                            <p class="primary-color-text fw-bold">Growth Net (YoY)</p>  
+                            <p class="primary-color-text fw-bold">Growth Net Profit (YoY)</p>  
                             <p>{{ $growthNetProfit ?? '-' }}%</p>  
                         </div>  
                     </div>  
