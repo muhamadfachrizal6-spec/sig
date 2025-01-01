@@ -205,7 +205,7 @@
         </div>
         <div class="col-xl-4 col-md-6 col-sm-12">
             <div class="card p-3 border-2 #43654C">
-                <h4 class="primary-color-text">Equality</h4>
+                <h4 class="primary-color-text">Equity</h4>
                 <table class="table">
                     <thead>
                         <tr>

@@ -7,6 +7,7 @@ use Livewire\Component;
 
 class KeyRatio extends Component
 {
+    public $selectedCompany;
     public $profitData = [];
     public $priceData = [];
 
@@ -24,21 +25,23 @@ class KeyRatio extends Component
 
     public function updatedAccount()
     {
-        // Menggunakan data perusahaan terakhir yang tersedia
-        $company = Company::with(['profitabilityRatios', 'relativeRatios', 'liquidityRatios'])->first();
-
-        // Panggil companyChanged untuk memperbarui data
-        $this->companyChanged($company);
+        if ($this->selectedCompany) {
+            $this->companyChanged($this->selectedCompany);
+        }
     }
 
     public function updatedTimeframe()
     {
-        $this->updatedAccount();
+        if ($this->selectedCompany) {
+            $this->companyChanged($this->selectedCompany);
+        }
     }
 
-    public function updatedGraphic()
+    public function updatedPeriode()
     {
-        $this->updatedAccount();
+        if ($this->selectedCompany) {
+            $this->companyChanged($this->selectedCompany);
+        }
     }
 
     public function companyChanged($company)
@@ -47,6 +50,8 @@ class KeyRatio extends Component
             $company = Company::with(['profitabilityRatios', 'relativeRatios', 'liquidityRatios'])
                 ->findOrFail($company['id']);
         }
+
+        $this->selectedCompany = $company;
 
         $currentYear = now()->year;
         $yearsAgo = 0;
@@ -104,33 +109,60 @@ class KeyRatio extends Component
                 });
             });
 
-        // Filter dan sorting berdasarkan tahun terbaru
         $filteredprofitabilityRatio = $company->profitabilityRatios
-        ->filter(function ($profitabilityRatio) use ($startYear, $currentYear) {
-            return $profitabilityRatio->year >= $startYear && $profitabilityRatio->year <= $currentYear;
-        })
-        ->sortBy([
-            ['year', 'asc'], // Mengurutkan berdasarkan tahun secara menaik
-            ['quarter', 'asc'] // Mengurutkan berdasarkan kuartal secara menaik
-        ]);
-
+            ->filter(function ($profitabilityRatio) use ($startYear, $currentYear) {
+                return $profitabilityRatio->year >= $startYear && $profitabilityRatio->year <= $currentYear;
+            });
+    
         $filteredrelativeRatio = $company->relativeRatios
-        ->filter(function ($relativeRatios) use ($startYear, $currentYear) {
-            return $relativeRatios->year >= $startYear && $relativeRatios->year <= $currentYear;
-        })
-            ->sortBy([
-                ['year', 'asc'],
-                ['quarter', 'asc']
-            ]);
+            ->filter(function ($relativeRatios) use ($startYear, $currentYear) {
+                return $relativeRatios->year >= $startYear && $relativeRatios->year <= $currentYear;
+            });
 
         $filteredliquidityRatio = $company->liquidityRatios
-        ->filter(function ($liquidityRatios) use ($startYear, $currentYear) {
-            return $liquidityRatios->year >= $startYear && $liquidityRatios->year <= $currentYear;
-        })
-            ->sortBy([
-                ['year', 'asc'],
-                ['quarter', 'asc']
-            ]);
+            ->filter(function ($liquidityRatios) use ($startYear, $currentYear) {
+                return $liquidityRatios->year >= $startYear && $liquidityRatios->year <= $currentYear;
+            });
+
+        if ($this->periode === 'annual') {
+            $filteredprofitabilityRatio = $filteredprofitabilityRatio
+                ->groupBy('year')
+                ->map(function ($yearData) {
+                    // Ambil data quarter terakhir yang tersedia di tahun tersebut
+                    return $yearData->sortByDesc('quarter')->first();
+            })
+                ->filter();
+
+            $filteredrelativeRatio = $filteredrelativeRatio
+                ->groupBy('year')
+                ->map(function ($yearData) {
+                    return $yearData->sortByDesc('quarter')->first();
+                })
+                ->filter();
+
+            $filteredliquidityRatio = $filteredliquidityRatio
+                ->groupBy('year')
+                ->map(function ($yearData) {
+                    return $yearData->sortByDesc('quarter')->first();
+                })
+                ->filter();
+        }
+
+        // Sorting data
+        $filteredprofitabilityRatio = $filteredprofitabilityRatio->sortBy([
+            ['year', 'asc'],
+            ['quarter', 'asc']
+        ]);
+
+        $filteredrelativeRatio = $filteredrelativeRatio->sortBy([
+            ['year', 'asc'],
+            ['quarter', 'asc']
+        ]);
+
+        $filteredliquidityRatio = $filteredliquidityRatio->sortBy([
+            ['year', 'asc'],
+            ['quarter', 'asc']
+        ]);
 
         $this->modalPopupData = [
             'categories' => $filteredMarketShares->map(function ($marketShare) {
@@ -153,32 +185,27 @@ class KeyRatio extends Component
                 ],
                 [
                     'name' => 'Price',
-                    'data' => $filteredMarketShares->pluck('price')->map(function ($value) {
-                        return floatval($value);
+                    'data' => $filteredMarketShares->pluck('price_popup')->map(function ($value) {
+                        return floatval(str_replace(' %', '', $value));
                     })->toArray(),
                 ],
             ],
         ];
 
-        // Kondisi untuk setiap account type dan update data untuk chart terkait
         if ($this->account === 'profitabilityRatioData' || $this->account === 'All') {
             $this->profitabilityRatioData = [
-                'categories' => $filteredprofitabilityRatio->map(function ($revenue) {
-                    return [
-                        'year' => $revenue->year,
-                        'quarter' => $revenue->quarter
-                    ];
-                })->sortBy([
-                    ['year', 'asc'],
-                    ['quarter', 'asc']
-                ])->map(function ($item) {
-                    return $item['year'] . ' - ' . $item['quarter'];
-                })->values()->toArray(),
+                'categories' => $this->periode === 'annual'
+                ? $filteredprofitabilityRatio->map(function ($ratio) use ($company) {
+                    return $company->name . ' - ' . $ratio->year;
+                })->values()->toArray()
+                    : $filteredprofitabilityRatio->map(function ($ratio) {
+                        return $ratio->year . ' - ' . $ratio->quarter;
+                    })->values()->toArray(),
                 'series' => [
                     [
                         'name' => 'ROE',
                         'data' => $filteredprofitabilityRatio->pluck('ROE')->map(function ($value) {
-                            return floatval(str_replace(' B', '', $value));
+                            return $value;
                         })->toArray(),
                     ],
                     [
@@ -199,17 +226,13 @@ class KeyRatio extends Component
 
         if ($this->account === 'relativeRatioData' || $this->account === 'All') {
             $this->relativeRatioData = [
-                'categories' => $filteredrelativeRatio->map(function ($revenue) {
-                    return [
-                        'year' => $revenue->year,
-                        'quarter' => $revenue->quarter
-                    ];
-                })->sortBy([
-                    ['year', 'asc'],
-                    ['quarter', 'asc']
-                ])->map(function ($item) {
-                    return $item['year'] . ' - ' . $item['quarter'];
-                })->values()->toArray(),
+                'categories' => $this->periode === 'annual'
+                ? $filteredrelativeRatio->map(function ($ratio) {
+                    return $ratio->year;
+                })->values()->toArray()
+                    : $filteredrelativeRatio->map(function ($ratio) {
+                        return $ratio->year . ' - ' . $ratio->quarter;
+                    })->values()->toArray(),
                 'series' => [
                     [
                         'name' => 'EPS',
@@ -241,17 +264,13 @@ class KeyRatio extends Component
 
         if ($this->account === 'liquidityRatioData' || $this->account === 'All') {
             $this->liquidityRatioData = [
-                'categories' => $filteredliquidityRatio->map(function ($revenue) {
-                    return [
-                        'year' => $revenue->year,
-                        'quarter' => $revenue->quarter
-                    ];
-                })->sortBy([
-                    ['year', 'asc'],
-                    ['quarter', 'asc']
-                ])->map(function ($item) {
-                    return $item['year'] . ' - ' . $item['quarter'];
-                })->values()->toArray(),
+                'categories' => $this->periode === 'annual'
+                ? $filteredliquidityRatio->map(function ($ratio) {
+                    return $ratio->year;
+                })->values()->toArray()
+                    : $filteredliquidityRatio->map(function ($ratio) {
+                        return $ratio->year . ' - ' . $ratio->quarter;
+                    })->values()->toArray(),
                 'series' => [
                     [
                         'name' => 'DAR',

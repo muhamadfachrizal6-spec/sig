@@ -16,6 +16,7 @@ class FinancialPositionData extends Model
         'quarter',
         'asset',
         'liability',
+        'equality',
     ];
 
     public $timestamps = false;

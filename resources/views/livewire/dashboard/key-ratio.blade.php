@@ -217,7 +217,7 @@
                     },
                     yAxis: {
                         title: {
-                            text: 'Values in Milliards'
+                            text: 'Values in Percent'
                         }
                     },
                     plotOptions: {

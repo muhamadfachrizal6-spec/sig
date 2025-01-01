@@ -7,7 +7,7 @@
             </div>
             <div class="card-body pb-5 text-center">
                 @if ($pack->description)
-                    @foreach (explode(' ', $pack->description) as $item)
+                    @foreach (explode('$', $pack->description) as $item)
                         <p><i class="fas fa-check-circle"></i> {{ $item }}</p>
                     @endforeach
                 @else

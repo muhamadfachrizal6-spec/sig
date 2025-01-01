@@ -15,6 +15,7 @@ class MarketShare extends Model
         'year',
         'quarter',
         'growth_net_profit',
+        'price_popup',
         'price',
         'market_cap',
     ];
