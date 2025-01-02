@@ -14,11 +14,9 @@ class Company extends Model
         'ticker',
         'name',
         'address',
-        'market_cap',
-        'price',
-        'growth',
         'category',
         'description',
+        'logo'
     ];
 
     public $timestamps = false;

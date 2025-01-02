@@ -60,22 +60,34 @@ class AnalyzeDashboardController extends Controller
     public function store(Request $request)
     {
         // Validasi input
-        $request->validate([
-            'ticker' => 'required|string|max:10',  // Kode atau ticker maksimal 10 karakter
-            'name' => 'required|string|max:255',   // Nama perusahaan maksimal 255 karakter
-            'category' => 'required|string|max:255', // Kategori maksimal 255 karakter
-            'address' => 'required|string',        // Alamat harus diisi
-            'description' => 'nullable|string',    // Deskripsi opsional
+        $request->validate(['ticker' => 'required|string|max:10',
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'address' => 'required|string',
+            'description' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Simpan data ke database
-        Company::create([
-            'ticker' => $request->input('ticker'),
-            'name' => $request->input('name'),
-            'category' => $request->input('category'),
-            'address' => $request->input('address'),
-            'description' => $request->input('description'), // Opsional
-        ]);
+
+        $logoPath = null;
+        if ($request->hasFile('logo')) {
+            // Simpan file ke folder public/assets/img/logo_emitten
+            $file = $request->file('logo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('assets/img/logo_emitten'), $filename);
+
+            // Simpan path relatif ke database
+            $logoPath = 'assets/img/logo_emitten/' . $filename;
+        }
+
+        $company = new Company();
+        $company->ticker = $request->input('ticker');
+        $company->name = $request->input('name');
+        $company->category = $request->input('category');
+        $company->address = $request->input('address');
+        $company->description = $request->input('description');
+        $company->logo = $logoPath;
+        $company->save();
 
         // Redirect kembali ke halaman dashboard dengan pesan sukses
         return redirect()->route('admin_analyze.emiten.dashboard')->with('success', 'Company created successfully.');
@@ -95,16 +107,41 @@ class AnalyzeDashboardController extends Controller
             'category' => 'required|string|max:255',
             'address' => 'required',
             'description' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $company = Company::find($id);
 
-        try {
-            $company->update($request->all());
-            return redirect()->route('admin_analyze.emiten.edit', $id)->with('success', 'Company updated successfully.');
-        } catch (\Exception $e) {
-            return redirect()->route('admin_analyze.emiten.edit', $id)->with('error', 'Failed to update company: ' . $e->getMessage());
+        if ($request->hasFile('logo')) {
+            // Hapus logo lama jika ada
+            if ($company->logo && file_exists(public_path($company->logo))) {
+                unlink(public_path($company->logo));
+            }
+
+            // Simpan file baru ke folder public/assets/img/logo_emitten
+            $file = $request->file('logo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('assets/img/logo_emitten'), $filename);
+
+            // Simpan path relatif ke database
+            $company->logo = 'assets/img/logo_emitten/' . $filename;
         }
+
+        // try {
+        //     $company->update($request->all());
+        //     return redirect()->route('admin_analyze.emiten.edit', $id)->with('success', 'Company updated successfully.');
+        // } catch (\Exception $e) {
+        //     return redirect()->route('admin_analyze.emiten.edit', $id)->with('error', 'Failed to update company: ' . $e->getMessage());
+        // }
+
+        $company->ticker = $request->input('ticker');
+        $company->name = $request->input('name');
+        $company->category = $request->input('category');
+        $company->address = $request->input('address');
+        $company->description = $request->input('description');
+        $company->save();
+
+        return redirect()->route('admin_analyze.emiten.edit', $id)->with('success', 'Company updated successfully.');
     }
 
     public function destroy($id)

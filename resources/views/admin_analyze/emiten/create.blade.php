@@ -1,53 +1,64 @@
 @extends('layouts.navigation-admin')
 
 @section('contents')
-<div class="container">
-    <!-- Bagian Header atau Judul Dashboard -->
-    <div class="mb-4 card shadow-sm border-light p-3">
-        <h3>Add Data Emiten</h3>
+    <div class="container">
+        <!-- Bagian Header atau Judul Dashboard -->
+        <div class="mb-4 card shadow-sm border-light p-3">
+            <h3>Add Data Emiten</h3>
+        </div>
+
+        <!-- Card untuk General Information -->
+        <div class="card shadow-sm border-light p-3">
+            <h2 class="mb-3">General Information</h2>
+            <p class="text-muted">Please fill in the form below to add a new emiten</p>
+
+            <form action="{{ route('admin_analyze.emiten.store') }}" method="POST">
+                @csrf
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Name Emiten</label>
+                        <input type="text" class="form-control" id="name" name="name"
+                            placeholder="Enter the company name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ticker" class="form-label">Ticker Code</label>
+                        <input type="text" class="form-control" id="ticker" name="ticker"
+                            placeholder="Enter 4-letter ticker">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-control" id="category" name="category">
+                            <option value="Automotive">Automotive</option>
+                            <option value="Energy">Energy</option>
+                            <option value="Technology">Technology</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address"
+                            placeholder="Enter the company address">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="logo" class="form-label">Logo</label>
+                        <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"
+                            placeholder="Additional details about the company"></textarea>
+                    </div>
+                </div>
+
+                <hr class="mt-3 mb-3 w-100">
+
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
+        </div>
     </div>
-
-    <!-- Card untuk General Information -->
-    <div class="card shadow-sm border-light p-3">
-        <h2 class="mb-3">General Information</h2>
-        <p class="text-muted">Please fill in the form below to add a new emiten</p>
-
-        <form action="{{ route('admin_analyze.emiten.store') }}" method="POST">
-            @csrf
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="name" class="form-label">Name Emiten</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter the company name">
-                </div>
-                <div class="col-md-6">
-                    <label for="ticker" class="form-label">Ticker Code</label>
-                    <input type="text" class="form-control" id="ticker" name="ticker" placeholder="Enter 4-letter ticker">
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="category" class="form-label">Category</label>
-                    <select class="form-control" id="category" name="category">
-                        <option value="Automotive">Automotive</option>
-                        <option value="Energy">Energy</option>
-                        <option value="Technology">Technology</option>
-                        <!-- Tambahkan kategori lain sesuai dengan kebutuhan -->
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="address" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter the company address">
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Additional details about the company"></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-success">Submit</button>
-        </form>
-    </div>
-</div>
 @endsection

@@ -1,5 +1,10 @@
 <div>
     <div class="row mb-4">
+        @if (session()->has('message'))
+            <div class="alert alert-info mt-3">
+                {{ session('message') }}
+            </div>
+        @endif
         <div class="col-lg-4">
             <label for="account" class="form-label">Account:</label>
             <select id="account" class="form-select" wire:model="account">
@@ -11,12 +16,64 @@
         </div>
         <div class="col-lg-4">
             <label for="timeframe" class="form-label">Timeframe:</label>
-            <select id="timeframe" class="form-select" wire:model="timeframe">
-                <option value="3 Years">3 Years</option>
-                <option value="5 Years">5 Years</option>
-                <option value="10 Years">10 Years</option>
-            </select>
+            <div class="accordion" id="mainAccordion">
+                <!-- Accordion Timeframe -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTimeframe">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTimeframe" aria-expanded="false" aria-controls="collapseTimeframe">
+                            Timeframe
+                        </button>
+                    </h2>
+                    <div id="collapseTimeframe" class="accordion-collapse collapse" aria-labelledby="headingTimeframe">
+                        <div class="accordion-body">
+                            <div>
+                                <input type="radio" id="threeYears" name="timeframe" value="3 Years"
+                                    wire:model.debounce.500ms="timeframe">
+                                <label for="threeYears">Last 3 Years</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="fiveYears" name="timeframe" value="5 Years"
+                                    wire:model.debounce.500ms="timeframe">
+                                <label for="fiveYears">Last 5 Years</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="tenYears" name="timeframe" value="10 Years"
+                                    wire:model.debounce.500ms="timeframe">
+                                <label for="tenYears">Last 10 Years</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Per Tahun -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingYears">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseYears" aria-expanded="false" aria-controls="collapseYears">
+                            Per Tahun
+                        </button>
+                    </h2>
+                    <div id="collapseYears" class="accordion-collapse collapse" aria-labelledby="headingYears">
+                        <div class="accordion-body">
+                            <form wire:submit.prevent="submitYears">
+                                @foreach ($yearsAvailable as $year)
+                                    <div>
+                                        <input type="checkbox" id="year{{ $year }}" value="{{ $year }}"
+                                            wire:model.debounce.500ms="selectedYears">
+                                        <label for="year{{ $year }}">{{ $year }}</label>
+                                    </div>
+                                @endforeach
+                                <div class="mt-3">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <div class="col-lg-4">
             <label for="periode" class="form-label">Periode:</label>
             <select id="periode" class="form-select" wire:model="periode">

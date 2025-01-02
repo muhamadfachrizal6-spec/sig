@@ -3,59 +3,60 @@
         <div class="col-lg-6 d-flex">
             <div class="card p-3 border-2 w-100 #43654C shadow">
                 <h4 class="primary-color-text">Company Profile</h4>
-                <div class="header-company d-flex flex-row gap-4 p-3 align-items-center rounded border primary-border shadow">
-                    <img src="{{ asset('assets/img/logo/sig2.png') }}" alt="Profile Image"
-                        class="rounded border primary-border" width="50" height="50">
+                <div
+                    class="header-company d-flex flex-row gap-4 p-3 align-items-center rounded border primary-border shadow">
+                    <img src="{{ asset($company->logo ?: 'assets/img/logo/sig2.png') }}" alt="Logo {{ $company->name }}"
+                        class="rounded border primary-border" width="70" height="70">
                     <div class="category d-flex flex-column justify-content-center text-center">
                         <p class="primary-color-text text-start"><b>{{ $company->name }}</b></p>
-                        <div class="category-container">  
-                            @if ($company->category == 'Auto')  
-                                <span class="category-item auto">  
-                                    <i class="fas fa-car"></i> Auto  
-                                </span>  
-                            @elseif ($company->category == 'Tech')  
-                                <span class="category-item tech">  
-                                    <i class="fas fa-microchip"></i> Tech  
-                                </span>  
-                            @else  
-                                <span class="category-item energy">  
-                                    <i class="fas fa-microchip"></i> {{ $company->category }}  
-                                </span>  
-                            @endif  
-                        </div>  
-                        
+                        <div class="category-container">
+                            @if ($company->category == 'Auto')
+                                <span class="category-item auto">
+                                    <i class="fas fa-car"></i> Auto
+                                </span>
+                            @elseif ($company->category == 'Tech')
+                                <span class="category-item tech">
+                                    <i class="fas fa-microchip"></i> Tech
+                                </span>
+                            @else
+                                <span class="category-item energy">
+                                    <i class="fas fa-microchip"></i> {{ $company->category }}
+                                </span>
+                            @endif
+                        </div>
+
                     </div>
                 </div>
-                <div class="company-info container-fluid p-3">  
-                    <div class="row mb-2">  
-                        <div class="col-12">  
-                            <p class="primary-color-text fw-bold">Address</p>  
-                            <p>{{ $company->address }}</p>  
-                        </div>  
-                    </div>  
-                
-                    <div class="row mb-2">  
-                        <div class="col-6">  
-                            <p class="primary-color-text fw-bold">Market Cap</p>  
-                            <p>Rp.{{ number_format($marketCap, 2, ',', '.') }} Milyards</p>  
-                        </div>  
-                        <div class="col-6">  
-                            <p class="primary-color-text fw-bold">Price</p>  
-                            <p>Rp.{{ number_format($price, 2, ',', '.') }} Milyards</p>  
-                        </div>  
-                    </div>  
-                
-                    <div class="row mb-2">  
-                        <div class="col-6">  
-                            <p class="primary-color-text fw-bold">Company code</p>  
-                            <p>{{$company->ticker}}</p>  
-                        </div>  
-                        <div class="col-6">  
-                            <p class="primary-color-text fw-bold">Growth Net Profit (YoY)</p>  
-                            <p>{{ $growthNetProfit ?? '-' }}%</p>  
-                        </div>  
-                    </div>  
-                </div>  
+                <div class="company-info container-fluid p-3">
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <p class="primary-color-text fw-bold">Address</p>
+                            <p>{{ $company->address }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <p class="primary-color-text fw-bold">Market Cap</p>
+                            <p>Rp.{{ number_format($marketCap, 2, ',', '.') }} Milyards</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="primary-color-text fw-bold">Price</p>
+                            <p>Rp.{{ number_format($price, 2, ',', '.') }} Milyards</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <p class="primary-color-text fw-bold">Company code</p>
+                            <p>{{ $company->ticker }}</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="primary-color-text fw-bold">Growth Net Profit (YoY)</p>
+                            <p>{{ $growthNetProfit ?? '-' }}%</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-lg-6 d-flex">
@@ -252,7 +253,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $dividends['dividend_per_sheet'][$year] ?? '-'  }}%</td>
+                                    <td>{{ $dividends['dividend_per_sheet'][$year] ?? '-' }}%</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -277,7 +278,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $dividends['yield'][$year] ?? '-'  }}%</td>
+                                    <td>{{ $dividends['yield'][$year] ?? '-' }}%</td>
                                 @endforeach
                             </tr>
                         @endforeach
