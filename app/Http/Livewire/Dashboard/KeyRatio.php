@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Models\Company;
-use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class KeyRatio extends Component
@@ -21,11 +20,17 @@ class KeyRatio extends Component
     public $periode = 'quarterly';
 
     public $modalPopupData = [];
+    public $isTimeframeOpen = false;
+    public $isYearsOpen = false;
 
     protected $listeners = ['companyChanged'];
 
     public $yearsAvailable = [];
     public $selectedYears = [];
+
+    public $tempTimeframe;
+    public $tempSelectedYears = [];
+
     public function mount()
     {
         $this->timeframe = '3 Years';
@@ -49,6 +54,9 @@ class KeyRatio extends Component
                 ->merge($company->liquidityRatios->pluck('year'));
             })
             ->unique()
+            ->filter(function ($year) use ($currentYear) {
+                return $year > 0 && $year <= $currentYear;
+            })
             ->sortDesc()
             ->values()
             ->toArray();
@@ -57,6 +65,9 @@ class KeyRatio extends Component
         if (!empty($this->selectedCompany)) {
             $this->companyChanged($this->selectedCompany, $this->selectedYears);
         }
+
+        $this->tempTimeframe = $this->timeframe;
+        $this->tempSelectedYears = $this->selectedYears;
     }
 
     public function submitYears()
@@ -76,7 +87,6 @@ class KeyRatio extends Component
         $this->companyChanged($this->selectedCompany, $this->selectedYears);
     }
 
-
     public function updatedAccount()
     {
         if ($this->selectedCompany) {
@@ -88,6 +98,8 @@ class KeyRatio extends Component
     {
         // Kosongkan filter per tahun langsung ketika timeframe dipilih
         $this->selectedYears = [];
+
+        $this->dispatchBrowserEvent('close-modal', ['modal' => 'timeframeModal']);
 
         // Update selectedYears berdasarkan timeframe yang dipilih
         $currentYear = now()->year;
@@ -101,6 +113,8 @@ class KeyRatio extends Component
 
         $this->selectedYears = range($startYear, $currentYear);
 
+        $this->timeframe = $value;
+
         // Panggil logika filter data
         if ($this->selectedCompany) {
             $this->companyChanged($this->selectedCompany, $this->selectedYears);
@@ -110,17 +124,36 @@ class KeyRatio extends Component
         session()->flash('message', 'Filter per tahun telah direset karena Anda memilih timeframe.');
     }
 
+    public function submitFilter()
+    {
+        if (!empty($this->timeframe)) {
+            $this->updatedTimeframe($this->timeframe);
+        } else {
+            $this->companyChanged($this->selectedCompany, $this->selectedYears);
+        }
+
+        // Tutup modal setelah filter diterapkan
+        $this->dispatchBrowserEvent('close-modal', ['modal' => 'timeframeModal']);
+
+        // Flash message untuk memberikan feedback
+        session()->flash('message', 'Filter telah diterapkan.');
+    }
+
     public function updatedSelectedYears($value)
     {
+        // Jika ada perubahan pada filter tahun, hapus timeframe
         if (!empty($value)) {
-            // Kosongkan timeframe jika tahun dipilih
             $this->timeframe = null;
 
-            // Flash message untuk feedback
+            // Panggil logika untuk memperbarui data dengan filter tahun spesifik
+            if ($this->selectedCompany) {
+                $this->companyChanged($this->selectedCompany, $this->selectedYears);
+            }
+
+            // Flash message untuk memberikan feedback
             session()->flash('message', 'Timeframe telah direset karena Anda memilih filter per tahun.');
         }
     }
-
     public function updatedPeriode()
     {
         if ($this->selectedCompany) {

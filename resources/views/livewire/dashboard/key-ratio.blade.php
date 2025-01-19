@@ -1,9 +1,17 @@
 <div>
     <div class="row mb-4">
         @if (session()->has('message'))
-            <div class="alert alert-info mt-3">
-                {{ session('message') }}
-            </div>
+            <script>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'info',
+                    title: '{{ session('message') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            </script>
         @endif
         <div class="col-lg-4">
             <label for="account" class="form-label">Account:</label>
@@ -14,64 +22,13 @@
                 <option value="liquidityRatioData">Liquidity Ratio</option>
             </select>
         </div>
+
         <div class="col-lg-4">
             <label for="timeframe" class="form-label">Timeframe:</label>
-            <div class="accordion" id="mainAccordion">
-                <!-- Accordion Timeframe -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTimeframe">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseTimeframe" aria-expanded="false" aria-controls="collapseTimeframe">
-                            Timeframe
-                        </button>
-                    </h2>
-                    <div id="collapseTimeframe" class="accordion-collapse collapse" aria-labelledby="headingTimeframe">
-                        <div class="accordion-body">
-                            <div>
-                                <input type="radio" id="threeYears" name="timeframe" value="3 Years"
-                                    wire:model.debounce.500ms="timeframe">
-                                <label for="threeYears">Last 3 Years</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="fiveYears" name="timeframe" value="5 Years"
-                                    wire:model.debounce.500ms="timeframe">
-                                <label for="fiveYears">Last 5 Years</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="tenYears" name="timeframe" value="10 Years"
-                                    wire:model.debounce.500ms="timeframe">
-                                <label for="tenYears">Last 10 Years</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Accordion Per Tahun -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingYears">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseYears" aria-expanded="false" aria-controls="collapseYears">
-                            Per Tahun
-                        </button>
-                    </h2>
-                    <div id="collapseYears" class="accordion-collapse collapse" aria-labelledby="headingYears">
-                        <div class="accordion-body">
-                            <form wire:submit.prevent="submitYears">
-                                @foreach ($yearsAvailable as $year)
-                                    <div>
-                                        <input type="checkbox" id="year{{ $year }}" value="{{ $year }}"
-                                            wire:model.debounce.500ms="selectedYears">
-                                        <label for="year{{ $year }}">{{ $year }}</label>
-                                    </div>
-                                @endforeach
-                                <div class="mt-3">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <button type="button" class="btn {{ $timeframe ? 'bg-white' : 'primary-color text-white' }} border-1 border-primary-black w-100" data-bs-toggle="modal"
+                data-bs-target="#timeframeModal">
+                {{ $timeframe ?: 'Custom timeframe' }}
+            </button>
         </div>
 
         <div class="col-lg-4">
@@ -82,6 +39,69 @@
             </select>
         </div>
     </div>
+
+    <div class="modal fade" id="timeframeModal" tabindex="-1" aria-labelledby="timeframeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="timeframeModalLabel">Select Timeframe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="submitFilter">
+                        <!-- Timeframe Section -->
+                        <div class="mb-4">
+                            <p class="mb-2 fw-bold text-primary">Choose a Timeframe:</p>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="threeYears" name="timeframe"
+                                        value="3 Years" wire:model.defer="timeframe">
+                                    <label class="form-check-label" for="threeYears">Last 3 Years</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="fiveYears" name="timeframe"
+                                        value="5 Years" wire:model.defer="timeframe">
+                                    <label class="form-check-label" for="fiveYears">Last 5 Years</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="tenYears" name="timeframe"
+                                        value="10 Years" wire:model.defer="timeframe">
+                                    <label class="form-check-label" for="tenYears">Last 10 Years</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="my-4">
+
+                        <!-- Specific Years Section -->
+                        <div>
+                            <p class="mb-2 fw-bold text-primary">Or Select Specific Years:</p>
+                            <div class="row row-cols-4 g-3">
+                                @foreach ($yearsAvailable as $year)
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="year{{ $year }}"
+                                                value="{{ $year }}" wire:model.defer="selectedYears">
+                                            <label class="form-check-label"
+                                                for="year{{ $year }}">{{ $year }}</label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="modal-footer mt-4">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="row d-flex flex-row justify-content-between g-3 nowrap" style="cursor: pointer" data-bs-toggle="modal"
         data-bs-target="#dataModal">
@@ -323,4 +343,25 @@
             }
         }
     }
+</script>
+<script>
+    document.addEventListener('livewire:load', function() {
+        Livewire.on('closeModal', (modalId) => {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                if (bootstrapModal) {
+                    bootstrapModal.hide();
+                }
+
+                // Hapus elemen backdrop
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+
+                // Pulihkan scroll di body
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+            }
+        });
+    });
 </script>

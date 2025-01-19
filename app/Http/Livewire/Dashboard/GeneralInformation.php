@@ -38,7 +38,6 @@ class GeneralInformation extends Component
 
     public function updateCompany($company)
     {
-
         $currentYear = now()->year;
         $currentQuarter = "Q" . intdiv(now()->month - 1, 3) + 1;
         // dd($currentQuarter);
@@ -59,12 +58,12 @@ class GeneralInformation extends Component
     
         $this->company = $company;
 
-        $this->years = collect(range($threeYearsAgo, $currentYear))->sortDesc()->values()->all();
+        $this->years = collect(range($threeYearsAgo, $currentYear))->values()->all();
 
         $this->revenueData = $company->revenues
             ->groupBy('quarter')
             ->map(function ($revenues) {
-                return $revenues->pluck('revenue', 'year')->only($this->years);
+            return $revenues->pluck('revenue', 'year')->only($this->years)->sortKeys();
             });
 
         $this->grossProfitData = $company->revenues

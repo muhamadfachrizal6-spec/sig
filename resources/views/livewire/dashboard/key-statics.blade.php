@@ -1,5 +1,18 @@
 <div>
     <div class="row mb-4">
+        @if (session()->has('message'))
+            <script>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'info',
+                    title: '{{ session('message') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            </script>
+        @endif
         <div class="col-lg-4">
             <label for="account" class="form-label">Account:</label>
             <select id="account" class="form-select" wire:model="account">
@@ -9,24 +22,87 @@
                 <option value="Dividend">Dividend</option>
             </select>
         </div>
+
         <div class="col-lg-4">
             <label for="timeframe" class="form-label">Timeframe:</label>
-            <select id="timeframe" class="form-select" wire:model="timeframe">
-                <option value="3 Years">3 Years</option>
-                <option value="5 Years">5 Years</option>
-                <option value="10 Years">10 Years</option>
-            </select>
+            <button type="button" class="btn {{ $timeframe ? 'bg-white' : 'primary-color text-white' }} border-1 border-primary-black w-100" data-bs-toggle="modal"
+                data-bs-target="#timeframeModal">
+                {{ $timeframe ?: 'Custom timeframe' }}
+            </button>
         </div>
+
         <div class="col-lg-4">
-            <label for="graphic" class="form-label">Periode :</label>
-            <select id="graphic" class="form-select" wire:model="graphic">
-                <option value="Annual">Annual</option>
-                <option value="Monthly">Quarterly</option>
+            <label for="periode" class="form-label">Periode:</label>
+            <select id="periode" class="form-select" wire:model="periode">
+                <option value="annual">Annual</option>
+                <option value="quarterly">Quarterly</option>
             </select>
         </div>
     </div>
 
-    <div class="row d-flex flex-row justify-content-between nowrap g-3" style="cursor: pointer" data-bs-toggle="modal"
+    <div class="modal fade" id="timeframeModal" tabindex="-1" aria-labelledby="timeframeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="timeframeModalLabel">Select Timeframe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="submitFilter">
+                        <!-- Timeframe Section -->
+                        <div class="mb-4">
+                            <p class="mb-2 fw-bold text-primary">Choose a Timeframe:</p>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="threeYears" name="timeframe"
+                                        value="3 Years" wire:model.defer="timeframe">
+                                    <label class="form-check-label" for="threeYears">Last 3 Years</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="fiveYears" name="timeframe"
+                                        value="5 Years" wire:model.defer="timeframe">
+                                    <label class="form-check-label" for="fiveYears">Last 5 Years</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="tenYears" name="timeframe"
+                                        value="10 Years" wire:model.defer="timeframe">
+                                    <label class="form-check-label" for="tenYears">Last 10 Years</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="my-4">
+
+                        <!-- Specific Years Section -->
+                        <div>
+                            <p class="mb-2 fw-bold text-primary">Or Select Specific Years:</p>
+                            <div class="row row-cols-4 g-3">
+                                @foreach ($yearsAvailable as $year)
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="year{{ $year }}"
+                                                value="{{ $year }}" wire:model.defer="selectedYears">
+                                            <label class="form-check-label"
+                                                for="year{{ $year }}">{{ $year }}</label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="modal-footer mt-4">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex flex-row justify-content-between g-3 nowrap" style="cursor: pointer" data-bs-toggle="modal"
         data-bs-target="#dataModal">
         <div class="col-lg-6 border-0">
             <div class="card p-3">
@@ -260,4 +336,25 @@
             }
         }
     }
+</script>
+<script>
+    document.addEventListener('livewire:load', function() {
+        Livewire.on('closeModal', (modalId) => {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                if (bootstrapModal) {
+                    bootstrapModal.hide();
+                }
+
+                // Hapus elemen backdrop
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+
+                // Pulihkan scroll di body
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+            }
+        });
+    });
 </script>

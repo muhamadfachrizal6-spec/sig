@@ -197,6 +197,43 @@
     height: 40px;
 }
 
+.accordion-collapse {
+    display: none;
+}
+
+.accordion-collapse.show {
+    display: block;
+}
+
+.accordion-button {
+    position: relative;
+}
+
+.accordion-button.collapsed::after {
+    transform: rotate(0deg);
+}
+
+.accordion-button:not(.collapsed)::after {
+    transform: rotate(180deg);
+}
+
+.border-primary-black{
+    border: 1px solid rgba(0, 0, 0, 0.175) !important;
+}
+
+.modal-backdrop {
+    height: 100%;
+}
+
+.modal-fullscreen .modal-content {
+    height: 100%;
+    overflow: auto;
+}
+
+.hover-main:hover {
+    color: #43654C !important;
+}
+
 #loadingSpinner {
     position: fixed;
     top: 0;

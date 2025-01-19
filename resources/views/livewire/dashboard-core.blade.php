@@ -17,15 +17,15 @@
 
     <ul class="nav nav-tabs custom-nav-tabs">
         <li class="nav-item">
-            <a class="nav-link {{ $activeTab === 'general-information' ? 'active' : '' }}" href="#"
+            <a class="nav-link hover-main {{ $activeTab === 'general-information' ? 'active' : '' }}" href="#"
                 wire:click.prevent="setActiveTab('general-information')">General Information</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ $activeTab === 'key-statics' ? 'active' : '' }}" href="#"
+            <a class="nav-link hover-main {{ $activeTab === 'key-statics' ? 'active' : '' }}" href="#"
                 wire:click.prevent="setActiveTab('key-statics')">Key Statistics</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ $activeTab === 'key-ratio' ? 'active' : '' }}" href="#"
+            <a class="nav-link hover-main {{ $activeTab === 'key-ratio' ? 'active' : '' }}" href="#"
                 wire:click.prevent="setActiveTab('key-ratio')">Key Ratio</a>
         </li>
     </ul>

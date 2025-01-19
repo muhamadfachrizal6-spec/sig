@@ -35,16 +35,17 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="category" class="form-label"><b>Category</b></label>
-                        <!-- Update to Dropdown for Category -->
                         <select name="category" class="form-control" id="category">
-                            <option value="Automotive" {{ $company->category == 'Automotive' ? 'selected' : '' }}>Automotive
-                            </option>
-                            <option value="Energy" {{ $company->category == 'Energy' ? 'selected' : '' }}>Energy</option>
-                            <option value="Technology" {{ $company->category == 'Technology' ? 'selected' : '' }}>Technology
-                            </option>
-                            <option value="Finance" {{ $company->category == 'Finance' ? 'selected' : '' }}>Finance</option>
-                            <option value="Health" {{ $company->category == 'Health' ? 'selected' : '' }}>Health</option>
-                            <!-- Tambahkan kategori lain jika ada -->
+                            <option value="IDXENERGY" {{ $company->category == 'IDXENERGY' ? 'selected' : '' }}>IDXENERGY</option>
+                            <option value="IDXNONCYC" {{ $company->category == 'IDXNONCYC' ? 'selected' : '' }}>IDXNONCYC</option>
+                            <option value="IDXFINANCE" {{ $company->category == 'IDXFINANCE' ? 'selected' : '' }}>IDXFINANCE</option>
+                            <option value="IDXINFRA" {{ $company->category == 'IDXINFRA' ? 'selected' : '' }}>IDXINFRA</option>
+                            <option value="IDXBASIC" {{ $company->category == 'IDXBASIC' ? 'selected' : '' }}>IDXBASIC</option>
+                            <option value="IDXTRANS" {{ $company->category == 'IDXTRANS' ? 'selected' : '' }}>IDXTRANS</option>
+                            <option value="IDXINDUST" {{ $company->category == 'IDXINDUST' ? 'selected' : '' }}>IDXINDUST</option>
+                            <option value="IDXTECHNO" {{ $company->category == 'IDXTECHNO' ? 'selected' : '' }}>IDXTECHNO</option>
+                            <option value="IDXHEALTH" {{ $company->category == 'IDXHEALTH' ? 'selected' : '' }}>IDXHEALTH</option>
+                            <option value="IDXINVEST" {{ $company->category == 'IDXINVEST' ? 'selected' : '' }}>IDXINVEST</option>
                         </select>
                     </div>
                     <div class="col-md-6">

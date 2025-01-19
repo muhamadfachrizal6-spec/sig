@@ -7,58 +7,181 @@ use Livewire\Component;
 
 class KeyStatics extends Component
 {
+    public $selectedCompany;
     public $profitData = [];
     public $priceData = [];
-    
+
     public $incomeStatementData = [];
     public $financialPositionData = [];
     public $dividendData = [];
 
     public $account = 'All';
     public $timeframe = '3 Years';
+    public $periode = 'quarterly';
+
+    public $isTimeframeOpen = false;
+    public $isYearsOpen = false;
+    public $tempTimeframe;
+    public $tempSelectedYears = [];
 
     public $modalPopupData = [];
 
     protected $listeners = ['companyChanged'];
 
+    public $yearsAvailable = [];
+    public $selectedYears = [];
+
+    public function mount()
+    {
+        $this->timeframe = '3 Years';
+        $currentYear = now()->year;
+        $yearsAgo = match ($this->timeframe) {
+            '3 Years' => 3,
+            '5 Years' => 5,
+            '10 Years' => 10,
+            default => 3,
+        };
+        $startYear = $currentYear - $yearsAgo + 1;
+        $this->selectedYears = range($startYear, $currentYear);
+
+        $this->yearsAvailable = Company::with(['revenues', 'financialPositions', 'dividends'])
+        ->get()
+            ->flatMap(function ($company) {
+                return $company->revenues->pluck('year')
+                ->merge($company->financialPositions->pluck('year'))
+                ->merge($company->dividends->pluck('year'));
+            })
+            ->unique()
+            ->filter(function ($year) use ($currentYear) {
+                return $year > 0 && $year <= $currentYear;
+            })
+            ->sortDesc()
+            ->values()
+            ->toArray();
+
+        // Muat data awal
+        if (!empty($this->selectedCompany)) {
+            $this->companyChanged($this->selectedCompany, $this->selectedYears);
+        }
+
+        $this->tempTimeframe = $this->timeframe;
+        $this->tempSelectedYears = $this->selectedYears;
+    }
+
+
+    public function submitFilter()
+    {
+        if (!empty($this->timeframe)) {
+            $this->updatedTimeframe($this->timeframe);
+        } else {
+            $this->companyChanged($this->selectedCompany, $this->selectedYears);
+        }
+
+        // Tutup modal setelah filter diterapkan
+        $this->dispatchBrowserEvent('close-modal', ['modal' => 'timeframeModal']);
+
+        // Flash message untuk memberikan feedback
+        session()->flash('message', 'Filter telah diterapkan.');
+    }
+
+    public function submitYears()
+    {
+        if (!empty($this->timeframe)) {
+            // Reset timeframe jika tahun spesifik dipilih
+            $this->timeframe = null;
+            session()->flash('message', 'Timeframe telah direset karena Anda memilih filter per tahun.');
+        }
+
+        if (empty($this->selectedYears)) {
+            session()->flash('message', 'Tidak ada tahun yang dipilih.');
+            return;
+        }
+
+        // Panggil filter data berdasarkan tahun yang dipilih
+        $this->companyChanged($this->selectedCompany, $this->selectedYears);
+    }
+
     public function updatedAccount()
     {
-        // Menggunakan data perusahaan terakhir yang tersedia
-        $company = Company::with(['revenues', 'financialPositions', 'dividends'])->first();
-
-        // Panggil companyChanged untuk memperbarui data
-        $this->companyChanged($company);
+        if ($this->selectedCompany) {
+            $this->companyChanged($this->selectedCompany);
+        }
     }
 
-    public function updatedTimeframe()
+    public function updatedTimeframe($value)
     {
-        $this->updatedAccount();
+        // Kosongkan filter per tahun langsung ketika timeframe dipilih
+        $this->selectedYears = [];
+
+        $this->dispatchBrowserEvent('close-modal', ['modal' => 'timeframeModal']);
+
+        // Update selectedYears berdasarkan timeframe yang dipilih
+        $currentYear = now()->year;
+        $yearsAgo = match ($value) {
+            '3 Years' => 3,
+            '5 Years' => 5,
+            '10 Years' => 10,
+            default => 3,
+        };
+        $startYear = $currentYear - $yearsAgo + 1;
+
+        $this->selectedYears = range($startYear, $currentYear);
+
+        $this->timeframe = $value;
+
+        // Panggil logika filter data
+        if ($this->selectedCompany) {
+            $this->companyChanged($this->selectedCompany, $this->selectedYears);
+        }
+
+        // Flash message untuk feedback
+        session()->flash('message', 'Filter per tahun telah direset karena Anda memilih timeframe.');
     }
 
-    public function updatedGraphic()
+    public function updatedSelectedYears($value)
     {
-        $this->updatedAccount();
+        // Jika ada perubahan pada filter tahun, hapus timeframe
+        if (!empty($value)) {
+            $this->timeframe = null;
+
+            // Panggil logika untuk memperbarui data dengan filter tahun spesifik
+            if ($this->selectedCompany) {
+                $this->companyChanged($this->selectedCompany, $this->selectedYears);
+            }
+
+            // Flash message untuk memberikan feedback
+            session()->flash('message', 'Timeframe telah direset karena Anda memilih filter per tahun.');
+        }
     }
 
-    public function companyChanged($company)
+    public function updatedPeriode()
+    {
+        if ($this->selectedCompany) {
+            $this->companyChanged($this->selectedCompany);
+        }
+    }
+
+    public function companyChanged($company, $years = null)
     {
         if (is_array($company)) {
             $company = Company::with(['revenues', 'financialPositions', 'dividends'])
                 ->findOrFail($company['id']);
         }
 
+        $this->selectedCompany = $company;
         $currentYear = now()->year;
-        $yearsAgo = 0;
-
-        if ($this->timeframe === '3 Years') {
-            $yearsAgo = 3;
-        } elseif ($this->timeframe === '5 Years') {
-            $yearsAgo = 5;
-        } elseif ($this->timeframe === '10 Years') {
-            $yearsAgo = 10;
+        $yearsFilter = $years ?: $this->selectedYears; // Prioritaskan filter per tahun
+        if (empty($yearsFilter)) {
+            // Jika tidak ada selectedYears, gunakan timeframe
+            $yearsAgo = match ($this->timeframe) {
+                '3 Years' => 3,
+                '5 Years' => 5,
+                '10 Years' => 10,
+                default => 3,
+            };
+            $startYear = $currentYear - $yearsAgo + 1;
+            $yearsFilter = range($startYear, $currentYear);
         }
-
-        $startYear = $currentYear - $yearsAgo;
 
         // Reset data sebelum mengisi ulang sesuai filter
         $this->incomeStatementData = [];
@@ -70,9 +193,8 @@ class KeyStatics extends Component
 
         $filteredMarketShares = $company->marketShares
             ->sortByDesc('year')
-            ->filter(function ($marketShare) use ($startYear, $currentYear) {
-                // Ambil data antara $startYear dan currentYear
-                return $marketShare->year >= $startYear && $marketShare->year <= $currentYear;
+            ->filter(function ($marketShare) use ($yearsFilter) {
+                return in_array($marketShare->year, $yearsFilter);
             });
 
         $this->profitData = $filteredMarketShares
@@ -103,33 +225,76 @@ class KeyStatics extends Component
                 });
             });
 
+        $yearsFilter = $this->selectedYears ?: range($startYear, $currentYear);
+
         // Filter dan sorting berdasarkan tahun terbaru
         $filteredRevenues = $company->revenues
-        ->filter(function ($revenue) use ($startYear, $currentYear) {
-            return $revenue->year >= $startYear && $revenue->year <= $currentYear;
-        })
-        ->sortBy([
-            ['year', 'asc'], // Mengurutkan berdasarkan tahun secara menaik
-            ['quarter', 'asc'] // Mengurutkan berdasarkan kuartal secara menaik
-        ]);
+            ->whereIn('year', $yearsFilter)
+            ->sortByDesc('year');
 
         $filteredFinancialPositions = $company->financialPositions
-        ->filter(function ($position) use ($startYear, $currentYear) {
-            return $position->year >= $startYear && $position->year <= $currentYear;
-        })
-            ->sortBy([
-                ['year', 'asc'],
-                ['quarter', 'asc']
-            ]);
+            ->whereIn('year', $yearsFilter)
+            ->sortByDesc('year');
 
         $filteredDividends = $company->dividends
-        ->filter(function ($dividend) use ($startYear, $currentYear) {
-            return $dividend->year >= $startYear && $dividend->year <= $currentYear;
-        })
-            ->sortBy([
-                ['year', 'asc'],
-                ['quarter', 'asc']
-            ]);
+            ->whereIn('year', $yearsFilter)
+            ->sortByDesc('year');
+
+        if ($this->periode === 'annual') {
+            $filteredRevenues = $filteredRevenues
+                ->groupBy('year')
+                ->map(function ($yearData) {
+                    $sorted = $yearData->sortByDesc('quarter');
+
+                    return $sorted
+                        ->filter(function ($item) {
+                            return $item->revenue != 0 || $item->gross_profit != 0 || $item->net_profit != 0;
+                        })
+                        ->first() ?? $sorted->first();
+                })
+                ->filter();
+
+            $filteredFinancialPositions = $filteredFinancialPositions
+                ->groupBy('year')
+                ->map(function ($yearData) {
+                    $sorted = $yearData->sortByDesc('quarter');
+
+                    return $sorted
+                        ->filter(function ($item) {
+                            return $item->asset != 0 || $item->liability != 0 || $item->equality != 0;
+                        })
+                        ->first() ?? $sorted->first();
+                })
+                ->filter();
+
+            $filteredDividends = $filteredDividends
+                ->groupBy('year')
+                ->map(function ($yearData) {
+                    $sorted = $yearData->sortByDesc('quarter');
+
+                    return $sorted
+                        ->filter(function ($item) {
+                            return $item->dividend_per_sheet != 0 || $item->yield != 0;
+                        })
+                        ->first() ?? $sorted->first();
+                })
+                ->filter();
+        }
+
+        $filteredRevenues = $filteredRevenues->sortBy([
+            ['year', 'asc'],
+            ['quarter', 'asc'],
+        ]);
+
+        $filteredFinancialPositions = $filteredFinancialPositions->sortBy([
+            ['year', 'asc'],
+            ['quarter', 'asc'],
+        ]);
+
+        $filteredDividends = $filteredDividends->sortBy([
+            ['year', 'asc'],
+            ['quarter', 'asc'],
+        ]);
 
         $this->modalPopupData = [
             'categories' => $filteredMarketShares->map(function ($marketShare) {
@@ -157,21 +322,17 @@ class KeyStatics extends Component
                     })->toArray(),
                 ],
             ],
-        ];  
+        ];
 
         // Kondisi untuk setiap account type dan update data untuk chart terkait
         if ($this->account === 'IncomeStatement' || $this->account === 'All') {
             $this->incomeStatementData = [
-                'categories' => $filteredRevenues->map(function ($revenue) {
-                    return [
-                        'year' => $revenue->year,
-                        'quarter' => $revenue->quarter
-                    ];
-                })->sortBy([
-                    ['year', 'asc'],
-                    ['quarter', 'asc']
-                ])->map(function ($item) {
-                    return $item['year'] . ' - ' . $item['quarter'];
+                'categories' => $this->periode === 'annual'
+                ? $filteredRevenues->map(function ($revenue) {
+                    return $revenue->year;
+                })->values()->toArray()
+                    : $filteredRevenues->map(function ($revenue) {
+                        return $revenue->year . ' - ' . $revenue->quarter;
                 })->values()->toArray(),
                 'series' => [
                     [
@@ -198,16 +359,12 @@ class KeyStatics extends Component
 
         if ($this->account === 'FinancialPosition' || $this->account === 'All') {
             $this->financialPositionData = [
-                'categories' => $filteredFinancialPositions->map(function ($revenue) {
-                    return [
-                        'year' => $revenue->year,
-                        'quarter' => $revenue->quarter
-                    ];
-                })->sortBy([
-                    ['year', 'asc'],
-                    ['quarter', 'asc']
-                ])->map(function ($item) {
-                    return $item['year'] . ' - ' . $item['quarter'];
+                'categories' => $this->periode === 'annual'
+                ? $filteredFinancialPositions->map(function ($revenue) {
+                    return $revenue->year;
+                })->values()->toArray()
+                    : $filteredFinancialPositions->map(function ($revenue) {
+                        return $revenue->year . ' - ' . $revenue->quarter;
                 })->values()->toArray(),
                 'series' => [
                     [
@@ -234,16 +391,12 @@ class KeyStatics extends Component
 
         if ($this->account === 'Dividend' || $this->account === 'All') {
             $this->dividendData = [
-                'categories' => $filteredDividends->map(function ($revenue) {
-                    return [
-                        'year' => $revenue->year,
-                        'quarter' => $revenue->quarter
-                    ];
-                })->sortBy([
-                    ['year', 'asc'],
-                    ['quarter', 'asc']
-                ])->map(function ($item) {
-                    return $item['year'] . ' - ' . $item['quarter'];
+                'categories' => $this->periode === 'annual'
+                ? $filteredDividends->map(function ($revenue) {
+                    return $revenue->year;
+                })->values()->toArray()
+                    : $filteredDividends->map(function ($revenue) {
+                        return $revenue->year . ' - ' . $revenue->quarter;
                 })->values()->toArray(),
                 'series' => [
                     [
