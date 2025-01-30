@@ -127,13 +127,6 @@ class AnalyzeDashboardController extends Controller
             $company->logo = 'assets/img/logo_emitten/' . $filename;
         }
 
-        // try {
-        //     $company->update($request->all());
-        //     return redirect()->route('admin_analyze.emiten.edit', $id)->with('success', 'Company updated successfully.');
-        // } catch (\Exception $e) {
-        //     return redirect()->route('admin_analyze.emiten.edit', $id)->with('error', 'Failed to update company: ' . $e->getMessage());
-        // }
-
         $company->ticker = $request->input('ticker');
         $company->name = $request->input('name');
         $company->category = $request->input('category');
@@ -649,7 +642,7 @@ class AnalyzeDashboardController extends Controller
         // Validasi dan simpan data
         $request->validate([
             'namePack' => 'required|string|max:255',
-            'price' => 'required|string',
+            'price' => 'required|numeric',
             'description' => 'nullable|string',
         ]);
 
@@ -671,20 +664,16 @@ class AnalyzeDashboardController extends Controller
 
     public function update_setting(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'namePack' => 'required|string|max:255',
             'price' => 'required|string',
             'description' => 'nullable|string',
         ]);
 
         $pack = Pack::findOrFail($id);
-        $pack->update([
-            'name_pack' => $request->namePack,
-            'price' => $request->price,
-            'description' => $request->description,
-        ]);
+        $pack->update($validated);
 
-        return response()->json(['success' => true]);
+        return redirect()->route('admin_analyze.setting.index')->with('success', 'Pack updated successfully!');
     }
     public function destroy_setting($id)
     {

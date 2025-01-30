@@ -10,7 +10,7 @@
         <ul class="nav nav-pills flex-column gap-2">
             <li class="nav-item">
                 <a href="{{ url('/admin_analyze/index') }}"
-                    class="nav-link {{ Request::is('admin_analyze/index') ? 'bg-white' : 'text-white' }}">
+                    class="nav-link text-decoration-none {{ Request::is('admin_analyze/index') ? 'bg-white primary-color-text' : 'text-white' }}">
                     <i class="bi bi-grid"></i>
                     Data Emiten
                 </a>
@@ -19,7 +19,7 @@
             <!-- Data User -->
             <li class="nav-item">
                 <a href="{{ url('/admin_analyze/user/index') }}"
-                    class="nav-link {{ Request::is('admin_analyze/user/index') ? 'bg-white' : 'text-white' }}">
+                    class="nav-link {{ Request::is('admin_analyze/user/index') ? 'bg-white primary-color-text' : 'text-white' }}">
                     <i class="bi bi-person"></i>
                     Data User
                 </a>
@@ -28,7 +28,7 @@
             <!-- Data Orders -->
             <li class="nav-item">
                 <a href="{{ url('/admin_analyze/data-order') }}"
-                    class="nav-link {{ Request::is('admin_analyze/data-order') ? 'bg-white' : 'text-white' }}">
+                    class="nav-link {{ Request::is('admin_analyze/data-order') ? 'bg-white primary-color-text' : 'text-white' }}">
                     <i class="bi bi-cart"></i>
                     Data Orders
                 </a>
@@ -37,7 +37,7 @@
             <!-- Settings -->
             <li>
                 <a href="{{ url('/admin_analyze/settings') }}"
-                    class="nav-link {{ Request::is('admin_analyze/settings') ? 'bg-white' : 'text-white' }}">
+                    class="nav-link {{ Request::is('admin_analyze/settings') ? 'bg-white primary-color-text' : 'text-white' }}">
                     <i class="bi bi-gear"></i>
                     Settings
                 </a>

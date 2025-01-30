@@ -9,6 +9,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnalyzeController;
 use App\Http\Controllers\AnalyzeDashboardController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SpreadsheetController;
 
 /*
@@ -28,6 +29,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/payment', [AnalyzeController::class, 'paymentAndBilling'])->name('payment');
     Route::get('/dashboard-core', [AnalyzeController::class, 'mainDashboard'])->name('dashboard-core');
     Route::get('/setting', [AnalyzeController::class, 'setting'])->name('setting');
+    Route::post('payment/notification', [PaymentController::class, 'notification']);
     Route::get('/profile-user', [AnalyzeController::class, 'profileUser'])->name('profile-user');
     Route::put('/profile-user', [AnalyzeController::class, 'updateProfile'])->name('updateProfile');
 

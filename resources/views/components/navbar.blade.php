@@ -7,7 +7,7 @@
             <div id="profileDropdown" class="dropdown-menu position-absolute"
                 style="display: none; top: 50px; right: 0;">
                 <a class="dropdown-item" href="{{ route('profile-user') }}">View Profile</a>
-                <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
+                <a class="dropdown-item" href="#" id="logoutLinksss">Logout</a>
             </div>
         </div>
     </div>
@@ -24,6 +24,31 @@
         let dropdown = document.getElementById('profileDropdown');
         if (!document.querySelector('.navbar-profile').contains(event.target)) {
             dropdown.style.display = 'none';
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutLink = document.getElementById('logoutLinksss');
+        if (logoutLink) {
+            logoutLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                console.log('Logout link clicked')
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#43654C',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, logout!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('logout') }}";
+                    }
+                });
+            });
         }
     });
 </script>

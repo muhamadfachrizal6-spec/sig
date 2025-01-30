@@ -179,7 +179,7 @@
 
             <!-- Submit Button -->
             <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Update Key Ratios</button>
+                <button class="btn btn-custom2" type="submit" class="btn btn-primary">Update Key Ratios</button>
             </div>
         </form>
     </div>

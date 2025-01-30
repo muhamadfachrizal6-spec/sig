@@ -30,10 +30,17 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="category" class="form-label">Category</label>
-                        <select class="form-control" id="category" name="category">
-                            <option value="Automotive">Automotive</option>
-                            <option value="Energy">Energy</option>
-                            <option value="Technology">Technology</option>
+                        <select name="category" class="form-control" id="category">
+                            <option value="IDXENERGY">IDXENERGY</option>
+                            <option value="IDXNONCYC">IDXNONCYC</option>
+                            <option value="IDXFINANCE">IDXFINANCE</option>
+                            <option value="IDXINFRA">IDXINFRA</option>
+                            <option value="IDXBASIC">IDXBASIC</option>
+                            <option value="IDXTRANS">IDXTRANS</option>
+                            <option value="IDXINDUST">IDXINDUST</option>
+                            <option value="IDXTECHNO">IDXTECHNO</option>
+                            <option value="IDXHEALTH">IDXHEALTH</option>
+                            <option value="IDXINVEST">IDXINVEST</option>
                         </select>
                     </div>
                     <div class="col-md-6">

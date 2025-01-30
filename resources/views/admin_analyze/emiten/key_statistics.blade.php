@@ -38,7 +38,7 @@
                         </button>
                     </div>
 
-                    <!-- Filter Data -->
+                    {{-- <!-- Filter Data -->
                     <div class="col-md-12 mt-4">
                         <label for="filter_data" class="form-label fw-bold primary-color-text">Select Data to
                             Display</label>
@@ -92,7 +92,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                 </div>
             </div>
@@ -370,7 +370,7 @@
 
             <!-- Submit Button -->
             <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Update Key Statistics</button>
+                <button class="btn-custom2 btn" type="submit" class="btn btn-primary">Update Key Statistics</button>
             </div>
         </form>
     </div>

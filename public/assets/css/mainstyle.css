@@ -42,7 +42,30 @@
 }
 
 .primary-color-text {
-    color: #43654C;
+    color: #43654C !important;
+}
+
+.spinner-container {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.bg-pack-card{
+    background-color: #b4f1c2 !important;
 }
 
 .secondary-bg {
@@ -104,17 +127,17 @@
 
 .btn-custom:hover {
     background-color: #43654C !important;
-    color: white;
+    color: white !important;
 }
 
 .btn-custom2 {
     background-color: #43654C !important;
-    color: white;
+    color: white !important;
 }
 
 .btn-custom2:hover {
     background-color: white !important;
-    color: #43654C;
+    color: #43654C !important;
 }
 
 .about-us-image {
@@ -145,7 +168,7 @@
     right: 0;
     bottom: 0;
     height: 2px;
-    background-color: white;
+    background-color: #43654C;
     transition: width 0.3s;
 }
 
@@ -197,26 +220,6 @@
     height: 40px;
 }
 
-.accordion-collapse {
-    display: none;
-}
-
-.accordion-collapse.show {
-    display: block;
-}
-
-.accordion-button {
-    position: relative;
-}
-
-.accordion-button.collapsed::after {
-    transform: rotate(0deg);
-}
-
-.accordion-button:not(.collapsed)::after {
-    transform: rotate(180deg);
-}
-
 .border-primary-black{
     border: 1px solid rgba(0, 0, 0, 0.175) !important;
 }
@@ -228,6 +231,10 @@
 .modal-fullscreen .modal-content {
     height: 100%;
     overflow: auto;
+}
+
+.navigation-core{
+    color: #43654C !important;
 }
 
 .hover-main:hover {
@@ -282,6 +289,11 @@
     display: flex;
     align-items: center;
     /* Vertically center the icon and text */
+}
+
+.scrollable-list {
+    max-height: 350px;
+    overflow-y: auto;
 }
 
 .auto {

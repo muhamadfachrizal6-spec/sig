@@ -6,7 +6,7 @@
             <div class="card-body position-relative">
                 <div class="row">
                     <div class="col-md-3 d-flex flex-column justify-content-center align-items-center">
-                        <img id="profileImage" src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/img/profile-image-blank.png') }}" class="rounded-circle border mb-3" alt="Profile Image" width="180" height="150">
+                        <img id="profileImage" src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/img/profile-image-blank.png') }}" class="rounded-circle border mb-3" alt="Profile Image" width="150" height="150">
                         
                         <button type="button" id="changeImageButton" class="btn btn-light border rounded-circle d-none">
                             <i class="fas fa-camera"></i>
@@ -77,8 +77,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-custom2 border border-2 w-100" id="saveButton" disabled>Update Profile</button>
+                                <div class="col-md-6 pt-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-custom2 border-2 w-100" id="saveButton" disabled>Update Profile</button>
                                 </div>
                             </div>
                         </form>

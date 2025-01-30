@@ -57,9 +57,6 @@
             <div class="card-body">
                 <div class="data-user-header d-flex flex-row justify-content-between align-items-center">
                     <h4>Data User</h4>
-                    <a href="{{ route('admin_analyze.emiten.create') }}" class="btn btn-outline-primary">
-                        + Tambah Data
-                    </a>
                 </div>
 
                 <div class="table-responsive mt-3">
@@ -68,11 +65,12 @@
                             <tr class="text-center">
                                 <th>Full Name</th>
                                 <th>User Name</th>
+                                <th>Profession</th>
                                 <th>Email</th>
                                 <th>Address</th>
                                 <th>Phone Number</th>
                                 <th>User type</th>
-                                <th>Action</th>
+                                {{-- <th>Action</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -80,11 +78,12 @@
                                 <tr>
                                     <td>{{ $user->name }}</td>
                                     <td class="text-center">{{ $user->username }}</td>
+                                    <td class="text-center">{{ $user->work }}</td>
                                     <td class="text-center">{{ $user->email }}</td>
                                     <td>{{ $user->address }}</td>
                                     <td class="text-center">{{ $user->phone }}</td>
                                     <td class="text-center">{{ $user->user_type }}</td>
-                                    <td class="d-flex gap-2 justify-content-center">
+                                    {{-- <td class="d-flex gap-2 justify-content-center">
                                         <a href="#" class="btn btn-warning btn-sm">
                                             <i class="text-white bi bi-pencil"></i>
                                         </a>
@@ -95,7 +94,7 @@
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>

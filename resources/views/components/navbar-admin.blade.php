@@ -10,18 +10,17 @@
         <div class="d-flex align-items-center ms-auto">
             <div class="dropdown">
                 <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://via.placeholder.com/30" alt="User Avatar" class="rounded-circle me-1"> 
-                    Admin
+                    Menu
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                    <li class="nav-item">
+                    <li class="nav-item p-2">
                         <a href="{{ url('/admin_analyze/index') }}"
                             class="nav-link {{ Request::is('admin_analyze/index') ? 'bg-white' : 'primary-color-text' }}">
                             <i class="bi bi-grid"></i>
                             Data Emiten
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item p-2">
                         <a href="{{ url('/admin_analyze/user/index') }}"
                             class="nav-link {{ Request::is('admin_analyze/user/index') ? 'bg-white' : 'primary-color-text' }}">
                             <i class="bi bi-person"></i>
@@ -29,7 +28,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item p-2">
                         <a href="{{ url('/admin_analyze/data-order') }}" 
                             class="nav-link {{ Request::is('admin_analyze/data-order') ? 'bg-white' : 'primary-color-text' }}">
                             <i class="bi bi-cart"></i>
@@ -37,14 +36,14 @@
                         </a>
                     </li>
 
-                    <li>
+                    <li class="nav-item p-2">
                         <a href="{{ url('/admin_analyze/settings') }}" class="nav-link {{ Request::is('admin_analyze/settings') ? 'bg-white' : 'primary-color-text' }}">
                             <i class="bi bi-gear"></i>
                             Settings
                         </a>
                     </li>
 
-                    <li>
+                    <li class="nav-item p-2">
                         <a href="#" id="logoutLink" class="nav-link primary-color-text">
                             <i class="bi bi-box-arrow-right"></i>
                             Logout
@@ -66,7 +65,7 @@
             text: "You won't be able to revert this!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#43654C',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, logout!'
         }).then((result) => {

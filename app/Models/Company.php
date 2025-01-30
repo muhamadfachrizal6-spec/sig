@@ -70,4 +70,14 @@ class Company extends Model
     {
         return $this->hasMany(MarketShare::class);
     }
+
+    public function packs()
+    {
+        return $this->hasMany(Pack::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transactions::class);
+    }
 }

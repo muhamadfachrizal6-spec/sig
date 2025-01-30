@@ -39,6 +39,11 @@
             </select>
         </div>
     </div>
+    <div wire:loading wire:target="submitFilter, submitYears, companyChanged, updatedAccount" class="spinner-container">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
 
     <div class="modal fade" id="timeframeModal" tabindex="-1" aria-labelledby="timeframeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
@@ -290,7 +295,7 @@
                     },
                     yAxis: {
                         title: {
-                            text: 'Values in Milliards'
+                            text: 'Values in Percent (%)'
                         }
                     },
                     plotOptions: {

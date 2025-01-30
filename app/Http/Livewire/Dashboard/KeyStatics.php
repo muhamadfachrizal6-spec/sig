@@ -380,7 +380,7 @@ class KeyStatics extends Component
                         })->toArray(),
                     ],
                     [
-                        'name' => 'Equality',
+                        'name' => 'Equity',
                         'data' => $filteredFinancialPositions->pluck('equality')->map(function ($value) {
                             return floatval(str_replace(' B', '', $value));
                         })->toArray(),
