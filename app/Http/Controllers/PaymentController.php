@@ -3,48 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transactions;
+use App\Models\UserAnalyze;
 use Illuminate\Http\Request;
-use Midtrans\Notification;
 
 class PaymentController extends Controller
 {
-    public function notification(Request $request)
+    public function success(Request $request)
     {
-        try {
-            $notification = new Notification();
 
-            $orderId = substr($notification->order_id, 6); // Remove 'ORDER-' prefix
-            $transaction = Transactions::find($orderId);
-
-            if ($transaction) {
-                $transactionStatus = $notification->transaction_status;
-                $type = $notification->payment_type;
-                $fraudStatus = $notification->fraud_status;
-
-                $status = 'pending';
-
-                if ($transactionStatus == 'capture') {
-                    if ($type == 'credit_card') {
-                        $status = ($fraudStatus == 'challenge') ? 'pending' : 'success';
-                    }
-                } else if ($transactionStatus == 'settlement') {
-                    $status = 'success';
-                } else if ($transactionStatus == 'pending') {
-                    $status = 'pending';
-                } else if ($transactionStatus == 'deny') {
-                    $status = 'failed';
-                } else if ($transactionStatus == 'expire') {
-                    $status = 'expired';
-                } else if ($transactionStatus == 'cancel') {
-                    $status = 'cancelled';
-                }
-
-                $transaction->update(['status' => $status]);
-            }
-
-            return response()->json(['status' => 'success']);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        if ($request->user()->user_type === 'free' && $request->user()->user_type !== 'bundle') {
+            UserAnalyze::updateOrCreate(
+                ['id' => $request->user()->id],
+                ['user_type' => 'custom']
+            );
+        } else {
+            UserAnalyze::updateOrCreate(
+                ['id' => $request->user()->id],
+                ['user_type' => 'bundle']
+            );
         }
+
+        Transactions::updateOrCreate(
+            ['user_id' => $request->user()->id],
+            ['status' => 'Success'],
+        );
+
+        return response()->json([
+            'message' => 'Payment success processed'
+        ], 200);
+    }
+
+    public function pending(Request $request)
+    {
+        return response()->json([
+            'message' => 'Payment pending processed'
+        ], 200);
     }
 }

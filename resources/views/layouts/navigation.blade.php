@@ -9,6 +9,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/logo/logo.png">
     <link rel="stylesheet" href="{{ asset('assets/css/font-awesome-pro.css') }}">
     <meta name="description" content>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>SIG Institute</title>
     @livewireStyles
 </head>

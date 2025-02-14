@@ -126,7 +126,8 @@
                                                 method="POST" style="display:inline-block;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    onclick="confirmDeletion(event, this)">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -201,8 +202,8 @@
                     icon: 'success',
                     title: 'Success!',
                     text: '{{ session('success_delete') }}',
-                    showConfirmButton: true, // Tampilkan tombol OK
-                    confirmButtonText: 'Confirm' // Teks tombol OK
+                    showConfirmButton: true,
+                    confirmButtonText: 'Confirm'
                 });
             });
         </script>
@@ -213,6 +214,27 @@
             {{ session('error') }}
         </div>
     @endif
+
+    <script>
+        function confirmDeletion(event, element) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This will permanently delete the data!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    element.closest("form").submit();
+                }
+            });
+        }
+    </script>
 
     <script>
         document.getElementById('syncButton').addEventListener('click', function() {

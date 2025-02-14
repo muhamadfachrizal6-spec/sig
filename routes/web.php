@@ -29,10 +29,10 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/payment', [AnalyzeController::class, 'paymentAndBilling'])->name('payment');
     Route::get('/dashboard-core', [AnalyzeController::class, 'mainDashboard'])->name('dashboard-core');
     Route::get('/setting', [AnalyzeController::class, 'setting'])->name('setting');
-    Route::post('payment/notification', [PaymentController::class, 'notification']);
+    Route::post('payment/pending', [PaymentController::class, 'pending'])->name('payment.pending');
+    Route::post('payment/success', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/profile-user', [AnalyzeController::class, 'profileUser'])->name('profile-user');
     Route::put('/profile-user', [AnalyzeController::class, 'updateProfile'])->name('updateProfile');
-
 });
 Route::get('/home-sig', [AnalyzeController::class, 'index'])->name('index');
 Route::get('/signin', [AnalyzeController::class, 'signin'])->name('signin');

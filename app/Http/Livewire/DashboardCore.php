@@ -4,6 +4,8 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use App\Models\Company;
+use App\Models\Transactions;
+use App\Models\UserAnalyze;
 
 class DashboardCore extends Component
 {
@@ -39,10 +41,22 @@ class DashboardCore extends Component
 
     public function render()
     {
-        if (auth()->check() && auth()->user()->user_type == 'free') {
-            $companies = Company::whereIn('ticker', ['ASII', 'TLKM', 'ACES'])->get();
-        } else {
+        $userType = auth()->user()->user_type;
+        if (auth()->check() && $userType === 'custom' && Transactions::where('user_id', auth()->user()->id)->where('status', 'Success')->exists()) {
+            $selectedEmiten = Transactions::where('user_id', auth()->user()->id)
+                ->where('status', 'Success')
+                ->pluck('selected_emiten')
+                ->flatten();
+
+            $selectedEmiten = $selectedEmiten->map(function ($emiten) {
+                return explode(", ", $emiten);
+            })->flatten()->unique();
+
+            $companies = Company::whereIn('ticker', $selectedEmiten)->get();
+        } else if (auth()->check() && $userType === 'bundle') {
             $companies = Company::all();
+        } else {
+            $companies = Company::whereIn('ticker', ['ASII', 'TLKM', 'ACES'])->get();
         }
 
         return view('livewire.dashboard-core', [

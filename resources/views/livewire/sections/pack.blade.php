@@ -1,5 +1,5 @@
 <div class="container d-flex justify-content-center flex-wrap gap-4 w-100 m-auto">
-    @foreach($packs as $pack)
+    @foreach ($packs as $pack)
         <div class="card border-0 flex-fill bg-pack-card" style="width: 18rem;">
             <div class="card-header border-0 secondary-color bg-transparent text-center p-5">
                 <h4><b>{{ ucfirst($pack->name_pack) }}</b></h4>
@@ -15,17 +15,31 @@
                 @endif
             </div>
             <div class="card-footer border-0 bg-transparent p-4 w-100 d-flex justify-content-center">
-                <button class="border-1 w-50 p-2 rounded" 
-                    wire:click="selectPack({{ $pack->id }})"
-                    wire:loading.attr="disabled"
-                    wire:target="selectPack">
-                    <span wire:loading.remove wire:target="selectPack({{ $pack->id }})">
+                @if($pack->name_pack === 'bundle' && !($paymentStatus === 'Success' && (empty($itemSuccessType))))
+                    <button class="border-1 w-50 p-2 rounded" wire:click="selectPack({{ $pack->id }})"
+                        wire:loading.attr="disabled" wire:target="selectPack">
+                        <span wire:loading.remove wire:target="selectPack({{ $pack->id }})">
+                            Purchase
+                        </span>
+                        <span wire:loading wire:target="selectPack({{ $pack->id }})">
+                            Processing...
+                        </span>
+                    </button>
+                @elseif($pack->name_pack === 'custom' && !($paymentStatus === 'Success' && (empty($itemSuccessType))))
+                    <button class="border-1 w-50 p-2 rounded" wire:click="selectPack({{ $pack->id }})"
+                        wire:loading.attr="disabled" wire:target="selectPack">
+                        <span wire:loading.remove wire:target="selectPack({{ $pack->id }})">
+                            Purchase
+                        </span>
+                        <span wire:loading wire:target="selectPack({{ $pack->id }})">
+                            Processing...
+                        </span>
+                    </button>
+                @elseif ($userType)
+                    <button class="border-1 w-50 p-2 rounded" wire:click="selectPack({{ $pack->id }})"disabled>
                         Purchase
-                    </span>
-                    <span wire:loading wire:target="selectPack({{ $pack->id }})">
-                        Processing...
-                    </span>
-                </button>
+                    </button>
+                @endif
             </div>
         </div>
     @endforeach
@@ -59,9 +73,8 @@
     @livewire('payment-detail')
 @endif
 
-<!-- Tambahkan script Midtrans yang sama seperti sebelumnya -->
 <script>
-    document.addEventListener("livewire:load", () => {
+    document.addEventListener('livewire:load', function() {
         // Cek apakah Snap.js sudah dimuat sebelumnya
         if (typeof snap === "undefined") {
             let snapScript = document.createElement("script");
@@ -71,7 +84,6 @@
             snapScript.onload = () => {
                 console.log("Snap.js berhasil dimuat.");
                 window.snapLoaded = true; // Tandai bahwa Snap.js sudah siap
-                // Memicu event untuk menandai Snap.js sudah siap
                 window.dispatchEvent(new CustomEvent('snap-loaded'));
             };
 
@@ -80,40 +92,56 @@
             console.log("Snap.js sudah tersedia.");
             window.snapLoaded = true;
         }
-    });
-</script>
 
-<script>
-    window.addEventListener("show-payment", (event) => {
-        // Tunggu hingga Snap.js dimuat
-        if (!window.snapLoaded) {
-            console.log("Menunggu Snap.js selesai dimuat...");
-            // Tunggu event `snap-loaded` sebelum memulai pembayaran
-            window.addEventListener('snap-loaded', () => {
-                console.log("Snap.js siap, memulai pembayaran.");
-                startSnapPayment(event.detail.snapToken);
-            });
-            return;
-        }
+        window.addEventListener("show-payment", (event) => {
+            if (!window.snapLoaded) {
+                console.log("Menunggu Snap.js selesai dimuat...");
+                window.addEventListener('snap-loaded', () => {
+                    console.log("Snap.js siap, memulai pembayaran.");
+                    startSnapPayment(event.detail.snapToken);
+                });
+                return;
+            }
 
-        // Jika Snap.js sudah siap, langsung mulai pembayaran
-        startSnapPayment(event.detail.snapToken);
-    });
-
-    function startSnapPayment(snapToken) {
-        snap.pay(snapToken, {
-            onSuccess: function (result) {
-                Livewire.emit("paymentSuccess", result);
-            },
-            onPending: function (result) {
-                Livewire.emit("paymentPending", result);
-            },
-            onError: function (result) {
-                Livewire.emit("paymentError", result);
-            },
-            onClose: function () {
-                Livewire.emit("paymentClosed");
-            },
+            startSnapPayment(event.detail.snapToken);
         });
-    }
+
+        let snapPaymentInProgress = false;
+
+        function startSnapPayment(snapToken) {
+            snap.pay(snapToken, {
+                onSuccess: function(result) {
+                    window.livewire.emit('paymentSuccess', result.order_id);
+
+                    Swal.fire({
+                        title: 'Payment Success',
+                        text: 'Your payment is Success!',
+                        icon: 'info',
+                        confirmButtonText: 'Okay',
+                    });
+                },
+                onPending: function(result) {
+                    window.livewire.emit('paymentPending', result.order_id);
+                    window.livewire.emit('updateActiveLink', 'paymentDetail');
+
+                    Swal.fire({
+                        title: 'Payment Pending',
+                        text: 'Your payment is still being processed. Please wait.',
+                        icon: 'info',
+                        confirmButtonText: 'Okay',
+                    });
+                },
+                onError: function(result) {
+                    console.log("Error", result);
+                    window.dispatchEvent(new CustomEvent('payment-error', {
+                        detail: result
+                    }));
+                },
+                onClose: function() {
+                    console.log("Closed");
+                    window.dispatchEvent(new CustomEvent('payment-closed'));
+                },
+            });
+        }
+    });
 </script>

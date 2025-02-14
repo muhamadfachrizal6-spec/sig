@@ -2,28 +2,46 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Transactions;
 use Livewire\Component;
 
 class PaymentDetail extends Component
 {
-    public $selectedEmiten;
+    public $selectedPack;
+    public $paymentStatus;
+    public $selectedItemPack;
+    public $priceTotal;
 
-    public function mount($selectedEmiten)
+    protected $listeners = ['packSelected' => 'handlePackSelection'];
+
+    public function handlePackSelection($packData)
     {
-        $this->selectedEmiten = $selectedEmiten;
+        $this->selectedPack = $packData;
+
     }
 
     public function render()
     {
-        $paymentMethods = [
-            ['code' => 'BRI', 'name' => 'Bank Republik Indonesia Tbk'],
-            ['code' => 'BNI', 'name' => 'Bank Negara Indonesia Tbk'],
-            ['code' => 'OVO', 'name' => 'OVO Indonesia Tbk'],
-        ];
+        if (!$this->paymentStatus) {
+            $this->paymentStatus = Transactions::where('user_id', auth()->user()->id)
+                ->where('pack_id', $this->selectedPack->id)
+                ->first()
+                ->status ?? null;
+        }
+
+        $this->selectedItemPack = Transactions::where('user_id', auth()->user()->id)
+            ->where('pack_id', $this->selectedPack->id)
+            ->first()
+            ->selected_emiten ?? null;
+
+        $selectedItemPackArray = explode(', ', $this->selectedItemPack);
+        $this->priceTotal = count($selectedItemPackArray) * $this->selectedPack->price;
 
         return view('livewire.sections.payment-detail', [
-            'paymentMethods' => $paymentMethods,
-            'selectedEmiten' => $this->selectedEmiten,
+            'selectedPack' => $this->selectedPack,
+            'paymentStatus' => $this->paymentStatus,
+            'selectedItemPack' => $this->selectedItemPack,
+            'priceTotal' => $this->priceTotal
         ]);
     }
 }

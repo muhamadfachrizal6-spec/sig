@@ -1,13 +1,16 @@
 <div>
     <ul class="navbar-nav d-flex flex-row gap-5">
         <li class="nav-item">
-            <a class="nav-link {{ $activeLink === 'pack' ? 'active' : '' }}" href="#" wire:click.prevent="setActiveLink('pack')">Pack</a>
+            <a class="nav-link {{ $activeLink === 'pack' ? 'active' : '' }}" href="#"
+                wire:click.prevent="setActiveLink('pack')">Pack</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ $activeLink === 'emiten' ? 'active' : '' }}" href="#" wire:click.prevent="setActiveLink('emiten')">Emiten</a>
+            <a class="nav-link {{ $activeLink === 'emiten' ? 'active' : '' }}" href="#"
+                wire:click.prevent="setActiveLink('emiten')">Emiten</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ $activeLink === 'paymentDetail' ? 'active' : '' }}" href="#" wire:click.prevent="setActiveLink('paymentDetail')">Payment Detail</a>
+            <a class="nav-link {{ $activeLink === 'paymentDetail' ? 'active' : '' }}" href="#"
+                wire:click.prevent="setActiveLink('paymentDetail')">Payment Detail</a>
         </li>
     </ul>
 
@@ -16,8 +19,8 @@
             @include('livewire.sections.pack')
         @elseif ($activeLink === 'emiten')
             <livewire:emiten-stock />
-        @elseif ($activeLink === 'paymentDetail' && $selectedEmiten)
-            <livewire:payment-detail :selectedEmiten="$selectedEmiten" />
+        @elseif ($activeLink === 'paymentDetail' && $selectedPack)
+            <livewire:payment-detail :selectedPack="$selectedPack" />
         @endif
     </div>
 </div>

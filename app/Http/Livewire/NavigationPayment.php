@@ -11,23 +11,91 @@ use Midtrans\Snap;
 class NavigationPayment extends Component
 {
     public $activeLink = 'pack';
-    public $selectedEmiten;
     public $packs;
     public $selectedPack;
+    public $selectedEmiten;
     public $snapToken;
     public $submitMessage = '';
+    public $userType;
+    public $paymentStatus;
+    public $itemSuccessType;
+    public $orderId;
 
     protected $listeners = [
         'emitenSelected',
-        'paymentSuccess' => 'handlePaymentSuccess',
+        'selectedEmitenList' => 'handleSelectedEmiten',
+        'updateActiveLink' => 'setActiveLink',
         'paymentPending' => 'handlePaymentPending',
-        'paymentError' => 'handlePaymentError',
-        'paymentClosed' => 'handlePaymentClosed'
+        'paymentSuccess' => 'handlePaymentSuccess',
     ];
 
     public function mount()
     {
         $this->packs = Pack::all();
+        $this->userType = auth()->user()->user_type;
+        $this->paymentStatus = Transactions::where('user_id', auth()->user()->id)->first()->status ?? null;
+        $this->itemSuccessType = Transactions::where('user_id', auth()->user()->id)->first()->selected_emiten ?? null;
+    }
+
+    public function handleSelectedEmiten($selectedEmiten)
+    {
+        $this->selectedEmiten = $selectedEmiten;
+    }
+
+    public function handlePaymentPending()
+    {
+        $companyList = collect($this->selectedEmiten)->pluck('ticker')->implode(', ');
+        Transactions::create([
+            'order_id' => 'ORDER-' . $this->orderId = uniqid(),
+            'company_id' => auth()->id(),
+            'user_id' => auth()->user()->id,
+            'selected_emiten' => $companyList,
+            'pack_id' => $this->selectedPack->id,
+            'total_price' => $this->selectedPack->price,
+            'status' => 'Pending',
+        ]);
+    }
+
+    public function handlePaymentSuccess()
+    {
+        $companyList = collect($this->selectedEmiten)->pluck('ticker')->implode(', ');
+        $companyListMerge = $companyList = collect($this->selectedEmiten)->pluck('ticker');
+        $existTransaction = Transactions::where('user_id', auth()->user()->id)->where('pack_id', 14)->first();
+        $transactionSuccess = Transactions::where('user_id', auth()->user()->id)->where('status', 'Success')->first();
+        if ($existTransaction && $transactionSuccess) {
+
+            $existingSelectedEmiten = $existTransaction->selected_emiten;
+            $existingSelectedEmitenArray = $existingSelectedEmiten ? explode(', ', $existingSelectedEmiten) : [];
+
+            $newSelectedEmitenArray = array_unique(array_merge($existingSelectedEmitenArray, $companyListMerge->toArray()));
+            $newSelectedEmiten = implode(', ', $newSelectedEmitenArray);
+
+            $existTransaction->update([
+                'order_id' => 'ORDER-' . $this->orderId = uniqid(),
+                'company_id' => auth()->id(),
+                'user_id' => auth()->user()->id,
+                'selected_emiten' => $newSelectedEmiten,
+                'pack_id' => $this->selectedPack->id,
+                'total_price' => $this->selectedPack->price,
+                'status' => 'Success',
+            ]);
+        } else {
+            Transactions::create([
+                'order_id' => 'ORDER-' . $this->orderId = uniqid(),
+                'company_id' => auth()->id(),
+                'user_id' => auth()->user()->id,
+                'selected_emiten' => $companyList,
+                'pack_id' => $this->selectedPack->id,
+                'total_price' => $this->selectedPack->price,
+                'status' => 'Success',
+            ]);
+        }
+
+        UserAnalyze::updateOrCreate(
+            ['id' => auth()->user()->id],
+            ['user_type' => 'premium']
+        );
+        $this->setActiveLink('paymentDetail');
     }
 
     public function selectPack($productId)
@@ -39,25 +107,26 @@ class NavigationPayment extends Component
         } else {
             $this->initiatePayment();
         }
+
+        $this->emit('packSelected', $this->selectedPack);
     }
 
     public function initiatePayment()
     {
+        $existTransaction = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->first();
+        $transactionPending = Transactions::where('user_id', auth()->user()->id)->where('status', 'pending')->first();
+        if ($existTransaction && $transactionPending) {
+            $existTransaction->delete();
+        }
+
         try {
-            $transaction = Transactions::create([
-                'company_id' => auth()->id(),
-                'pack_id' => $this->selectedPack->id,
-                'total_price' => $this->selectedPack->price,
-                'status' => 'pending',
-            ]);
-
-            // Siapkan deskripsi items untuk Midtrans
             $itemsDescription = explode('$', $this->selectedPack->description);
-            $itemsList = array_filter($itemsDescription); // Menghapus empty values
-
+            $itemsList = array_filter($itemsDescription);
+            $this->orderId = uniqid();
+            
             $midtransData = [
                 'transaction_details' => [
-                    'order_id' => 'ORDER-' . $transaction->id,
+                    'order_id' => 'ORDER-' . $this->orderId,
                     'gross_amount' => $this->selectedPack->price,
                 ],
                 'item_details' => [
@@ -76,81 +145,21 @@ class NavigationPayment extends Component
                     'email' => auth()->user()->email,
                     'phone' => auth()->user()->phone_number ?? '',
                 ],
-                'custom_field1' => json_encode($itemsList), // Menyimpan detail fitur bundle
+                'custom_field1' => json_encode($itemsList),
             ];
 
             $this->snapToken = Snap::getSnapToken($midtransData);
             $this->dispatchBrowserEvent('show-payment', ['snapToken' => $this->snapToken]);
-            $this->setActiveLink('paymentDetail');
+            // $this->activeLink = 'paymentDetail';
         } catch (\Exception $e) {
             session()->flash('error', 'Terjadi kesalahan saat membuat transaksi: ' . $e->getMessage());
         }
     }
 
-    public function handlePaymentSuccess($result)
-    {
-        $transactionId = $this->getOrderIdFromResult($result);
-
-        Transactions::where('id', $transactionId)
-            ->update(['status' => 'success']);
-
-        $transaction = Transactions::find($transactionId);
-        $pack = $transaction->pack;
-
-        $userType = (strpos(strtolower($pack->name_pack), 'bundle') !== false) ? 'bundle' : 'free';
-
-        // Perbarui user_type pada UserAnalyze
-        UserAnalyze::updateOrCreate(
-            ['id' => auth()->id()],
-            ['user_type' => $userType]
-        );
-
-        $this->submitMessage = 'Pembayaran berhasil!';
-        $this->resetPayment();
-    }
-
-    public function handlePaymentPending($result)
-    {
-        Transactions::where('id', $this->getOrderIdFromResult($result))
-            ->update(['status' => 'pending']);
-        $this->submitMessage = 'Pembayaran dalam proses';
-    }
-
-    public function handlePaymentError($result)
-    {
-        Transactions::where('id', $this->getOrderIdFromResult($result))
-            ->update(['status' => 'failed']);
-        $this->submitMessage = 'Pembayaran gagal';
-    }
-
-    public function handlePaymentClosed()
-    {
-        $this->submitMessage = 'Pembayaran dibatalkan';
-    }
-
-    private function getOrderIdFromResult($result)
-    {
-        return substr($result['order_id'], 6);
-    }
-
-    private function resetPayment()
-    {
-        $this->selectedPack = null;
-        $this->snapToken = null;
-        $this->setActiveLink('pack');
-    }
-
     public function setActiveLink($link)
     {
         if ($link === 'emiten' && !$this->selectedPack) {
-            // Tampilkan pesan atau beri tahu pengguna untuk memilih pack terlebih dahulu
             session()->flash('error', 'Pilih pack terlebih dahulu sebelum melanjutkan.');
-            return;
-        }
-
-        if ($link === 'paymentDetail' && !$this->selectedEmiten) {
-            // Tampilkan pesan atau beri tahu pengguna untuk memilih emiten terlebih dahulu
-            session()->flash('error', 'Pilih emiten terlebih dahulu sebelum melanjutkan.');
             return;
         }
 
@@ -159,8 +168,7 @@ class NavigationPayment extends Component
 
     public function emitenSelected($emiten)
     {
-        $this->selectedEmiten = $emiten;
-        $this->setActiveLink('paymentDetail');
+        $this->selectedEmiten[] = $emiten;
     }
 
     public function render()

@@ -1,36 +1,50 @@
-<div class="container mt-5">
-    <div class="card border-1">
-        <div class="text-center">
-            <h2>Payment Detail</h2>
-        </div>
-        <div class="card-body">
-            <h4>Your Package</h4>
-            <h2 class="font-weight-bold">Bundle</h2>
-            <p>Period: 25 - 04 - 2024</p>
-            <p>Your account: Anggung Gigih P</p>
-            <p>Total: Rp. 50.000,-</p>
-
-            <h4 class="mt-4">Selected Emiten</h4>
-            <ul>
-                @foreach ($selectedEmiten as $emiten)
-                    <li>{{ $emiten }}</li>
-                @endforeach
-            </ul>
-
-            <h4 class="mt-4">Pilih metode pembayaran</h4>
-            @foreach ($paymentMethods as $method)
-                <div class="d-flex justify-content-between align-items-center list-group-item border-0">
-                    <div>
-                        <h5>{{ $method['code'] }}</h5>
-                        <p>{{ $method['name'] }}</p>
-                    </div>
-                    <button class="btn btn-outline-success">Pilih</button>
-                </div>
-            @endforeach
-
-            <div class="text-center mt-4">
-                <button class="btn btn-primary">Submit</button>
+<div class="mt-5">
+    <h2 class="text-center mb-4">Payment Details</h2>
+    @if ($selectedPack)
+        <div class="card shadow-sm p-4">
+            <div class="d-flex justify-content-between mb-3">
+                <h4 class="card-title">Selected Package</h4>
             </div>
+            <div class="list-group">
+                <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row">
+                    <strong>Package Name:</strong>
+                    <span>{{ $selectedPack['name_pack'] ?? 'N/A' }}</span>
+                </div>
+                @if($selectedPack['name_pack'] === 'custom')
+                    <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row">
+                        <strong>Item List :</strong>
+                        <span>{{ $selectedItemPack }}</span>
+                    </div>
+                @endif
+                <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row">
+                    <strong>Price:</strong>
+                    <span>Rp.{{ number_format($priceTotal ?? 0, 2) }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row">
+                    <strong>Payment Status :</strong>
+                    @if($paymentStatus === 'Success')
+                        <span class="text-white bg-success p-2 rounded"><strong>{{ $paymentStatus ?? 'Failed Payment' }}</strong></span>
+                    @elseif($paymentStatus === 'Pending')
+                        <span class="text-white bg-warning p-2 rounded"><strong>{{ $paymentStatus ?? 'Failed Payment' }}</strong></span>
+                    @else
+                        <span class="text-white bg-danger p-2 rounded"><strong>{{ $paymentStatus ?? 'Failed Payment' }}</strong></span>
+                    @endif
+                </div>
+            </div>
+
+            @if($paymentStatus === 'Success')
+                <div class="text-center mt-4">
+                    <a href="/dashboard-core/" class="btn btn-custom2 btn-lg">Continue to Analyze</a>
+                </div>
+            @else()
+                <div class="d-flex flex-row justify-content-center align-center gap-2">
+                    <div class="text-center mt-4">
+                        <a href="/payment" class="btn btn-custom2 btn-lg">Back to Payment</a>
+                    </div>
+                </div>
+            @endif
         </div>
-    </div>
+    @else
+        <p class="text-center text-danger">No package selected.</p>
+    @endif
 </div>

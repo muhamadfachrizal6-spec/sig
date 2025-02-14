@@ -1,5 +1,5 @@
 <div class="container mt-5 border rounded w-80">
-    <div class="text-center mb-4">
+    <div class="text-center mb-4 mt-3">
         <h2>Discover Company Stock</h2>
         <p>Choose your emiten for growth business</p>
     </div>
@@ -78,7 +78,7 @@
     </div>
 
     <div class="text-center m-4">
-        <button class="border-1 w-25 p-2 rounded" wire:click="submit">
+        <button class="border-1 w-50 p-2 rounded" wire:click="submit">
             <span wire:loading.remove wire:target="submit">Bayar Sekarang</span>
             <span wire:loading wire:target="submit">Processing...</span>
         </button>
@@ -87,6 +87,12 @@
     @if (session()->has('error'))
         <div class="alert alert-danger mt-4">
             {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session()->has('success'))
+        <div class="alert alert-danger mt-4">
+            {{ session('success') }}
         </div>
     @endif
 
@@ -104,61 +110,4 @@
             @this.submitMessage = '';
         }, event.detail.delay);
     });
-</script>
-<script>
-    document.addEventListener("livewire:load", () => {
-        // Cek apakah Snap.js sudah dimuat sebelumnya
-        if (typeof snap === "undefined") {
-            let snapScript = document.createElement("script");
-            snapScript.src = "https://app.sandbox.midtrans.com/snap/snap.js";
-            snapScript.setAttribute("data-client-key", "{{ config('midtrans.client_key') }}");
-
-            snapScript.onload = () => {
-                console.log("Snap.js berhasil dimuat.");
-                window.snapLoaded = true; // Tandai bahwa Snap.js sudah siap
-                // Memicu event untuk menandai Snap.js sudah siap
-                window.dispatchEvent(new CustomEvent('snap-loaded'));
-            };
-
-            document.body.appendChild(snapScript);
-        } else {
-            console.log("Snap.js sudah tersedia.");
-            window.snapLoaded = true;
-        }
-    });
-</script>
-
-<script>
-    window.addEventListener("show-payment", (event) => {
-        // Tunggu hingga Snap.js dimuat
-        if (!window.snapLoaded) {
-            console.log("Menunggu Snap.js selesai dimuat...");
-            // Tunggu event `snap-loaded` sebelum memulai pembayaran
-            window.addEventListener('snap-loaded', () => {
-                console.log("Snap.js siap, memulai pembayaran.");
-                startSnapPayment(event.detail.snapToken);
-            });
-            return;
-        }
-
-        // Jika Snap.js sudah siap, langsung mulai pembayaran
-        startSnapPayment(event.detail.snapToken);
-    });
-
-    function startSnapPayment(snapToken) {
-        snap.pay(snapToken, {
-            onSuccess: function (result) {
-                Livewire.emit("paymentSuccess", result);
-            },
-            onPending: function (result) {
-                Livewire.emit("paymentPending", result);
-            },
-            onError: function (result) {
-                Livewire.emit("paymentError", result);
-            },
-            onClose: function () {
-                Livewire.emit("paymentClosed");
-            },
-        });
-    }
 </script>

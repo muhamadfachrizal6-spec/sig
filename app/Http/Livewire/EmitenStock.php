@@ -4,8 +4,6 @@ namespace App\Http\Livewire;
 use App\Models\Company;
 use App\Models\Pack;
 use App\Models\Transactions;
-use App\Models\UserAnalyze;
-use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Midtrans\Snap;
 
@@ -17,60 +15,6 @@ class EmitenStock extends Component
     public $submitMessage = '';
     public $totalPrice = 0;
     public $snapToken;
-    protected $listeners = [
-        'paymentSuccess' => 'handlePaymentSuccess',
-        'paymentPending' => 'handlePaymentPending',
-        'paymentError' => 'handlePaymentError',
-        'paymentClosed' => 'handlePaymentClosed'
-    ];
-
-    public function handlePaymentSuccess($result)
-    {
-        // Update status transaksi menjadi success
-        Transactions::where('id', $this->getOrderIdFromResult($result))
-            ->update(['status' => 'success']);
-
-        $userAnalyze = UserAnalyze::updateOrCreate(
-            ['id' => auth()->id()],
-            ['user_type' => 'custom']
-        );
-
-        Log::info('Updated or created UserAnalyze: ' . $userAnalyze->id);
-
-        $this->submitMessage = 'Pembayaran berhasil!';
-        $this->selectedEmiten = [];
-        $this->calculateTotalPrice();
-    }
-
-    public function handlePaymentPending($result)
-    {
-        // Update status transaksi menjadi pending
-        Transactions::where('id', $this->getOrderIdFromResult($result))
-            ->update(['status' => 'pending']);
-
-        $this->submitMessage = 'Pembayaran dalam proses';
-    }
-
-
-    public function handlePaymentError($result)
-    {
-        // Update status transaksi menjadi failed
-        Transactions::where('id', $this->getOrderIdFromResult($result))
-            ->update(['status' => 'failed']);
-
-        $this->submitMessage = 'Pembayaran gagal';
-    }
-
-    public function handlePaymentClosed()
-    {
-        $this->submitMessage = 'Pembayaran dibatalkan';
-    }
-
-    private function getOrderIdFromResult($result)
-    {
-        // Extract ID from order_id (ORDER-123 -> 123)
-        return substr($result['order_id'], 6);
-    }
 
     public function mount()
     {
@@ -101,6 +45,7 @@ class EmitenStock extends Component
         }
 
         $this->selectedEmiten = array_values($this->selectedEmiten);
+        $this->emit('selectedEmitenList', $this->selectedEmiten);
         $this->calculateTotalPrice();
     }
 
@@ -120,13 +65,14 @@ class EmitenStock extends Component
             'selectedEmiten' => 'required|array|min:1',
         ]);
 
+        $existTransaction = Transactions::where('user_id', auth()->user()->id)->where('pack_id', 14)->first();
+        $transactionPending = Transactions::where('user_id', auth()->user()->id)->where('status', 'pending')->first();
+        if ($existTransaction && $transactionPending) {
+            $existTransaction->delete();
+        }
+
         try {
-            $transaction = Transactions::create([
-                'company_id' => auth()->id(),
-                'pack_id' => 1,
-                'total_price' => $this->totalPrice,
-                'status' => 'pending',
-            ]);
+            $orderId = 'ORDER-' . uniqid();
 
             $items = [];
             foreach ($this->selectedEmiten as $emiten) {
@@ -140,14 +86,14 @@ class EmitenStock extends Component
 
             $midtransData = [
                 'transaction_details' => [
-                    'order_id' => 'ORDER-' . $transaction->id,
+                    'order_id' => 'ORDER-' . $orderId,
                     'gross_amount' => $this->totalPrice,
                 ],
                 'item_details' => $items,
                 'customer_details' => [
                     'first_name' => auth()->user()->name,
                     'email' => auth()->user()->email,
-                    'phone' => auth()->user()->phone_number ?? '',
+                    'phone' => auth()->user()->phone ?? '',
                 ],
             ];
 
