@@ -20,6 +20,7 @@ class NavigationPayment extends Component
     public $paymentStatus;
     public $itemSuccessType;
     public $orderId;
+    public $orderIdCustomPack;
 
     protected $listeners = [
         'emitenSelected',
@@ -27,7 +28,13 @@ class NavigationPayment extends Component
         'updateActiveLink' => 'setActiveLink',
         'paymentPending' => 'handlePaymentPending',
         'paymentSuccess' => 'handlePaymentSuccess',
+        'orderIdCustomPack' => 'handleOrderIdCustomPack',
     ];
+
+    public function handleOrderIdCustomPack($orderId)
+    {
+        $this->orderIdCustomPack = $orderId;
+    }
 
     public function mount()
     {
@@ -46,7 +53,7 @@ class NavigationPayment extends Component
     {
         $companyList = collect($this->selectedEmiten)->pluck('ticker')->implode(', ');
         Transactions::create([
-            'order_id' => 'ORDER-' . $this->orderId = uniqid(),
+            'order_id' => 'ORDER-' . ($this->orderIdCustomPack ?  $this->orderIdCustomPack : $this->orderId),
             'company_id' => auth()->id(),
             'user_id' => auth()->user()->id,
             'selected_emiten' => $companyList,
@@ -58,11 +65,19 @@ class NavigationPayment extends Component
 
     public function handlePaymentSuccess()
     {
+        $packIdName = Transactions::where('user_id', auth()->user()->id)
+            ->where('pack_id', $this->selectedPack->id)
+            ->first();
+        if ($packIdName) {
+            $packName = Pack::where('id', $packIdName->pack_id)->first()->name_pack;
+        }
         $companyList = collect($this->selectedEmiten)->pluck('ticker')->implode(', ');
+        $companyListclear = collect($this->selectedEmiten)->pluck('ticker')->implode(', ');
         $companyListMerge = $companyList = collect($this->selectedEmiten)->pluck('ticker');
-        $existTransaction = Transactions::where('user_id', auth()->user()->id)->where('pack_id', 14)->first();
+        $existTransaction = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->first();
         $transactionSuccess = Transactions::where('user_id', auth()->user()->id)->where('status', 'Success')->first();
-        if ($existTransaction && $transactionSuccess) {
+
+        if ($existTransaction && $transactionSuccess && $packName === 'custom') {
 
             $existingSelectedEmiten = $existTransaction->selected_emiten;
             $existingSelectedEmitenArray = $existingSelectedEmiten ? explode(', ', $existingSelectedEmiten) : [];
@@ -70,8 +85,7 @@ class NavigationPayment extends Component
             $newSelectedEmitenArray = array_unique(array_merge($existingSelectedEmitenArray, $companyListMerge->toArray()));
             $newSelectedEmiten = implode(', ', $newSelectedEmitenArray);
 
-            $existTransaction->update([
-                'order_id' => 'ORDER-' . $this->orderId = uniqid(),
+            $existTransaction->update(['order_id' => 'ORDER-' . $this->orderIdCustomPack ?? $this->orderId,
                 'company_id' => auth()->id(),
                 'user_id' => auth()->user()->id,
                 'selected_emiten' => $newSelectedEmiten,
@@ -79,9 +93,26 @@ class NavigationPayment extends Component
                 'total_price' => $this->selectedPack->price,
                 'status' => 'Success',
             ]);
-        } else {
+            UserAnalyze::updateOrCreate(
+                ['id' => auth()->user()->id],
+                ['user_type' => 'custom']
+            );
+        } else if ($this->selectedPack->name_pack === 'custom' && $transactionSuccess === null) {
             Transactions::create([
-                'order_id' => 'ORDER-' . $this->orderId = uniqid(),
+                'order_id' => 'ORDER-' . ($this->orderIdCustomPack ?  $this->orderIdCustomPack : $this->orderId),
+                'company_id' => auth()->id(),
+                'user_id' => auth()->user()->id,
+                'selected_emiten' => $companyListclear,
+                'pack_id' => $this->selectedPack->id,
+                'total_price' => $this->selectedPack->price,
+                'status' => 'Success',
+            ]);
+            UserAnalyze::updateOrCreate(
+                ['id' => auth()->user()->id],
+                ['user_type' => 'custom']
+            );
+        } else {
+            Transactions::create(['order_id' => 'ORDER-' . ($this->orderIdCustomPack ?  $this->orderIdCustomPack : $this->orderId),
                 'company_id' => auth()->id(),
                 'user_id' => auth()->user()->id,
                 'selected_emiten' => $companyList,
@@ -89,12 +120,11 @@ class NavigationPayment extends Component
                 'total_price' => $this->selectedPack->price,
                 'status' => 'Success',
             ]);
+            UserAnalyze::updateOrCreate(
+                ['id' => auth()->user()->id],
+                ['user_type' => 'bundle']
+            );
         }
-
-        UserAnalyze::updateOrCreate(
-            ['id' => auth()->user()->id],
-            ['user_type' => 'premium']
-        );
         $this->setActiveLink('paymentDetail');
     }
 
@@ -126,7 +156,7 @@ class NavigationPayment extends Component
             
             $midtransData = [
                 'transaction_details' => [
-                    'order_id' => 'ORDER-' . $this->orderId,
+                    'order_id' => 'ORDER-' . ($this->orderIdCustomPack ?  $this->orderIdCustomPack : $this->orderId),
                     'gross_amount' => $this->selectedPack->price,
                 ],
                 'item_details' => [

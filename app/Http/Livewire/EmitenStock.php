@@ -15,10 +15,18 @@ class EmitenStock extends Component
     public $submitMessage = '';
     public $totalPrice = 0;
     public $snapToken;
+    public $selectedPack;
+
+    protected $listeners = ['packSelected' => 'handlePackSelection'];
 
     public function mount()
     {
         $this->emitenList = Company::all(['id', 'ticker', 'name'])->sortBy('ticker');
+    }
+
+    public function handlePackSelection($selectedPack)
+    {
+        $this->selectedPack = $selectedPack;
     }
 
     public function selectEmiten($ticker)
@@ -65,14 +73,15 @@ class EmitenStock extends Component
             'selectedEmiten' => 'required|array|min:1',
         ]);
 
-        $existTransaction = Transactions::where('user_id', auth()->user()->id)->where('pack_id', 14)->first();
+        $existTransaction = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack['id'])->first();
         $transactionPending = Transactions::where('user_id', auth()->user()->id)->where('status', 'pending')->first();
         if ($existTransaction && $transactionPending) {
             $existTransaction->delete();
         }
 
         try {
-            $orderId = 'ORDER-' . uniqid();
+            $orderId = uniqid();
+            $this->emit('orderIdCustomPack', $orderId);
 
             $items = [];
             foreach ($this->selectedEmiten as $emiten) {

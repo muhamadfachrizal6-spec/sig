@@ -52,7 +52,10 @@ class DashboardCore extends Component
                 return explode(", ", $emiten);
             })->flatten()->unique();
 
-            $companies = Company::whereIn('ticker', $selectedEmiten)->get();
+            $additionalEmitens = ['ASII', 'TLKM', 'ACES'];
+            $mergedEmitens = $selectedEmiten->merge($additionalEmitens)->unique();
+
+            $companies = Company::whereIn('ticker', $mergedEmitens)->get();
         } else if (auth()->check() && $userType === 'bundle') {
             $companies = Company::all();
         } else {

@@ -15,7 +15,7 @@
                 @endif
             </div>
             <div class="card-footer border-0 bg-transparent p-4 w-100 d-flex justify-content-center">
-                @if($pack->name_pack === 'bundle' && !($paymentStatus === 'Success' && (empty($itemSuccessType))))
+                @if($pack->name_pack === 'bundle' && $userType !=='bundle' && !($paymentStatus === 'Success' && (empty($itemSuccessType))))
                     <button class="border-1 w-50 p-2 rounded" wire:click="selectPack({{ $pack->id }})"
                         wire:loading.attr="disabled" wire:target="selectPack">
                         <span wire:loading.remove wire:target="selectPack({{ $pack->id }})">
@@ -25,7 +25,7 @@
                             Processing...
                         </span>
                     </button>
-                @elseif($pack->name_pack === 'custom' && !($paymentStatus === 'Success' && (empty($itemSuccessType))))
+                @elseif($pack->name_pack === 'custom' && $userType !=='bundle' && !($paymentStatus === 'Success' && (empty($itemSuccessType))))
                     <button class="border-1 w-50 p-2 rounded" wire:click="selectPack({{ $pack->id }})"
                         wire:loading.attr="disabled" wire:target="selectPack">
                         <span wire:loading.remove wire:target="selectPack({{ $pack->id }})">
