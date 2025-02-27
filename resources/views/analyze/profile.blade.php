@@ -62,7 +62,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <x-mandatory-validation for="work" label="Work" />
+                                        <x-mandatory-validation for="work" label="Profession" />
                                         <input type="text" class="form-control bg-light" id="work" name="work" value="{{ old('work', $user->work) }}" readonly>
                                     </div>
                                 </div>

@@ -34,7 +34,13 @@
 }
 
 .primary-color {
-    background-color: #43654C;
+    background-color: #43654C !important;
+}
+
+input[type="checkbox"]:checked, 
+input[type="radio"]:checked {
+    background-color: #43654C !important;
+    border-color: darkolivegreen;
 }
 
 .primary-border{

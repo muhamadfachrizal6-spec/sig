@@ -260,9 +260,15 @@ class KeyRatio extends Component
                     return [
                         'year' => $yearData->first()->year,
                         'EPS' => $yearData->sum('EPS'),
-                        'PER' => $yearData->first()->PER,
-                        'BVPS' => $yearData->first()->BVPS,
-                        'PBV' => $yearData->first()->PBV,
+                        'PER' => optional($yearData->filter(function ($item) {
+                            return !is_null($item->PER) && $item->PER !== 0.0;
+                        })->sortByDesc('quarter')->first())->PER,
+                        'BVPS' => optional($yearData->filter(function ($item) {
+                            return !is_null($item->BVPS) && $item->BVPS !== 0.0;
+                        })->sortByDesc('quarter')->first())->BVPS,
+                        'PBV' => optional($yearData->filter(function ($item) {
+                            return !is_null($item->PBV) && $item->PBV !== 0.0;
+                        })->sortByDesc('quarter')->first())->PBV,
                     ];
                 }
 
@@ -275,6 +281,7 @@ class KeyRatio extends Component
                     ->first() ?? $sorted->first();
                 })
                 ->filter();
+            
 
             $filteredliquidityRatio = $filteredliquidityRatio
                 ->groupBy('year')
@@ -312,8 +319,7 @@ class KeyRatio extends Component
                     'year' => $marketShare->year,
                     'quarter' => $marketShare->quarter
                 ];
-            })->sortBy([
-                ['year', 'asc'],
+            })->sortBy([['year', 'desc'],
                 ['quarter', 'asc']
             ])->map(function ($item) {
                 return $item['year'] . ' - ' . $item['quarter'];
@@ -374,8 +380,8 @@ class KeyRatio extends Component
                     $filteredrelativeRatio->map(function ($ratio) {
                         return $ratio['year'];
                     })
-                    ->filter()  // Filter null
-                    ->values()  // Hapus indeks
+                ->filter()
+                ->values()
                     ->toArray()
                     :
                     $filteredrelativeRatio->map(function ($ratio) {

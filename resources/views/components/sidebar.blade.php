@@ -2,9 +2,9 @@
 @section('content')
     <div class="sidebarNav d-none d-lg-block d-md-block primary-color">
         <ul class="nav flex-column gap-5">
-            <li class="nav-item" style="cursor: pointer" onclick="window.location.href='{{ route('dashboard-core') }}'">
+            <li class="nav-item rounded-circle border border-light" style="cursor: pointer; width: 40px; height: 40px; display:flex; flex-direction: column; justify-content: center; align-items: center; flex-wrap: nowrap; padding: 2px" onclick="window.location.href='{{ route('dashboard-core') }}'">
                 <img src="{{ asset('assets/img/logo/sig-white.png') }}" alt="Profile Image"
-                    class="rounded-circle border border-light" width="40" height="40">
+                    class="img-fluid" style="width: 100%; height: auto;">
             </li>
             <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
                 <a class="nav-link" href="{{ route('dashboard-core') }}"><i class="text-white bi-bar-chart-fill"></i></a>

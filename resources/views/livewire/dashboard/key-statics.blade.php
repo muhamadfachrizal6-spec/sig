@@ -25,7 +25,7 @@
 
         <div class="col-lg-4">
             <label for="timeframe" class="form-label">Timeframe:</label>
-            <button type="button" class="btn {{ $timeframe ? 'bg-white' : 'primary-color text-white' }} border-1 border-primary-black w-100" data-bs-toggle="modal"
+            <button type="button" class="btn {{ $timeframe ? 'bg-white' : 'primary-color text-white' }} border-1 border-primary-black w-100 text-start" data-bs-toggle="modal"
                 data-bs-target="#timeframeModal">
                 {{ $timeframe ?: 'Custom timeframe' }}
             </button>
@@ -49,14 +49,14 @@
         <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="timeframeModalLabel">Select Timeframe</h5>
+                    <h5 class="modal-title primary-color-text" id="timeframeModalLabel">Select Timeframe</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form wire:submit.prevent="submitFilter">
                         <!-- Timeframe Section -->
                         <div class="mb-4">
-                            <p class="mb-2 fw-bold text-primary">Choose a Timeframe:</p>
+                            <p class="mb-2 fw-bold primary-color-text">Choose a Timeframe:</p>
                             <div class="d-flex flex-column gap-2">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" id="threeYears" name="timeframe"
@@ -81,7 +81,7 @@
 
                         <!-- Specific Years Section -->
                         <div>
-                            <p class="mb-2 fw-bold text-primary">Or Select Specific Years:</p>
+                            <p class="mb-2 fw-bold primary-color-text">Or Select Specific Years:</p>
                             <div class="row row-cols-4 g-3">
                                 @foreach ($yearsAvailable as $year)
                                     <div class="col">
@@ -99,7 +99,7 @@
                         <!-- Footer -->
                         <div class="modal-footer mt-4">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Apply Filter</button>
+                            <button type="submit" class="btn primary-color text-white" data-bs-dismiss="modal">Apply Filter</button>
                         </div>
                     </form>
                 </div>
@@ -127,10 +127,20 @@
                                                     <span>{{ $entry['value'] }}%</span>
                                                 </div>
                                                 <div class="progress">
-                                                    <div class="progress-bar" role="progressbar"
+                                                    <div class="progress-bar 
+                                                        @if($entry['value'] >= 75) 
+                                                            bg-success 
+                                                        @elseif($entry['value'] >= 50) 
+                                                            bg-warning 
+                                                        @else 
+                                                            bg-danger 
+                                                        @endif"
+                                                        role="progressbar"
                                                         style="width: {{ $entry['value'] }}%;"
-                                                        aria-valuenow="{{ $entry['value'] }}" aria-valuemin="0"
-                                                        aria-valuemax="100"></div>
+                                                        aria-valuenow="{{ $entry['value'] }}" 
+                                                        aria-valuemin="0" 
+                                                        aria-valuemax="100">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

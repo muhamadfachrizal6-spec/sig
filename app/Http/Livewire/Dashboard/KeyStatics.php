@@ -244,11 +244,21 @@ class KeyStatics extends Component
             $filteredRevenues = $filteredRevenues
                 ->groupBy('year')
                 ->map(function ($yearData) {
-                    $sorted = $yearData->sortByDesc('quarter');
+                if ($this->periode === 'annual') {
+                    return [
+                        'year' => $yearData->first()->year,
+                        'gross_profit' => $yearData->sum('gross_profit'),
+                        'revenue' => $yearData->sum('revenue'),
+                        'net_profit' => $yearData->sum('net_profit'),
 
-                    return $sorted
-                        ->filter(function ($item) {
-                            return $item->revenue != 0 || $item->gross_profit != 0 || $item->net_profit != 0;
+                    ];
+                }
+
+                // Jika periode adalah quarterly, ambil data dari kuartal pertama
+                $sorted = $yearData->sortByDesc('quarter');
+                return $sorted
+                    ->filter(function ($item) {
+                    return $item->EPS != 0 || $item->PER != 0 || $item->BVPS != 0 || $item->PBV != 0;
                         })
                         ->first() ?? $sorted->first();
                 })
@@ -303,7 +313,7 @@ class KeyStatics extends Component
                     'quarter' => $marketShare->quarter
                 ];
             })->sortBy([
-                ['year', 'asc'],
+                ['year', 'desc'],
                 ['quarter', 'asc']
             ])->map(function ($item) {
                 return $item['year'] . ' - ' . $item['quarter'];
@@ -317,8 +327,8 @@ class KeyStatics extends Component
                 ],
                 [
                     'name' => 'Price',
-                    'data' => $filteredMarketShares->pluck('price')->map(function ($value) {
-                        return floatval($value);
+                    'data' => $filteredMarketShares->pluck('price_popup')->map(function ($value) {
+                        return floatval(str_replace(' %', '', $value));
                     })->toArray(),
                 ],
             ],
@@ -329,8 +339,11 @@ class KeyStatics extends Component
             $this->incomeStatementData = [
                 'categories' => $this->periode === 'annual'
                 ? $filteredRevenues->map(function ($revenue) {
-                    return $revenue->year;
-                })->values()->toArray()
+                    return $revenue['year'];
+                })
+                    ->filter()
+                    ->values()
+                    ->toArray()
                     : $filteredRevenues->map(function ($revenue) {
                         return $revenue->year . ' - ' . $revenue->quarter;
                 })->values()->toArray(),
