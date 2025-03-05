@@ -17,6 +17,9 @@ class ProfitabilityRatioData extends Model
         'ROE',
         'GPM',
         'NPM',
+        'unit_roe',
+        'unit_gpm',
+        'unit_npm',
     ];
 
     public $timestamps = false;

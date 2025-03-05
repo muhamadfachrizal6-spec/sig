@@ -28,22 +28,33 @@ class PaymentDetail extends Component
         $this->orderId = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->first()->order_id;
         $status = \Midtrans\Transaction::status($this->orderId);
 
-        $this->checkPaymentStatus = $status->transaction_status;
-        if ($this->checkPaymentStatus == 'settlement' && $this->selectedPack->name_pack == 'custom') {
+        $trxStatus = $this->checkPaymentStatus = $status->transaction_status;
+        $trxId = $status->transaction_id;
+        $trxPrice = $status->gross_amount;
+        $trxPaymentType = $status->payment_type;
+        $trxTime = $status->transaction_time;
+        $trxTimeFormatted = \Carbon\Carbon::parse($trxTime)->format('d M Y H:i:s');
+        $trxMessage = '';
+
+        if ($trxStatus == 'settlement' && $this->selectedPack->name_pack == 'custom') {
             UserAnalyze::updateOrCreate(
                 ['id' => auth()->user()->id],
                 ['user_type' => 'custom']
             );
 
             Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->update(['status' => 'Success']);
-        } else {
+            $trxMessage = "Selamat, pembayaran Anda sudah sukses!<br>Waktu Transaksi: $trxTimeFormatted<br>ID Transaksi: $trxId<br>Total Pembayaran: $trxPrice<br>Metode Pembayaran: $trxPaymentType";
+        } else if ($trxStatus === 'settlement' && $this->selectedPack->name_pack == 'bundle') {
             UserAnalyze::updateOrCreate(
                 ['id' => auth()->user()->id],
                 ['user_type' => 'bundle']
             );
 
             Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->update(['status' => 'Success']);
+            $trxMessage = "Selamat, pembayaran Anda sudah sukses!<br>Waktu Transaksi: $trxTimeFormatted<br>ID Transaksi: $trxId<br>Total Pembayaran: $trxPrice<br>Metode Pembayaran: $trxPaymentType";
         }
+
+        $this->emit('paymentStatusChecked', $trxMessage);
     }
 
     public function render()

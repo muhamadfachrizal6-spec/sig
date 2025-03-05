@@ -104,6 +104,9 @@ class GeneralInformation extends Component
                 'ROE' => $ratios->pluck('ROE', 'year')->only($this->years),
                 'GPM' => $ratios->pluck('GPM', 'year')->only($this->years),
                 'NPM' => $ratios->pluck('NPM', 'year')->only($this->years),
+                'unit_roe' => $ratios->pluck('unit_roe', 'year')->only($this->years),
+                'unit_gpm' => $ratios->pluck('unit_gpm', 'year')->only($this->years),
+                'unit_npm' => $ratios->pluck('unit_npm', 'year')->only($this->years),
             ];
             });
 
@@ -115,6 +118,10 @@ class GeneralInformation extends Component
                 'PER' => $ratios->pluck('PER', 'year')->only($this->years),
                 'BVPS' => $ratios->pluck('BVPS', 'year')->only($this->years),
                 'PBV' => $ratios->pluck('PBV', 'year')->only($this->years),
+                'unit_eps' => $ratios->pluck('unit_eps', 'year')->only($this->years),
+                'unit_per' => $ratios->pluck('unit_per', 'year')->only($this->years),
+                'unit_bvps' => $ratios->pluck('unit_bvps', 'year')->only($this->years),
+                'unit_pbv' => $ratios->pluck('unit_pbv', 'year')->only($this->years),
             ];
             });
 
@@ -124,6 +131,8 @@ class GeneralInformation extends Component
                 return [
                 'DAR' => $ratios->pluck('DAR', 'year')->only($this->years),
                 'DER' => $ratios->pluck('DER', 'year')->only($this->years),
+                'unit_dar' => $ratios->pluck('unit_dar', 'year')->only($this->years),
+                'unit_der' => $ratios->pluck('unit_der', 'year')->only($this->years),
             ];
         });
 

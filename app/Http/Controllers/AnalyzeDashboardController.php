@@ -60,7 +60,8 @@ class AnalyzeDashboardController extends Controller
     public function store(Request $request)
     {
         // Validasi input
-        $request->validate(['ticker' => 'required|string|max:10',
+        $request->validate([
+            'ticker' => 'required|string|max:10',
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'address' => 'required|string',
@@ -141,7 +142,7 @@ class AnalyzeDashboardController extends Controller
     {
         // Hapus data terkait di tabel dividend_data
         DividendData::where('company_id', $id)->delete();
-    
+
         // Hapus data dari tabel company
         Company::destroy($id);
 
@@ -256,8 +257,8 @@ class AnalyzeDashboardController extends Controller
         }
 
         $allYears = MarketShare::where('company_id', $companyId)
-        ->select('year')
-        ->distinct()
+            ->select('year')
+            ->distinct()
             ->orderBy(
                 'year',
                 'desc'
@@ -276,8 +277,8 @@ class AnalyzeDashboardController extends Controller
             foreach ($years as $year) {
                 $marketShare = MarketShare::where('company_id', $companyId)
                 ->where('year', $year)
-                ->where('quarter', $quarter)
-                ->first();
+                    ->where('quarter', $quarter)
+                    ->first();
 
                 $marketShareData[$quarter][$year] = [
                     'growth_net_profit' => $marketShare ? $marketShare->growth_net_profit : '-',
@@ -499,6 +500,9 @@ class AnalyzeDashboardController extends Controller
                     'ROE' => $profitability ? $profitability->ROE : '-',
                     'GPM' => $profitability ? $profitability->GPM : '-',
                     'NPM' => $profitability ? $profitability->NPM : '-',
+                    'unit_roe' => $profitability->unit_roe,
+                    'unit_gpm' => $profitability->unit_gpm,
+                    'unit_npm' => $profitability->unit_npm,
                 ];
             }
         }
@@ -515,6 +519,10 @@ class AnalyzeDashboardController extends Controller
                 $relativeRatioData[$quarter]['PER'][$year] = $relativeRatio ? $relativeRatio->PER : '-';
                 $relativeRatioData[$quarter]['BVPS'][$year] = $relativeRatio ? $relativeRatio->BVPS : '-';
                 $relativeRatioData[$quarter]['PBV'][$year] = $relativeRatio ? $relativeRatio->PBV : '-';
+                $relativeRatioData[$quarter]['unit_eps'][$year] = $relativeRatio ? $relativeRatio->unit_eps : '-';
+                $relativeRatioData[$quarter]['unit_per'][$year] = $relativeRatio ? $relativeRatio->unit_per : '-';
+                $relativeRatioData[$quarter]['unit_bvps'][$year] = $relativeRatio ? $relativeRatio->unit_bvps : '-';
+                $relativeRatioData[$quarter]['unit_pbv'][$year] = $relativeRatio ? $relativeRatio->unit_pbv : '-';
             }
         }
 
@@ -528,6 +536,8 @@ class AnalyzeDashboardController extends Controller
                     ->first();
                 $liquidityRatioData[$quarter]['DAR'][$year] = $liquidity ? $liquidity->DAR : '-';
                 $liquidityRatioData[$quarter]['DER'][$year] = $liquidity ? $liquidity->DER : '-';
+                $liquidityRatioData[$quarter]['unit_dar'][$year] = $liquidity ? $liquidity->unit_dar : '-';
+                $liquidityRatioData[$quarter]['unit_der'][$year] = $liquidity ? $liquidity->unit_der : '-';
             }
         }
 
@@ -539,18 +549,22 @@ class AnalyzeDashboardController extends Controller
             'profitabilityRatioData',
             'relativeRatioData',
             'liquidityRatioData',
-            'allYears'
+            'allYears',
         ));
     }
 
     public function update_key_ratio(Request $request, $companyId)
     {
         try {
+
             // Validasi input untuk memastikan format data benar
             $request->validate([
                 'profitability_ratios.*.*.*' => 'numeric|nullable',
                 'relative_ratios.*.*.*' => 'numeric|nullable',
                 'liquidity_ratios.*.*.*' => 'numeric|nullable',
+                'unit_roe' => 'nullable|string|max:10',
+                'unit_npm' => 'nullable|string|max:10',
+                'unit_gpm' => 'nullable|string|max:10',
             ]);
 
             // **Update Profitability Ratios**
@@ -563,13 +577,26 @@ class AnalyzeDashboardController extends Controller
                                 'year' => $year,
                                 'quarter' => $quarter,
                             ],
-                            [$ratio => $value]  // Field yang diupdate
+                            [$ratio => $value]  // Update field rasio (seperti ROE, GPM, NPM)
                         );
                     }
                 }
             }
 
-            // **Update Relative Ratios**
+            $unitFieldsProfitability = [
+                'ROE' => 'unit_roe',
+                'GPM' => 'unit_gpm',
+                'NPM' => 'unit_npm'
+            ];
+
+            foreach ($unitFieldsProfitability as $ratio => $column) {
+                $unitValue = $request->input('unit_' . strtolower($ratio));
+                if ($unitValue) {
+                    ProfitabilityRatioData::query()
+                        ->update([$column => $unitValue]);
+                }
+            }
+
             foreach ($request->input('relative_ratios', []) as $ratio => $years) {
                 foreach ($years as $year => $quarters) {
                     foreach ($quarters as $quarter => $value) {
@@ -579,9 +606,24 @@ class AnalyzeDashboardController extends Controller
                                 'year' => $year,
                                 'quarter' => $quarter,
                             ],
-                            [$ratio => $value]  // Field yang diupdate
+                            [$ratio => $value]
                         );
                     }
+                }
+            }
+
+            $unitFieldsRelative = [
+                'EPS' => 'unit_eps',
+                'PER' => 'unit_per',
+                'BVPS' => 'unit_bvps',
+                'PBV' => 'unit_pbv'
+            ];
+
+            foreach ($unitFieldsRelative as $ratio => $column) {
+                $unitValue = $request->input('unit_' . strtolower($ratio));
+                if ($unitValue) {
+                    RelativeRatioData::query()
+                        ->update([$column => $unitValue]);
                 }
             }
 
@@ -595,9 +637,22 @@ class AnalyzeDashboardController extends Controller
                                 'year' => $year,
                                 'quarter' => $quarter,
                             ],
-                            [$ratio => $value]  // Field yang diupdate
+                            [$ratio => $value]
                         );
                     }
+                }
+            }
+
+            $unitFieldsRelative = [
+                'DAR' => 'unit_dar',
+                'DER' => 'unit_der',
+            ];
+
+            foreach ($unitFieldsRelative as $ratio => $column) {
+                $unitValue = $request->input('unit_' . strtolower($ratio));
+                if ($unitValue) {
+                    LiquidityRatioData::query()
+                        ->update([$column => $unitValue]);
                 }
             }
 

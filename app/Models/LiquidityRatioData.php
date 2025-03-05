@@ -16,6 +16,8 @@ class LiquidityRatioData extends Model
         'quarter',
         'DAR',
         'DER',
+        'unit_dar',
+        'unit_der',
     ];
 
     public $timestamps = false;

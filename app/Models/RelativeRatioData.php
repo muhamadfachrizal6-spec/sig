@@ -18,6 +18,10 @@ class RelativeRatioData extends Model
         'PER',
         'BVPS',
         'PBV',
+        'unit_per',
+        'unit_pbv',
+        'unit_bvps',
+        'unit_eps',
     ];
 
     public $timestamps = false;

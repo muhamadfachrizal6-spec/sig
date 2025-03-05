@@ -309,7 +309,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['ROE'][$year] ?? '-' }}%</td>
+                                    <td>{{ $ratios['ROE'][$year] ?? '-' }} {{$ratios['unit_roe'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -334,7 +334,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['GPM'][$year] ?? '-' }}%</td>
+                                    <td>{{ $ratios['GPM'][$year] ?? '-' }} {{$ratios['unit_gpm'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -359,7 +359,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['NPM'][$year] ?? '-' }}%</td>
+                                    <td>{{ $ratios['NPM'][$year] ?? '-' }} {{$ratios['unit_npm'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -390,7 +390,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['EPS'][$year] ?? '-' }}</td>
+                                    <td>{{ $ratios['EPS'][$year] ?? '-' }} {{$ratios['unit_eps'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -415,7 +415,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['PER'][$year] ?? '-' }}</td>
+                                    <td>{{ $ratios['PER'][$year] ?? '-' }} {{$ratios['unit_per'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -440,7 +440,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['BVPS'][$year] ?? '-' }}</td>
+                                    <td>{{ $ratios['BVPS'][$year] ?? '-' }} {{$ratios['unit_bvps'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -465,7 +465,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['PBV'][$year] ?? '-' }}</td>
+                                    <td>{{ $ratios['PBV'][$year] ?? '-' }} {{$ratios['unit_pbv'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -496,7 +496,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['DAR'][$year] ?? '-' }}%</td>
+                                    <td>{{ $ratios['DAR'][$year] ?? '-' }} {{$ratios['unit_dar'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -521,7 +521,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['DER'][$year] ?? '-' }}%</td>
+                                    <td>{{ $ratios['DER'][$year] ?? '-' }} {{$ratios['unit_der'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach

@@ -37,63 +37,6 @@
                             <i class="fas fa-filter me-2"></i> Filter Data
                         </button>
                     </div>
-
-                    {{-- <!-- Filter Data -->
-                    <div class="col-md-12 mt-4">
-                        <label for="filter_data" class="form-label fw-bold primary-color-text">Select Data to
-                            Display</label>
-                        <div class="border rounded p-4 bg-light">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" value="revenue" id="display_revenue"
-                                            checked>
-                                        <label class="form-check-label primary-color-text" for="display_revenue">
-                                            <i class="fas fa-chart-line primary-color-text me-2"></i> Revenue
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" value="gross_profit"
-                                            id="display_gross_profit" checked>
-                                        <label class="form-check-label primary-color-text" for="display_gross_profit">
-                                            <i class="fas fa-chart-bar primary-color-text me-2"></i> Gross Profit
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" value="net_profit"
-                                            id="display_net_profit" checked>
-                                        <label class="form-check-label primary-color-text" for="display_net_profit">
-                                            <i class="fas fa-coins primary-color-text me-2"></i> Net Profit
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" value="assets" id="display_assets"
-                                            checked>
-                                        <label class="form-check-label primary-color-text" for="display_assets">
-                                            <i class="fas fa-building primary-color-text me-2"></i> Assets
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" value="liabilities"
-                                            id="display_liabilities" checked>
-                                        <label class="form-check-label primary-color-text" for="display_liabilities">
-                                            <i class="fas fa-file-invoice-dollar primary-color-text me-2"></i> Liabilities
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" value="dividends"
-                                            id="display_dividends" checked>
-                                        <label class="form-check-label primary-color-text" for="display_dividends">
-                                            <i class="fas fa-hand-holding-usd primary-color-text me-2"></i> Dividends
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-
                 </div>
             </div>
         </form>

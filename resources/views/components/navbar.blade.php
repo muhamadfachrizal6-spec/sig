@@ -2,8 +2,10 @@
     <div class="navbar-box d-flex flex-row justify-content-between w-90 align-items-center">
         <h2 class="primary-color-text">{{ $title }}</h2>
         <div class="navbar-profile" style="cursor: pointer">
-            <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/img/profile-image-blank.png') }}"
-                alt="Profile Image" class="rounded-circle border border-dark" width="40" height="40">
+            <div class="profile-wrapper border border-dark" style="border-radius:50%; cursor: pointer; width: 40px; height: 40px; display:flex; flex-direction: column; justify-content: center; align-items: center; flex-wrap: nowrap; padding: 2px">
+                <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/img/profile-image-blank.png') }}"
+                alt="Profile Image" class="img-fluid"  style="width: 100%; height: 100%;">
+            </div>
             <div id="profileDropdown" class="dropdown-menu position-absolute"
                 style="display: none; top: 50px; right: 0;">
                 <a class="dropdown-item" href="{{ route('profile-user') }}">View Profile</a>
