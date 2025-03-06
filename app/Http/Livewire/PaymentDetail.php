@@ -14,6 +14,11 @@ class PaymentDetail extends Component
     public $priceTotal;
     public $orderId;
     public $checkPaymentStatus;
+    public $paymentType;
+    public $paymentStore;
+    public $paymentCodeStore;
+    public $paymentVirtualAccount;
+    public $paymentBank;
 
     protected $listeners = ['packSelected' => 'handlePackSelection'];
 
@@ -27,6 +32,8 @@ class PaymentDetail extends Component
     {
         $this->orderId = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->first()->order_id;
         $status = \Midtrans\Transaction::status($this->orderId);
+
+        // dd($status);
 
         $trxStatus = $this->checkPaymentStatus = $status->transaction_status;
         $trxId = $status->transaction_id;
@@ -59,6 +66,17 @@ class PaymentDetail extends Component
 
     public function render()
     {
+        $this->orderId = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->first()->order_id;
+        $status = \Midtrans\Transaction::status($this->orderId);
+        $trxPaymentType = $this->paymentType = $status->payment_type;
+
+        if ($trxPaymentType == 'cstore') {
+            $this->paymentStore = $status->store;
+            $this->paymentCodeStore = $status->payment_code;
+        } else if ($trxPaymentType == 'bank_transfer') {
+            $this->paymentVirtualAccount = $status->va_numbers[0]->va_number;
+            $this->paymentBank = $status->va_numbers[0]->bank;
+        }
 
         if (!$this->paymentStatus) {
             $this->paymentStatus = Transactions::where('user_id', auth()->user()->id)
@@ -81,6 +99,11 @@ class PaymentDetail extends Component
             'selectedItemPack' => $this->selectedItemPack,
             'priceTotal' => $this->priceTotal,
             'checkPaymentStatus' => $this->checkPaymentStatus,
+            'paymentType' => $this->paymentType,
+            'paymentStore' => $this->paymentStore,
+            'paymentCodeStore' => $this->paymentCodeStore,
+            'paymentVirtualAccount' => $this->paymentVirtualAccount,
+            'paymentBank' => $this->paymentBank,
         ]);
     }
 }

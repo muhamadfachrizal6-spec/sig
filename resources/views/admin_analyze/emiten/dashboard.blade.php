@@ -11,7 +11,7 @@
     <div class="mt-4">
         <!-- Bagian Atas: Dashboard + Tambah Data + Search -->
         <div class="card primary-color-text align-items-center mb-4 p-2 max-w-fit">
-            <h4 class="fw-bold">Data Emitten</h4>
+            <h4 class="fw-bold">Data Emiten</h4>
         </div>
 
         <!-- Header Statistik -->

@@ -2,7 +2,7 @@
     <ul class="nav">
         <li class="nav-item">
             <a class="nav-link text-item-nav {{ $activeTab === 'my-emitten' ? 'active' : '' }}" href="#"
-                wire:click.prevent="setActiveTab('my-emitten')">My Emitten</a>
+                wire:click.prevent="setActiveTab('my-emitten')">My Emiten</a>
         </li>
         <li class="nav-item">
             <a class="nav-link text-item-nav {{ $activeTab === 'support' ? 'active' : '' }}" href="#"
