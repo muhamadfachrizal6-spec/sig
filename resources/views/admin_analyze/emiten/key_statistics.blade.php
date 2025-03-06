@@ -50,271 +50,156 @@
             <div class="row income-statement d-flex flex-wrap gap-4">
                 <p class="mt-4"><b>Income Statement Data</b></p>
                 <hr>
-
-                <div class="col-md-5">
-                    <div class="card p-3 border-0">
-                        <h4>Revenue</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Quarter</th>
-                                    @foreach ($years as $year)
-                                        <th>{{ $year }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($quarters as $quarter)
-                                    <tr>
-                                        <td>{{ $quarter }}</td>
+                @foreach (['revenue', 'gross_profit', 'net_profit'] as $type)
+                    <div class="col-md-5">
+                        <div class="card p-3 border-0">
+                            <h4>{{ strtoupper(str_replace('_', ' ', $type)) }}</h4>
+                            <div class="w-50">
+                                <label for="unit_{{ $type }}">Unit for {{ $type }}</label>
+                                <input type="text"
+                                    name="unit_{{ strtolower($type) }}"
+                                    @foreach ($quarters as $quarter)
                                         @foreach ($years as $year)
-                                            <td>
-                                                <input type="text"
-                                                    name="income_statement[revenue][{{ $year }}][{{ $quarter }}]"
-                                                    value="{{ old('income_statement.revenue.' . $year . '.' . $quarter, $revenueData[$quarter][$year]['revenue'] ?? '-') }}"
-                                                    class="form-control">
-                                            </td>
+                                            value="{{ old('unit_' . strtolower($type), $revenueData[$quarter][$year]['unit_' . strtolower($type)] ?? '') }}"
+                                        @endforeach
+                                    @endforeach
+                                    placeholder="unit ex: (M / % / etc)" 
+                                    class="form-control w-50">
+                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Quarter</th>
+                                        @foreach ($years as $year)
+                                            <th>{{ $year }}</th>
                                         @endforeach
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            
-                <div class="col-md-5">
-                    <div class="card p-3 border-0">
-                        <h4>Gross Profit</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Quarter</th>
-                                    @foreach ($years as $year)
-                                        <th>{{ $year }}</th>
+                                </thead>
+                                <tbody>
+                                    @foreach ($quarters as $quarter)
+                                        <tr>
+                                            <td>{{ $quarter }}</td>
+                                            @foreach ($years as $year)
+                                                <td>
+                                                    <input type="text"
+                                                        name="revenues[{{ $type }}][{{ $year }}][{{ $quarter }}]"
+                                                        value="{{ old('revenues.' . $type . '.' . $year . '.' . $quarter, $revenueData[$quarter][$year][$type] ?? '-') }}"
+                                                        class="form-control">
+                                                </td>
+                                            @endforeach
+                                        </tr>
                                     @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($quarters as $quarter)
-                                    <tr>
-                                        <td>{{ $quarter }}</td>
-                                        @foreach ($years as $year)
-                                            <td>
-                                                <input type="text"
-                                                    name="income_statement[gross_profit][{{ $year }}][{{ $quarter }}]"
-                                                    value="{{ old('income_statement.gross_profit.' . $year . '.' . $quarter, $revenueData[$quarter][$year]['gross_profit'] ?? '-') }}"
-                                                    class="form-control">
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            
-                <div class="col-md-5">
-                    <div class="card p-3 border-0">
-                        <h4>Net Profit</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Quarter</th>
-                                    @foreach ($years as $year)
-                                        <th>{{ $year }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($quarters as $quarter)
-                                    <tr>
-                                        <td>{{ $quarter }}</td>
-                                        @foreach ($years as $year)
-                                            <td>
-                                                <input type="text"
-                                                    name="income_statement[net_profit][{{ $year }}][{{ $quarter }}]"
-                                                    value="{{ old('income_statement.net_profit.' . $year . '.' . $quarter, $revenueData[$quarter][$year]['net_profit'] ?? '-') }}"
-                                                    class="form-control">
-                                            </td>
+                @endforeach
+
+
+                <!-- Financial Position Section -->
+                <div class="row assets d-flex flex-wrap gap-4">
+                    <p class="mt-4"><b>Financial Position Data</b></p>
+                    <hr>
+                    @foreach (['asset', 'liability', 'equality'] as $type)
+                        <div class="col-md-5">
+                            <div class="card p-3 border-0">
+                                <h4>{{strtoupper(str_replace('_', ' ', $type))}}</h4>
+                                <div class="w-50">
+                                    <label for="unit_{{ $type }}">Unit for {{ $type }}</label>
+                                    <input type="text"
+                                        name="unit_{{ strtolower($type) }}"
+                                        @foreach ($quarters as $quarter)
+                                            @foreach ($years as $year)
+                                                value="{{ old('unit_' . strtolower($type), $financialPositionData[$quarter]['unit_' . strtolower($type)][$year] ?? '') }}"
+                                            @endforeach
                                         @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>            
-
-            <!-- Financial Position Section -->
-            <div class="row assets d-flex flex-wrap gap-4">
-                <p class="mt-4"><b>Financial Position Data</b></p>
-                <hr>
-                <div class="col-md-5">
-                    <div class="card p-3 border-0">
-                        <h4>Assets</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Quarter</th>
-                                    @foreach ($years as $year)
-                                        <th>{{ $year }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($quarters as $quarter)
-                                    <tr>
-                                        <td>{{ $quarter }}</td>
-                                        @foreach ($years as $year)
-                                            <td>
-                                                <input type="text"
-                                                    name="financial_positions[asset][{{ $year }}][{{ $quarter }}]"
-                                                    value="{{ old('financial_positions.asset.' . $year . '.' . $quarter, $financialPositionData[$quarter]['asset'][$year] ?? '-') }}"
-                                                    class="form-control">
-                                            </td>
+                                        placeholder="unit ex: (M / % / etc)" 
+                                        class="form-control w-50">
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Quarter</th>
+                                            @foreach ($years as $year)
+                                                <th>{{ $year }}</th>
+                                            @endforeach
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($quarters as $quarter)
+                                            <tr>
+                                                <td>{{ $quarter }}</td>
+                                                @foreach ($years as $year)
+                                                    <td>
+                                                        <input type="text"
+                                                            name="financial_positions[{{ $type }}][{{ $year }}][{{ $quarter }}]"
+                                                            value="{{ old('financial_positions.' . $type . '.' . $year . '.' . $quarter, $financialPositionData[$quarter][$type][$year] ?? '-') }}"
+                                                            class="form-control">
+                                                    </td>
+                                                @endforeach
+                                            </tr>
                                         @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    <!-- Dividend Section -->
+                    <div class="row dividend d-flex flex-wrap">
+                        <p class="mt-4"><b>Dividend Data</b></p>
+                        <hr>
+                        @foreach (['dividend_per_share', 'yield'] as $type)
+                            <div class="col-md-6">
+                                <div class="card p-3 border-0">
+                                    <h4>{{ strtoupper(str_replace('_', ' ', $type)) }}</h4>
+                                    <div class="w-50">
+                                        <label for="unit_{{ $type }}">Unit for {{ $type }}</label>
+                                        <input type="text"
+                                            name="unit_{{ strtolower($type) }}"
+                                            @foreach ($quarters as $quarter)
+                                                @foreach ($years as $year)
+                                                    value="{{ old('unit_' . strtolower($type), $dividendData[$quarter]['unit_' . strtolower($type)][$year] ?? '') }}"
+                                                @endforeach
+                                            @endforeach
+                                            placeholder="unit ex: (M / % / etc)" 
+                                            class="form-control w-50">
+                                    </div>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Quarter</th>
+                                                @foreach ($years as $year)
+                                                    <th>{{ $year }}</th>
+                                                @endforeach
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($quarters as $quarter)
+                                                <tr>
+                                                    <td>{{ $quarter }}</td>
+                                                    @foreach ($years as $year)
+                                                        <td>
+                                                            <input type="text"
+                                                                name="dividends[{{ $type }}][{{ $year }}][{{ $quarter }}]"
+                                                                value="{{ old('dividends.' . $year . '.' . $quarter, $dividendData[$quarter][$type][$year] ?? '-') }}"
+                                                                class="form-control">
+                                                        </td>
+                                                    @endforeach
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                </div>
 
-                <div class="col-md-5">
-                    <div class="card p-3 border-0">
-                        <h4>Liabilities</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Quarter</th>
-                                    @foreach ($years as $year)
-                                        <th>{{ $year }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($quarters as $quarter)
-                                    <tr>
-                                        <td>{{ $quarter }}</td>
-                                        @foreach ($years as $year)
-                                            <td>
-                                                <input type="text"
-                                                    name="financial_positions[liability][{{ $year }}][{{ $quarter }}]"
-                                                    value="{{ old('financial_positions.liability.' . $year . '.' . $quarter, $financialPositionData[$quarter]['liability'][$year] ?? '-') }}"
-                                                    class="form-control">
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <!-- Submit Button -->
+                    <div class="mt-4">
+                        <button class="btn-custom2 btn" type="submit" class="btn btn-primary">Update Key
+                            Statistics</button>
                     </div>
-                </div>
-
-                <div class="col-md-5">
-                    <div class="card p-3 border-0">
-                        <h4>Equality</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Quarter</th>
-                                    @foreach ($years as $year)
-                                        <th>{{ $year }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($quarters as $quarter)
-                                    <tr>
-                                        <td>{{ $quarter }}</td>
-                                        @foreach ($years as $year)
-                                            <td>
-                                                <input type="text"
-                                                    name="financial_positions[equality][{{ $year }}][{{ $quarter }}]"
-                                                    value="{{ old('financial_positions.equality.' . $year . '.' . $quarter, $financialPositionData[$quarter]['equality'][$year] ?? '-') }}"
-                                                    class="form-control">
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dividend Section -->
-            <div class="row dividend d-flex flex-wrap">
-                <p class="mt-4"><b>Dividend Data</b></p>
-                <hr>
-
-                <div class="col-md-6">
-                    <div class="card p-3 border-0">
-                        <h4>Dividend per Share</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Quarter</th>
-                                    @foreach ($years as $year)
-                                        <th>{{ $year }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($quarters as $quarter)
-                                    <tr>
-                                        <td>{{ $quarter }}</td>
-                                        @foreach ($years as $year)
-                                            <td>
-                                                <input type="text"
-                                                    name="dividends[{{ $year }}][{{ $quarter }}]"
-                                                    value="{{ old('dividends.' . $year . '.' . $quarter, $dividendData[$quarter][$year] ?? '-') }}"
-                                                    class="form-control">
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card p-3 border-0">
-                        <h4>Yield</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Quarter</th>
-                                    @foreach ($years as $year)
-                                        <th>{{ $year }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($quarters as $quarter)
-                                    <tr>
-                                        <td>{{ $quarter }}</td>
-                                        @foreach ($years as $year)
-                                            <td>
-                                                <input type="text"
-                                                    name="yields[{{ $year }}][{{ $quarter }}]"
-                                                    value="{{ old('yields.' . $year . '.' . $quarter, $yieldData[$quarter][$year] ?? '-') }}"
-                                                    class="form-control">
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="mt-4">
-                <button class="btn-custom2 btn" type="submit" class="btn btn-primary">Update Key Statistics</button>
-            </div>
         </form>
     </div>
 

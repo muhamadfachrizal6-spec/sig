@@ -63,19 +63,14 @@ class GeneralInformation extends Component
         $this->revenueData = $company->revenues
             ->groupBy('quarter')
             ->map(function ($revenues) {
-            return $revenues->pluck('revenue', 'year')->only($this->years)->sortKeys();
-            });
-
-        $this->grossProfitData = $company->revenues
-            ->groupBy('quarter')
-            ->map(function ($revenues) {
-                return $revenues->pluck('gross_profit', 'year')->only($this->years);
-            });
-
-        $this->netProfitData = $company->revenues
-            ->groupBy('quarter')
-            ->map(function ($revenues) {
-                return $revenues->pluck('net_profit', 'year')->only($this->years);
+            return [
+                'revenue' => $revenues->pluck('revenue', 'year')->only($this->years),
+                'gross_profit' => $revenues->pluck('gross_profit', 'year')->only($this->years),
+                'net_profit' => $revenues->pluck('net_profit', 'year')->only($this->years),
+                'unit_revenue' => $revenues->pluck('unit_revenue', 'year')->only($this->years),
+                'unit_gross_profit' => $revenues->pluck('unit_gross_profit', 'year')->only($this->years),
+                'unit_net_profit' => $revenues->pluck('unit_net_profit', 'year')->only($this->years),
+            ];
             });
 
         $this->financialPositionData = $company->financialPositions
@@ -85,6 +80,9 @@ class GeneralInformation extends Component
                 'asset' => $positions->pluck('asset', 'year')->only($this->years),
                 'liability' => $positions->pluck('liability', 'year')->only($this->years),
                 'equality' => $positions->pluck('equality', 'year')->only($this->years),
+                'unit_asset' => $positions->pluck('unit_asset', 'year')->only($this->years),
+                'unit_liability' => $positions->pluck('unit_liability', 'year')->only($this->years),
+                'unit_equality' => $positions->pluck('unit_equality', 'year')->only($this->years),
             ];
             });
 
@@ -92,8 +90,10 @@ class GeneralInformation extends Component
             ->groupBy('quarter')
             ->map(function ($dividends) {
                 return [
-                    'dividend_per_sheet' => $dividends->pluck('dividend_per_sheet', 'year')->only($this->years),
-                    'yield' => $dividends->pluck('yield', 'year')->only($this->years),
+                'dividend_per_share' => $dividends->pluck('dividend_per_share', 'year')->only($this->years),
+                'yield' => $dividends->pluck('yield', 'year')->only($this->years),
+                'unit_dividend_per_share' => $dividends->pluck('unit_dividend_per_share', 'year')->only($this->years),
+                'unit_yield' => $dividends->pluck('unit_yield', 'year')->only($this->years),
                 ];
             });
 
@@ -151,8 +151,6 @@ class GeneralInformation extends Component
         return view('livewire.dashboard.general-information', [
             'company' => $this->company,
             'revenueData' => $this->revenueData,
-            'grossProfitData' => $this->grossProfitData,
-            'netProfitData' => $this->netProfitData,
             'financialPositionData' => $this->financialPositionData,
             'dividendData' => $this->dividendData,
             'profitabilityRatioData' => $this->profitabilityRatioData,

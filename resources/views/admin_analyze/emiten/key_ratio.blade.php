@@ -73,16 +73,15 @@
                             <div class="d-flex gap-3 justify-content-between">
                                 <h4>{{ $ratio }}</h4>
                                 <div class="w-50">
-                                    <label for="unit_{{ $ratio }}">Unit for {{ $ratio }}</label>
                                     <input type="text"
                                         name="unit_{{ strtolower($ratio) }}"
                                         @foreach ($quarters as $quarter)
                                             @foreach ($years as $year)
-                                                value="{{ old('unit_' . strtolower($ratio), $profitabilityRatioData[$quarter][$year]['unit_' . strtolower($ratio)] ?? '-') }}"
+                                                value="{{ old('unit_' . strtolower($ratio), $profitabilityRatioData[$quarter][$year]['unit_' . strtolower($ratio)] ?? '') }}"
                                             @endforeach
                                         @endforeach
                                         placeholder="unit ex: (M / % / etc)" 
-                                        class="form-control w-50">
+                                        class="form-control w-100">
                                 </div>
                             </div>                            
                             <table class="table">
@@ -102,7 +101,7 @@
                                                 <td>
                                                     <input type="text"
                                                         name="profitability_ratios[{{ $ratio }}][{{ $year }}][{{ $quarter }}]"
-                                                        value="{{ old('profitability_ratios.' . $ratio . '.' . $year . '.' . $quarter, $profitabilityRatioData[$quarter][$year][$ratio] ?? '-') }}"
+                                                        value="{{ old('profitability_ratios.' . $ratio . '.' . $year . '.' . $quarter, $profitabilityRatioData[$quarter][$year][$ratio] ?? '') }}"
                                                         class="form-control">
                                                 </td>
                                             @endforeach
@@ -122,18 +121,19 @@
                 @foreach (['EPS', 'PER', 'BVPS', 'PBV'] as $ratio)
                     <div class="col-md-5">
                         <div class="card p-3 border-0">
-                            <h4>{{ $ratio }}</h4>
-                            <div class="w-50">
-                                <label for="unit_{{ $ratio }}">Unit for {{ $ratio }}</label>
-                                <input type="text"
-                                    name="unit_{{ strtolower($ratio) }}"
-                                    @foreach ($quarters as $quarter)
-                                        @foreach ($years as $year)
-                                            value="{{ old('unit_' . strtolower($ratio), $relativeRatioData[$quarter]['unit_' . strtolower($ratio)][$year] ?? '-') }}"
+                            <div class="d-flex gap-3 justify-content-between">
+                                <h4>{{ $ratio }}</h4>
+                                <div class="w-50">
+                                    <input type="text"
+                                        name="unit_{{ strtolower($ratio) }}"
+                                        @foreach ($quarters as $quarter)
+                                            @foreach ($years as $year)
+                                                value="{{ old('unit_' . strtolower($ratio), $relativeRatioData[$quarter]['unit_' . strtolower($ratio)][$year] ?? '') }}"
+                                            @endforeach
                                         @endforeach
-                                    @endforeach
-                                    placeholder="unit ex: (M / % / etc)" 
-                                    class="form-control w-50">
+                                        placeholder="unit ex: (M / % / etc)" 
+                                        class="form-control w-100">
+                                </div>
                             </div>
                             <table class="table">
                                 <thead>
@@ -152,7 +152,7 @@
                                                 <td>
                                                     <input type="text"
                                                         name="relative_ratios[{{ $ratio }}][{{ $year }}][{{ $quarter }}]"
-                                                        value="{{ old('relative_ratios.' . $ratio . '.' . $year . '.' . $quarter, $relativeRatioData[$quarter][$ratio][$year] ?? '-') }}"
+                                                        value="{{ old('relative_ratios.' . $ratio . '.' . $year . '.' . $quarter, $relativeRatioData[$quarter][$ratio][$year] ?? '') }}"
                                                         class="form-control">
                                                 </td>
                                             @endforeach
@@ -172,18 +172,19 @@
                 @foreach (['DAR', 'DER'] as $ratio)
                     <div class="col-md-5">
                         <div class="card p-3 border-0">
-                            <h4>{{ $ratio }}</h4>
-                            <div class="w-50">
-                                <label for="unit_{{ $ratio }}">Unit for {{ $ratio }}</label>
-                                <input type="text"
-                                    name="unit_{{ strtolower($ratio) }}"
-                                    @foreach ($quarters as $quarter)
-                                        @foreach ($years as $year)
-                                            value="{{ old('unit_' . strtolower($ratio), $liquidityRatioData[$quarter]['unit_' . strtolower($ratio)][$year] ?? '-') }}"
+                            <div class="d-flex justify-content-between">
+                                <h4>{{ $ratio }}</h4>
+                                <div class="w-50">
+                                    <input type="text"
+                                        name="unit_{{ strtolower($ratio) }}"
+                                        @foreach ($quarters as $quarter)
+                                            @foreach ($years as $year)
+                                                value="{{ old('unit_' . strtolower($ratio), $liquidityRatioData[$quarter]['unit_' . strtolower($ratio)][$year] ?? '') }}"
+                                            @endforeach
                                         @endforeach
-                                    @endforeach
-                                    placeholder="unit ex: (M / % / etc)" 
-                                    class="form-control w-50">
+                                        placeholder="unit ex: (M / % / etc)" 
+                                        class="form-control w-100">
+                                </div>
                             </div>
                             <table class="table">
                                 <thead>
@@ -202,7 +203,7 @@
                                                 <td>
                                                     <input type="text"
                                                         name="liquidity_ratios[{{ $ratio }}][{{ $year }}][{{ $quarter }}]"
-                                                        value="{{ old('liquidity_ratios.' . $ratio . '.' . $year . '.' . $quarter, $liquidityRatioData[$quarter][$ratio][$year] ?? '-') }}"
+                                                        value="{{ old('liquidity_ratios.' . $ratio . '.' . $year . '.' . $quarter, $liquidityRatioData[$quarter][$ratio][$year] ?? '') }}"
                                                         class="form-control">
                                                 </td>
                                             @endforeach

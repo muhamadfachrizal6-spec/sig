@@ -17,6 +17,9 @@ class FinancialPositionData extends Model
         'asset',
         'liability',
         'equality',
+        'unit_asset',
+        'unit_liability',
+        'unit_equality',
     ];
 
     public $timestamps = false;

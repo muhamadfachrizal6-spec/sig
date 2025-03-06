@@ -88,7 +88,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ number_format($revenues[$year], 0, '', '.') ?? '-' }} M</td>
+                                    <td>{{ isset($revenues['revenue'][$year]) ? number_format($revenues['revenue'][$year], 0, '', '.') : '-' }} {{ $revenues['unit_revenue'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -109,11 +109,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($grossProfitData as $quarter => $profits)
+                        @foreach ($revenueData as $quarter => $revenues)
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ number_format($profits[$year], 0, '', '.') ?? '-' }} M</td>
+                                    <td>{{ isset($revenues['gross_profit'][$year]) ? number_format($revenues['gross_profit'][$year], 0, '', '.') : '-' }} {{ $revenues['unit_gross_profit'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -134,11 +134,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($netProfitData as $quarter => $profits)
+                        @foreach ($revenueData as $quarter => $revenues)
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ number_format($profits[$year], 0, '', '.') ?? '-' }} M</td>
+                                    <td>{{ isset($revenues['net_profit'][$year]) ? number_format($revenues['net_profit'][$year], 0, '', '.') : '-' }} {{ $revenues['unit_net_profit'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -169,8 +169,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ isset($positions['asset'][$year]) ? number_format($positions['asset'][$year], 0, '', '.') : '-' }}
-                                        M</td>
+                                    <td>{{ isset($positions['asset'][$year]) ? number_format($positions['asset'][$year], 0, '', '.') : '-' }} {{ $positions['unit_asset'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -195,8 +194,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ isset($positions['liability'][$year]) ? number_format($positions['liability'][$year], 0, '', '.') : '-' }}
-                                        M</td>
+                                    <td>{{ isset($positions['liability'][$year]) ? number_format($positions['liability'][$year], 0, '', '.') : '-' }} {{ $positions['unit_liability'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -221,8 +219,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ isset($positions['equality'][$year]) ? number_format($positions['equality'][$year], 0, '', '.') : '-' }}
-                                        M</td>
+                                    <td>{{ isset($positions['equality'][$year]) ? number_format($positions['equality'][$year], 0, '', '.') : '-' }} {{ $positions['unit_equality'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -238,7 +235,7 @@
     <div class="row row-cols-xl-3 row-cols-md-2 row-cols-sm-1 g-3">
         <div class="col-xl-4 col-md-6 col-sm-12">
             <div class="card p-3 border-2 #43654C">
-                <h4 class="primary-color-text">Dividend per Sheet</h4>
+                <h4 class="primary-color-text">Dividend per Share</h4>
                 <table class="table">
                     <thead>
                         <tr>
@@ -253,7 +250,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $dividends['dividend_per_sheet'][$year] ?? '-' }}%</td>
+                                    <td>{{ isset($dividends['dividend_per_share'][$year]) ? number_format($dividends['dividend_per_share'][$year], 0, '', '.') : '-' }} {{ $dividends['unit_dividend_per_share'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -278,7 +275,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $dividends['yield'][$year] ?? '-' }}%</td>
+                                    <td>{{ isset($dividends['yield'][$year]) ? number_format($dividends['yield'][$year], 0, '', '.') : '-' }} {{ $dividends['unit_yield'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -309,7 +306,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['ROE'][$year] ?? '-' }} {{$ratios['unit_roe'][$year]}}</td>
+                                    <td>{{ isset($ratios['ROE'][$year]) ? number_format($ratios['ROE'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_roe'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -334,7 +331,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['GPM'][$year] ?? '-' }} {{$ratios['unit_gpm'][$year]}}</td>
+                                    <td>{{ isset($ratios['GPM'][$year]) ? number_format($ratios['GPM'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_gpm'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -359,7 +356,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['NPM'][$year] ?? '-' }} {{$ratios['unit_npm'][$year]}}</td>
+                                    <td>{{ isset($ratios['NPM'][$year]) ? number_format($ratios['NPM'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_npm'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -390,7 +387,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['EPS'][$year] ?? '-' }} {{$ratios['unit_eps'][$year]}}</td>
+                                    <td>{{ isset($ratios['EPS'][$year]) ? number_format($ratios['EPS'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_eps'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -415,7 +412,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['PER'][$year] ?? '-' }} {{$ratios['unit_per'][$year]}}</td>
+                                    <td>{{ isset($ratios['PER'][$year]) ? number_format($ratios['PER'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_per'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -440,7 +437,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['BVPS'][$year] ?? '-' }} {{$ratios['unit_bvps'][$year]}}</td>
+                                    <td>{{ isset($ratios['BVPS'][$year]) ? number_format($ratios['BVPS'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_bvps'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -465,7 +462,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['PBV'][$year] ?? '-' }} {{$ratios['unit_pbv'][$year]}}</td>
+                                    <td>{{ isset($ratios['PBV'][$year]) ? number_format($ratios['PBV'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_pbv'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -496,7 +493,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['DAR'][$year] ?? '-' }} {{$ratios['unit_dar'][$year]}}</td>
+                                    <td>{{ isset($ratios['DAR'][$year]) ? number_format($ratios['DAR'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_dar'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach
@@ -521,7 +518,7 @@
                             <tr>
                                 <td>{{ $quarter }}</td>
                                 @foreach ($years as $year)
-                                    <td>{{ $ratios['DER'][$year] ?? '-' }} {{$ratios['unit_der'][$year]}}</td>
+                                    <td>{{ isset($ratios['DER'][$year]) ? number_format($ratios['DER'][$year], 0, '', '.') : '-' }} {{ $ratios['unit_der'][$year]}}</td>
                                 @endforeach
                             </tr>
                         @endforeach

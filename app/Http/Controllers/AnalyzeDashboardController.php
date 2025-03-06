@@ -314,6 +314,9 @@ class AnalyzeDashboardController extends Controller
                     'revenue' => $revenue ? $revenue->revenue : '-',
                     'gross_profit' => $revenue ? $revenue->gross_profit : '-',
                     'net_profit' => $revenue ? $revenue->net_profit : '-',
+                    'unit_revenue' => $revenue ? $revenue->unit_revenue : '',
+                    'unit_gross_profit' => $revenue ? $revenue->unit_gross_profit : '',
+                    'unit_net_profit' => $revenue ? $revenue->unit_net_profit : '',
                 ];
             }
         }
@@ -329,20 +332,24 @@ class AnalyzeDashboardController extends Controller
                 $financialPositionData[$quarter]['asset'][$year] = $financialPosition ? $financialPosition->asset : '-';
                 $financialPositionData[$quarter]['liability'][$year] = $financialPosition ? $financialPosition->liability : '-';
                 $financialPositionData[$quarter]['equality'][$year] = $financialPosition ? $financialPosition->equality : '-';
+                $financialPositionData[$quarter]['unit_asset'][$year] = $financialPosition ? $financialPosition->unit_asset : '';
+                $financialPositionData[$quarter]['unit_liability'][$year] = $financialPosition ? $financialPosition->unit_liability : '';
+                $financialPositionData[$quarter]['unit_equality'][$year] = $financialPosition ? $financialPosition->unit_equality : '';
             }
         }
 
         // Ambil dividend data
         $dividendData = [];
-        $yieldData = [];
         foreach ($quarters as $quarter) {
             foreach ($years as $year) {
                 $dividend = DividendData::where('company_id', $companyId)
                     ->where('year', $year)
                     ->where('quarter', $quarter)
                     ->first();
-                $dividendData[$quarter][$year] = $dividend ? $dividend->dividend_per_sheet : '-';
-                $yieldData[$quarter][$year] = $dividend ? $dividend->yield : '-';
+                $dividendData[$quarter]['dividend_per_share'][$year] = $dividend ? $dividend->dividend_per_share : '-';
+                $dividendData[$quarter]['yield'][$year] = $dividend ? $dividend->yield : '-';
+                $dividendData[$quarter]['unit_dividend_per_share'][$year] = $dividend ? $dividend->unit_dividend_per_share : '';
+                $dividendData[$quarter]['unit_yield'][$year] = $dividend ? $dividend->unit_yield : '';
             }
         }
 
@@ -354,107 +361,117 @@ class AnalyzeDashboardController extends Controller
             'revenueData',
             'financialPositionData',
             'dividendData',
-            'yieldData',
             'allYears'
         ));
     }
 
     public function update_key_statistics(Request $request, $companyId)
     {
-        // Validasi input, pastikan semua field yang diharapkan terisi
-        $request->validate(
-            [
-                'revenues.*.*' => 'numeric|nullable',
-                'gross_profits.*.*' => 'numeric|nullable',
-                'net_profits.*.*' => 'numeric|nullable',
-                'financial_positions.asset.*.*' => 'nullable|numeric',
-                'financial_positions.liability.*.*' => 'nullable|numeric',
-                'financial_positions.equality.*.*' => 'nullable|numeric',
-                'dividends.*.*' => 'nullable|numeric',
-            ]
-        );
+        try {
+            // Validasi input, pastikan semua field yang diharapkan terisi
+            $request->validate(
+                [
+                    'revenues.*.*.*' => 'numeric|nullable',
+                    'gross_profits.*.*.*' => 'numeric|nullable',
+                    'net_profits.*.*.*' => 'numeric|nullable',
+                    'financial_positions.*.*.*' => 'nullable|numeric',
+                    'dividends.*.*.*' => 'nullable|numeric',
+                ]
+            );
 
-        // Update Revenue Data
-        foreach ($request->input('revenues', []) as $year => $quarters) {
-            foreach ($quarters as $quarter => $revenue) {
-                $revenueData = RevenueData::where('company_id', $companyId)
-                    ->where('year', $year)
-                    ->where('quarter', $quarter)
-                    ->first();
-
-                if ($revenueData) {
-                    $revenueData->update([
-                        'revenue' => $revenue,
-                        'gross_profit' => $request->input("gross_profits.$year.$quarter"),
-                        'net_profit' => $request->input("net_profits.$year.$quarter"),
-                    ]);
-                } else {
-                    RevenueData::create([
-                        'company_id' => $companyId,
-                        'year' => $year,
-                        'quarter' => $quarter,
-                        'revenue' => $revenue,
-                        'gross_profit' => $request->input("gross_profits.$year.$quarter"),
-                        'net_profit' => $request->input("net_profits.$year.$quarter"),
-                    ]);
+            // Update Revenue Data
+            foreach ($request->input('revenues', []) as $revenue => $years) {
+                foreach ($years as $year => $quarters) {
+                    foreach ($quarters as $quarter => $value) {
+                        RevenueData::updateOrCreate(
+                            [
+                                'company_id' => $companyId,
+                                'year' => $year,
+                                'quarter' => $quarter,
+                            ],
+                            [$revenue => $value]
+                        );
+                    }
                 }
             }
-        }
 
-        // Update Financial Position Data (Assets and Liabilities)
-        foreach ($request->input('financial_positions.asset', []) as $year => $quarters) {
-            foreach ($quarters as $quarter => $asset) {
-                $financialPositionData = FinancialPositionData::where('company_id', $companyId)
-                    ->where('year', $year)
-                    ->where('quarter', $quarter)
-                    ->first();
+            $unitFieldsRevenue = [
+                'revenue' => 'unit_revenue',
+                'gross_profit' => 'unit_gross_profit',
+                'net_profit' => 'unit_net_profit',
+            ];
 
-                if ($financialPositionData) {
-                    $financialPositionData->update([
-                        'asset' => $asset,
-                        'liability' => $request->input("financial_positions.liability.$year.$quarter"),
-                        'equality' => $request->input("financial_positions.equality.$year.$quarter"),
-                    ]);
-                } else {
-                    FinancialPositionData::create([
-                        'company_id' => $companyId,
-                        'year' => $year,
-                        'quarter' => $quarter,
-                        'asset' => $asset,
-                        'liability' => $request->input("financial_positions.liability.$year.$quarter"),
-                        'equality' => $request->input("financial_positions.equality.$year.$quarter"),
-                    ]);
+            foreach ($unitFieldsRevenue as $ratio => $column) {
+                $unitValue = $request->input('unit_' . strtolower($ratio));
+                if ($unitValue) {
+                    RevenueData::query()
+                        ->update([$column => $unitValue]);
                 }
             }
-        }
 
-        // Update Dividend Data
-        foreach ($request->input('dividends', []) as $year => $quarters) {
-            foreach ($quarters as $quarter => $dividend) {
-                $yield = $request->input("yields.$year.$quarter");
-                $dividendData = DividendData::where('company_id', $companyId)
-                    ->where('year', $year)
-                    ->where('quarter', $quarter)
-                    ->first();
-
-                if ($dividendData) {
-                    $dividendData->update([
-                        'dividend_per_sheet' => $dividend,
-                        'yield' => $yield,
-                    ]);
-                } else {
-                    DividendData::create([
-                        'company_id' => $companyId,
-                        'year' => $year,
-                        'quarter' => $quarter,
-                        'dividend_per_sheet' => $dividend,
-                        'yield' => $yield,
-                    ]);
+            // Update Financial Position Data (Assets and Liabilities)
+            foreach ($request->input('financial_positions', []) as $financial_position => $years) {
+                foreach ($years as $year => $quarters) {
+                    foreach ($quarters as $quarter => $value) {
+                        FinancialPositionData::updateOrCreate(
+                            [
+                                'company_id' => $companyId,
+                                'year' => $year,
+                                'quarter' => $quarter,
+                            ],
+                            [$financial_position => $value]
+                        );
+                    }
                 }
             }
-        }
 
-        return redirect()->back()->with('success', 'Key Ratios updated successfully.');
+            $unitFieldsFinancial = [
+                'asset' => 'unit_asset',
+                'liability' => 'unit_liability',
+                'equality' => 'unit_equality',
+            ];
+
+            foreach ($unitFieldsFinancial as $ratio => $column) {
+                $unitValue = $request->input('unit_' . strtolower($ratio));
+                if ($unitValue) {
+                    FinancialPositionData::query()
+                        ->update([$column => $unitValue]);
+                }
+            }
+
+            // Update Dividend Data
+            foreach ($request->input('dividends', []) as $dividend => $years) {
+                foreach ($years as $year => $quarters) {
+                    foreach ($quarters as $quarter => $value) {
+                        DividendData::updateOrCreate(
+                            [
+                                'company_id' => $companyId,
+                                'year' => $year,
+                                'quarter' => $quarter,
+                            ],
+                            [$dividend => $value]
+                        );
+                    }
+                }
+            }
+
+            $unitFieldsDividend = [
+                'dividend_per_share' => 'unit_dividend_per_share',
+                'yield' => 'unit_yield',
+            ];
+
+            foreach ($unitFieldsDividend as $ratio => $column) {
+                $unitValue = $request->input('unit_' . strtolower($ratio));
+                if ($unitValue) {
+                    DividendData::query()
+                        ->update([$column => $unitValue]);
+                }
+            }
+
+            return redirect()->back()->with('success', 'Key Statistics updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mengupdate data' . $e->getMessage());
+        }
     }
 
     public function edit_key_ratio($companyId, Request $request)
@@ -519,10 +536,10 @@ class AnalyzeDashboardController extends Controller
                 $relativeRatioData[$quarter]['PER'][$year] = $relativeRatio ? $relativeRatio->PER : '-';
                 $relativeRatioData[$quarter]['BVPS'][$year] = $relativeRatio ? $relativeRatio->BVPS : '-';
                 $relativeRatioData[$quarter]['PBV'][$year] = $relativeRatio ? $relativeRatio->PBV : '-';
-                $relativeRatioData[$quarter]['unit_eps'][$year] = $relativeRatio ? $relativeRatio->unit_eps : '-';
-                $relativeRatioData[$quarter]['unit_per'][$year] = $relativeRatio ? $relativeRatio->unit_per : '-';
-                $relativeRatioData[$quarter]['unit_bvps'][$year] = $relativeRatio ? $relativeRatio->unit_bvps : '-';
-                $relativeRatioData[$quarter]['unit_pbv'][$year] = $relativeRatio ? $relativeRatio->unit_pbv : '-';
+                $relativeRatioData[$quarter]['unit_eps'][$year] = $relativeRatio ? $relativeRatio->unit_eps : '';
+                $relativeRatioData[$quarter]['unit_per'][$year] = $relativeRatio ? $relativeRatio->unit_per : '';
+                $relativeRatioData[$quarter]['unit_bvps'][$year] = $relativeRatio ? $relativeRatio->unit_bvps : '';
+                $relativeRatioData[$quarter]['unit_pbv'][$year] = $relativeRatio ? $relativeRatio->unit_pbv : '';
             }
         }
 
@@ -536,8 +553,8 @@ class AnalyzeDashboardController extends Controller
                     ->first();
                 $liquidityRatioData[$quarter]['DAR'][$year] = $liquidity ? $liquidity->DAR : '-';
                 $liquidityRatioData[$quarter]['DER'][$year] = $liquidity ? $liquidity->DER : '-';
-                $liquidityRatioData[$quarter]['unit_dar'][$year] = $liquidity ? $liquidity->unit_dar : '-';
-                $liquidityRatioData[$quarter]['unit_der'][$year] = $liquidity ? $liquidity->unit_der : '-';
+                $liquidityRatioData[$quarter]['unit_dar'][$year] = $liquidity ? $liquidity->unit_dar : '';
+                $liquidityRatioData[$quarter]['unit_der'][$year] = $liquidity ? $liquidity->unit_der : '';
             }
         }
 

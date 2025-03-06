@@ -14,7 +14,7 @@ class DividendData extends Model
         'company_id',
         'year',
         'quarter',
-        'dividend_per_sheet',
+        'dividend_per_share',
         'yield',
     ];
 

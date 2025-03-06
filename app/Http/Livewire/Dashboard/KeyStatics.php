@@ -284,7 +284,7 @@ class KeyStatics extends Component
 
                     return $sorted
                         ->filter(function ($item) {
-                            return $item->dividend_per_sheet != 0 || $item->yield != 0;
+                    return $item->dividend_per_share != 0 || $item->yield != 0;
                         })
                         ->first() ?? $sorted->first();
                 })
@@ -414,7 +414,7 @@ class KeyStatics extends Component
                 'series' => [
                     [
                         'name' => 'Dividend Per Sheet',
-                        'data' => $filteredDividends->pluck('dividend_per_sheet')->map(function ($value) {
+                        'data' => $filteredDividends->pluck('dividend_per_share')->map(function ($value) {
                             return floatval(str_replace(' B', '', $value));
                         })->toArray(),
                     ],

@@ -115,7 +115,7 @@ class SpreadsheetController extends Controller
                         'year' => $year,
                         'quarter' => $quarter,
 
-                        'dividend_per_sheet' => $dividendPerSheet,
+                        'dividend_per_share' => $dividendPerSheet,
                         'yield' => $yield,
 
                         'asset' => $asset,
@@ -213,7 +213,7 @@ class SpreadsheetController extends Controller
                         'year' => $entry['year'],
                         'quarter' => $entry['quarter'],
 
-                        'dividend_per_sheet' => $entry['dividend_per_sheet'],
+                        'dividend_per_share' => $entry['dividend_per_share'],
                         'yield' => $entry['yield'],
                     ];
                 }
@@ -288,7 +288,7 @@ class SpreadsheetController extends Controller
                         'quarter' => $dividend['quarter'],
                     ],
                     [
-                        'dividend_per_sheet' => $dividend['dividend_per_sheet'],
+                        'dividend_per_share' => $dividend['dividend_per_share'],
                         'yield' => $dividend['yield'],
                     ]
                 );

@@ -17,6 +17,9 @@ class RevenueData extends Model
         'revenue',
         'gross_profit',
         'net_profit',
+        'unit_revenue',
+        'unit_gross_profit',
+        'unit_net_profit',
     ];
 
     public $timestamps = false;
