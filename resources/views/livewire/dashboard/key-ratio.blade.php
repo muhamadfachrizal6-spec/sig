@@ -117,7 +117,7 @@
                     <p>No data available for the selected timeframe.</p>
                 @else
                     @foreach ($profitData as $year => $quarters)
-                        <h6>Growth Net Profit {{ $year }}</h6>
+                        <h6 class="text-center primary-color text-white p-2 rounded">Growth Net Profit {{ $year }}</h6>
                         @if (is_array($quarters) || is_object($quarters))
                             @foreach ($quarters as $quarter => $data)
                                 @if (is_array($data) || is_object($data))
@@ -129,10 +129,20 @@
                                                     <span>{{ $entry['value'] }}%</span>
                                                 </div>
                                                 <div class="progress">
-                                                    <div class="progress-bar" role="progressbar"
+                                                    <div class="progress-bar 
+                                                        @if($entry['value'] >= 75) 
+                                                            bg-success 
+                                                        @elseif($entry['value'] >= 50) 
+                                                            bg-warning 
+                                                        @else 
+                                                            bg-danger 
+                                                        @endif"
+                                                        role="progressbar"
                                                         style="width: {{ $entry['value'] }}%;"
-                                                        aria-valuenow="{{ $entry['value'] }}" aria-valuemin="0"
-                                                        aria-valuemax="100"></div>
+                                                        aria-valuenow="{{ $entry['value'] }}" 
+                                                        aria-valuemin="0" 
+                                                        aria-valuemax="100">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,7 +165,7 @@
                     <p>No data available for the selected timeframe.</p>
                 @else
                     @foreach ($priceData as $year => $quarters)
-                        <h6>Price {{ $year }}</h6>
+                        <h6 class="text-center primary-color text-white p-2 rounded">Price {{ $year }}</h6>
                         @if (is_array($quarters) || is_object($quarters))
                             @foreach ($quarters as $quarter => $data)
                                 @if (is_array($data) || is_object($data))
@@ -167,7 +177,15 @@
                                                     <span>{{ $entry['value'] }}</span>
                                                 </div>
                                                 <div class="progress">
-                                                    <div class="progress-bar" role="progressbar"
+                                                    <div class="progress-bar" 
+                                                        @if($entry['value'] >= 75) 
+                                                            bg-success 
+                                                        @elseif($entry['value'] >= 50) 
+                                                            bg-warning 
+                                                        @else 
+                                                            bg-danger 
+                                                        @endif"
+                                                        role="progressbar"
                                                         style="width: {{ $entry['value'] }}"
                                                         aria-valuenow="{{ $entry['value'] }}" aria-valuemin="0"
                                                         aria-valuemax="100"></div>
@@ -249,21 +267,21 @@
         const relativeRatioData = @json($relativeRatioData);
         const liquidityRatioData = @json($liquidityRatioData);
 
-        loadKeyStatisticsChart('profitabilityRatioData', profitabilityRatioData, 'Profitability Ratio');
-        loadKeyStatisticsChart('relativeRatioData', relativeRatioData, 'Relative Ratio');
-        loadKeyStatisticsChart('liquidityRatioData', liquidityRatioData, 'Liquidity Ratio');
-        loadKeyStatisticsChart('modalPopupData', modalPopupData, 'PERIODE');
+        loadKeyRatioChart('profitabilityRatioData', profitabilityRatioData, 'Profitability Ratio');
+        loadKeyRatioChart('relativeRatioData', relativeRatioData, 'Relative Ratio');
+        loadKeyRatioChart('liquidityRatioData', liquidityRatioData, 'Liquidity Ratio');
+        loadKeyRatioChart('modalPopupData', modalPopupData, 'PERIODE');
     });
 
     window.addEventListener('update-chart', function(event) {
-        loadKeyStatisticsChart('profitabilityRatioData', event.detail.profitabilityRatioData,
+        loadKeyRatioChart('profitabilityRatioData', event.detail.profitabilityRatioData,
             'Profitability Ratio');
-        loadKeyStatisticsChart('relativeRatioData', event.detail.relativeRatioData, 'Relative Ratio');
-        loadKeyStatisticsChart('liquidityRatioData', event.detail.liquidityRatioData, 'Liquidity Ratio');
-        loadKeyStatisticsChart('modalPopupData', event.detail.modalPopupData, 'PERIODE');
+        loadKeyRatioChart('relativeRatioData', event.detail.relativeRatioData, 'Relative Ratio');
+        loadKeyRatioChart('liquidityRatioData', event.detail.liquidityRatioData, 'Liquidity Ratio');
+        loadKeyRatioChart('modalPopupData', event.detail.modalPopupData, 'PERIODE');
     });
 
-    function loadKeyStatisticsChart(container, data, title) {
+    function loadKeyRatioChart(container, data, title) {
         if (!data || !data.categories || !data.series) {
             console.error("Invalid data format:", data);
             return;

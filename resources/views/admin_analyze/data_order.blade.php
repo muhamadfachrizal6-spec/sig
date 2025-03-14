@@ -48,5 +48,69 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tabel Data User -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="data-user-header d-flex flex-row justify-content-between align-items-center">
+                    <h4>Data User</h4>
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr class="text-center">
+                                <th>Order Id</th>
+                                <th>User Name</th>
+                                <th>Status</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($userOrder as $order)
+                                <tr>
+                                    <td>{{ $order->order_id }}</td>
+                                    <td class="text-center">{{ $order->username }}</td>
+                                    <td class="text-center">{{ $order->work }}</td>
+                                    <td class="text-center">{{ $order->email }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <!-- Tombol Previous -->
+                        <li class="page-item {{ $order->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $order->previousPageUrl() }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- Logika Pagination -->
+                        @for ($i = 1; $i <= $order->lastPage(); $i++)
+                            @if ($i == 1 || $i == $order->lastPage() || ($i >= $order->currentPage() - 1 && $i <= $order->currentPage() + 1))
+                                <li class="page-item {{ $i == $order->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $order->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @elseif ($i == 2 && $order->currentPage() > 4)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @elseif ($i == $order->lastPage() - 1 && $order->currentPage() < $order->lastPage() - 3)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                        @endfor
+
+                        <!-- Tombol Next -->
+                        <li class="page-item {{ $order->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link" href="{{ $order->nextPageUrl() }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 @endsection

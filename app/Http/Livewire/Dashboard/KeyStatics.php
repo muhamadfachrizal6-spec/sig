@@ -192,7 +192,7 @@ class KeyStatics extends Component
         $this->modalPopupData = [];
 
         $filteredMarketShares = $company->marketShares
-            ->sortByDesc('year')
+            ->sortBy('year')
             ->filter(function ($marketShare) use ($yearsFilter) {
                 return in_array($marketShare->year, $yearsFilter);
             });
@@ -313,7 +313,7 @@ class KeyStatics extends Component
                     'quarter' => $marketShare->quarter
                 ];
             })->sortBy([
-                ['year', 'desc'],
+                ['year', 'asc'],
                 ['quarter', 'asc']
             ])->map(function ($item) {
                 return $item['year'] . ' - ' . $item['quarter'];

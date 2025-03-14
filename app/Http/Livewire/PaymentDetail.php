@@ -33,8 +33,6 @@ class PaymentDetail extends Component
         $this->orderId = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->first()->order_id;
         $status = \Midtrans\Transaction::status($this->orderId);
 
-        // dd($status);
-
         $trxStatus = $this->checkPaymentStatus = $status->transaction_status;
         $trxId = $status->transaction_id;
         $trxPrice = $status->gross_amount;
@@ -59,6 +57,18 @@ class PaymentDetail extends Component
 
             Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->update(['status' => 'Success']);
             $trxMessage = "Selamat, pembayaran Anda sudah sukses!<br>Waktu Transaksi: $trxTimeFormatted<br>ID Transaksi: $trxId<br>Total Pembayaran: $trxPrice<br>Metode Pembayaran: $trxPaymentType";
+
+            $this->dispatchBrowserEvent('swal:success', [
+                'title' => 'Payment Success!',
+                'text' => "Transaction Time: $trxTimeFormatted\nTransaction ID: $trxId\nTotal Payment: Rp $trxPrice\nPayment Method: " . ucwords(str_replace('_', ' ', $trxPaymentType)),
+                'icon' => 'success',
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('swal:info', [
+                'title' => 'Payment Pending!',
+                'text' => "Transaction Time: $trxTimeFormatted\nTransaction ID: $trxId\nTotal Payment: Rp $trxPrice\nPayment Method: " . ucwords(str_replace('_', ' ', $trxPaymentType)),
+                'icon' => 'info',
+            ]);
         }
 
         $this->emit('paymentStatusChecked', $trxMessage);
@@ -69,13 +79,17 @@ class PaymentDetail extends Component
         $this->orderId = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->first()->order_id;
         $status = \Midtrans\Transaction::status($this->orderId);
         $trxPaymentType = $this->paymentType = $status->payment_type;
+        // dd($status);
 
         if ($trxPaymentType == 'cstore') {
             $this->paymentStore = $status->store;
             $this->paymentCodeStore = $status->payment_code;
         } else if ($trxPaymentType == 'bank_transfer') {
-            $this->paymentVirtualAccount = $status->va_numbers[0]->va_number;
+            $this->paymentVirtualAccount = $status->va_numbers[0]->va_number !== null ? $status->va_numbers[0]->va_number : $status->permata_va_number;
             $this->paymentBank = $status->va_numbers[0]->bank;
+        } else if ($trxPaymentType == 'echannel') {
+            $this->paymentVirtualAccount = $status->biller_key;
+            $this->paymentBank = 'Bank Mandiri';
         }
 
         if (!$this->paymentStatus) {

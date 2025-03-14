@@ -17,7 +17,7 @@ class SpreadsheetController extends Controller
     public function index()
     {
         try {
-            $values = new SheetDB('6skh3cxgsnm88');
+            $values = new SheetDB('wwizw577wk7n4');
             $data = json_decode(json_encode($values->get()), true);
 
             // Lewati heaDER (baris pertama)

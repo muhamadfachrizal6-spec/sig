@@ -47,7 +47,7 @@ class KeyRatio extends Component
 
         // Mengambil daftar tahun yang ada di database (marketShares, profitabilityRatios, dll)
         $this->yearsAvailable = Company::with(['profitabilityRatios', 'relativeRatios', 'liquidityRatios'])
-        ->get()
+            ->get()
             ->flatMap(function ($company) {
                 return $company->profitabilityRatios->pluck('year')
                 ->merge($company->relativeRatios->pluck('year'))
@@ -192,7 +192,7 @@ class KeyRatio extends Component
         $this->modalPopupData = [];
 
         $filteredMarketShares = $company->marketShares
-            ->sortByDesc('year')
+            ->sortBy('year')
             ->filter(function ($marketShare) use ($yearsFilter) {
                 return in_array($marketShare->year, $yearsFilter);
             });
@@ -260,14 +260,17 @@ class KeyRatio extends Component
                     return [
                         'year' => $yearData->first()->year,
                         'EPS' => $yearData->sum('EPS'),
+
                         'PER' => optional($yearData->filter(function ($item) {
-                            return !is_null($item->PER) && $item->PER !== 0.0;
+                            return $item->PER != 0.0;
                         })->sortByDesc('quarter')->first())->PER,
+
                         'BVPS' => optional($yearData->filter(function ($item) {
-                            return !is_null($item->BVPS) && $item->BVPS !== 0.0;
+                            return $item->BVPS;
                         })->sortByDesc('quarter')->first())->BVPS,
+
                         'PBV' => optional($yearData->filter(function ($item) {
-                            return !is_null($item->PBV) && $item->PBV !== 0.0;
+                            return $item->PBV;
                         })->sortByDesc('quarter')->first())->PBV,
                     ];
                 }
@@ -281,7 +284,7 @@ class KeyRatio extends Component
                     ->first() ?? $sorted->first();
                 })
                 ->filter();
-            
+
 
             $filteredliquidityRatio = $filteredliquidityRatio
                 ->groupBy('year')
@@ -319,7 +322,8 @@ class KeyRatio extends Component
                     'year' => $marketShare->year,
                     'quarter' => $marketShare->quarter
                 ];
-            })->sortBy([['year', 'desc'],
+            })->sortBy([
+                ['year', 'asc'],
                 ['quarter', 'asc']
             ])->map(function ($item) {
                 return $item['year'] . ' - ' . $item['quarter'];
@@ -343,9 +347,9 @@ class KeyRatio extends Component
         if ($this->account === 'profitabilityRatioData' || $this->account === 'All') {
             $this->profitabilityRatioData = [
                 'categories' => $this->periode === 'annual'
-                ? $filteredprofitabilityRatio->map(function ($ratio) use ($company) {
-                    return $ratio->year;
-                })->values()->toArray()
+                    ? $filteredprofitabilityRatio->map(function ($ratio) use ($company) {
+                        return $ratio->year;
+                    })->values()->toArray()
                     : $filteredprofitabilityRatio->map(function ($ratio) {
                         return $ratio->year . ' - ' . $ratio->quarter;
                     })->values()->toArray(),
@@ -376,12 +380,12 @@ class KeyRatio extends Component
             $this->relativeRatioData = [
                 'categories' =>
                 $this->periode === 'annual'
-                ?
+                    ?
                     $filteredrelativeRatio->map(function ($ratio) {
                         return $ratio['year'];
                     })
-                ->filter()
-                ->values()
+                    ->filter()
+                    ->values()
                     ->toArray()
                     :
                     $filteredrelativeRatio->map(function ($ratio) {
@@ -421,9 +425,9 @@ class KeyRatio extends Component
         if ($this->account === 'liquidityRatioData' || $this->account === 'All') {
             $this->liquidityRatioData = [
                 'categories' => $this->periode === 'annual'
-                ? $filteredliquidityRatio->map(function ($ratio) {
-                    return $ratio->year;
-                })->values()->toArray()
+                    ? $filteredliquidityRatio->map(function ($ratio) {
+                        return $ratio->year;
+                    })->values()->toArray()
                     : $filteredliquidityRatio->map(function ($ratio) {
                         return $ratio->year . ' - ' . $ratio->quarter;
                     })->values()->toArray(),

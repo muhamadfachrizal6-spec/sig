@@ -11,6 +11,7 @@ use App\Models\Pack;
 use App\Models\ProfitabilityRatioData;
 use App\Models\RelativeRatioData;
 use App\Models\RevenueData;
+use App\Models\Transactions;
 use App\Models\UserAnalyze;
 use App\Services\StockService;
 use Illuminate\Http\Request;
@@ -762,9 +763,11 @@ class AnalyzeDashboardController extends Controller
         ->count();
         $totalEmiten = Company::count();
         $totalUser = UserAnalyze::count();
+        $userOrder = Transactions::paginate(10);
+        $userName = Transactions::where('user_id')->UserAnalyze::where('user_id');
 
         // Kirim hasil hitungan ke view
-        return view('admin_analyze.data_order', ['orderCount' => $orderCount], compact('totalEmiten', 'totalUser', 'orderCount'));
+        return view('admin_analyze.data_order', compact('totalEmiten', 'totalUser', 'orderCount', 'userOrder'));
     }
 
     protected $stockService;
