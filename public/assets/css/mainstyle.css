@@ -186,6 +186,18 @@ input[type="radio"]:checked {
     width: 100%;
 }
 
+.hover-item{
+    color: white;
+}
+
+.hover-item:hover {
+    color: #def606 !important;
+}
+
+.small-text{
+    font-size: x-small;
+}
+
 .containerNav {
     display: flex;
     min-height: 100vh;

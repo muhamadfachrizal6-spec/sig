@@ -67,12 +67,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($userOrder as $order)
+                            @foreach ($dataOrder as $order)
                                 <tr>
-                                    <td>{{ $order->order_id }}</td>
-                                    <td class="text-center">{{ $order->username }}</td>
-                                    <td class="text-center">{{ $order->work }}</td>
-                                    <td class="text-center">{{ $order->email }}</td>
+                                    <td>{{ $order['order_id'] }}</td>
+                                    <td class="text-center">{{ $order['username'] }}</td>
+                                    <td class="text-center">{{ $order['status'] }}</td>
+                                    <td class="text-center">Rp.{{ number_format($order['total_price'], 0, ',', '.') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -83,28 +83,28 @@
                 <nav class="mt-4">
                     <ul class="pagination justify-content-center">
                         <!-- Tombol Previous -->
-                        <li class="page-item {{ $order->onFirstPage() ? 'disabled' : '' }}">
-                            <a class="page-link" href="{{ $order->previousPageUrl() }}" aria-label="Previous">
+                        <li class="page-item {{ $dataOrder->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $dataOrder->previousPageUrl() }}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-
+                
                         <!-- Logika Pagination -->
-                        @for ($i = 1; $i <= $order->lastPage(); $i++)
-                            @if ($i == 1 || $i == $order->lastPage() || ($i >= $order->currentPage() - 1 && $i <= $order->currentPage() + 1))
-                                <li class="page-item {{ $i == $order->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ $order->url($i) }}">{{ $i }}</a>
+                        @for ($i = 1; $i <= $dataOrder->lastPage(); $i++)
+                            @if ($i == 1 || $i == $dataOrder->lastPage() || ($i >= $dataOrder->currentPage() - 1 && $i <= $dataOrder->currentPage() + 1))
+                                <li class="page-item {{ $i == $dataOrder->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $dataOrder->url($i) }}">{{ $i }}</a>
                                 </li>
-                            @elseif ($i == 2 && $order->currentPage() > 4)
+                            @elseif ($i == 2 && $dataOrder->currentPage() > 4)
                                 <li class="page-item disabled"><span class="page-link">...</span></li>
-                            @elseif ($i == $order->lastPage() - 1 && $order->currentPage() < $order->lastPage() - 3)
+                            @elseif ($i == $dataOrder->lastPage() - 1 && $dataOrder->currentPage() < $dataOrder->lastPage() - 3)
                                 <li class="page-item disabled"><span class="page-link">...</span></li>
                             @endif
                         @endfor
-
+                
                         <!-- Tombol Next -->
-                        <li class="page-item {{ $order->hasMorePages() ? '' : 'disabled' }}">
-                            <a class="page-link" href="{{ $order->nextPageUrl() }}" aria-label="Next">
+                        <li class="page-item {{ $dataOrder->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link" href="{{ $dataOrder->nextPageUrl() }}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>

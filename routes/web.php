@@ -9,6 +9,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnalyzeController;
 use App\Http\Controllers\AnalyzeDashboardController;
+use App\Http\Controllers\MyOrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SpreadsheetController;
 
@@ -33,6 +34,9 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::post('payment/success', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/profile-user', [AnalyzeController::class, 'profileUser'])->name('profile-user');
     Route::put('/profile-user', [AnalyzeController::class, 'updateProfile'])->name('updateProfile');
+
+    Route::get('/myOrder', [MyOrderController::class, 'index'])->name('myOrderIndex');
+    Route::post('/check-payment-status', [MyOrderController::class, 'checkPaymentStatus'])->name('checkPaymentStatus');
 });
 Route::get('/home-sig', [AnalyzeController::class, 'index'])->name('index');
 Route::get('/signin', [AnalyzeController::class, 'signin'])->name('signin');

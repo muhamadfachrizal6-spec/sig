@@ -52,15 +52,25 @@ class NavigationPayment extends Component
     public function handlePaymentPending()
     {
         $companyList = collect($this->selectedEmiten)->pluck('ticker')->implode(', ');
+        $companyCount = collect($this->selectedEmiten)->count();
+
+        if ($this->selectedPack->name_pack === 'custom') {
+            $totalPrice = $this->selectedPack->price * $companyCount;
+        } else {
+            $totalPrice = $this->selectedPack->price;
+        }
+
         Transactions::create([
             'order_id' => 'ORDER-' . ($this->orderIdCustomPack ?  $this->orderIdCustomPack : $this->orderId),
             'company_id' => auth()->id(),
             'user_id' => auth()->user()->id,
             'selected_emiten' => $companyList,
             'pack_id' => $this->selectedPack->id,
-            'total_price' => $this->selectedPack->price,
+            'total_price' => $totalPrice,
             'status' => 'Pending',
         ]);
+
+        return redirect()->to('/myOrder');
     }
 
     public function handlePaymentSuccess()
@@ -115,7 +125,7 @@ class NavigationPayment extends Component
             Transactions::create(['order_id' => 'ORDER-' . ($this->orderIdCustomPack ?  $this->orderIdCustomPack : $this->orderId),
                 'company_id' => auth()->id(),
                 'user_id' => auth()->user()->id,
-                'selected_emiten' => $companyList,
+                'selected_emiten' => 'Bundle',
                 'pack_id' => $this->selectedPack->id,
                 'total_price' => $this->selectedPack->price,
                 'status' => 'Success',
@@ -125,6 +135,7 @@ class NavigationPayment extends Component
                 ['user_type' => 'bundle']
             );
         }
+        return redirect()->to('/myOrder');
         $this->setActiveLink('paymentDetail');
     }
 
@@ -144,8 +155,9 @@ class NavigationPayment extends Component
     public function initiatePayment()
     {
         $existTransaction = Transactions::where('user_id', auth()->user()->id)->where('pack_id', $this->selectedPack->id)->first();
-        $transactionPending = Transactions::where('user_id', auth()->user()->id)->where('status', 'pending')->first();
-        if ($existTransaction && $transactionPending) {
+        $transactionPending = Transactions::where('user_id', auth()->user()->id)->where('status', 'Pending')->first();
+        $transactionExpired = Transactions::where('user_id', auth()->user()->id)->where('status', 'Expired')->first();
+        if ($existTransaction && $transactionPending || $existTransaction && $transactionExpired) {
             $existTransaction->delete();
         }
 

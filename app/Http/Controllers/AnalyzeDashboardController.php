@@ -37,8 +37,8 @@ class AnalyzeDashboardController extends Controller
             ->orderBy('name', 'asc')
             ->paginate(10)->appends(['search' => $search]);
 
-        $orderCount = DB::table('user_analyze')
-        ->where('user_type', '!=', 'free')
+        $orderCount = DB::table('transactions')
+            ->where('status', '!=', 'Pending')
         ->count();
 
         return view('admin_analyze.emiten.dashboard', compact('companies', 'orderCount'))
@@ -687,8 +687,8 @@ class AnalyzeDashboardController extends Controller
         $users = UserAnalyze::paginate(10);
         $totalEmiten = Company::count();
         $totalUser = UserAnalyze::count();
-        $orderCount = DB::table('user_analyze')
-        ->where('user_type', '!=', 'free')
+        $orderCount = DB::table('transactions')
+            ->where('status', '!=', 'Pending')
         ->count();
 
         return view('admin_analyze.user.index', compact('users', 'totalEmiten', 'totalUser', 'orderCount'));
@@ -758,16 +758,18 @@ class AnalyzeDashboardController extends Controller
 
     public function data_order()
     {
-        $orderCount = DB::table('user_analyze')
-        ->where('user_type', '!=', 'free')
+        $orderCount = DB::table('transactions')
+            ->where('status', '!=', 'Pending')
         ->count();
         $totalEmiten = Company::count();
         $totalUser = UserAnalyze::count();
-        $userOrder = Transactions::paginate(10);
-        $userName = Transactions::where('user_id')->UserAnalyze::where('user_id');
+
+        $dataOrder = Transactions::join('user_analyze', 'transactions.user_id', '=', 'user_analyze.id')
+            ->select('transactions.*', 'user_analyze.username')
+            ->paginate(10);
 
         // Kirim hasil hitungan ke view
-        return view('admin_analyze.data_order', compact('totalEmiten', 'totalUser', 'orderCount', 'userOrder'));
+        return view('admin_analyze.data_order', compact('totalEmiten', 'totalUser', 'orderCount', 'dataOrder'));
     }
 
     protected $stockService;

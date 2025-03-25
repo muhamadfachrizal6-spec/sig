@@ -9,7 +9,7 @@
                 wire:click.prevent="setActiveLink('emiten')">Emiten</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ $activeLink === 'paymentDetail' ? 'active' : '' }} " href="#"
+            <a class="nav-link {{ $activeLink === 'paymentDetail' ? 'active' : 'disabled' }} " href="#"
                 wire:click.prevent="setActiveLink('paymentDetail')">Payment Detail</a>
         </li>
     </ul>

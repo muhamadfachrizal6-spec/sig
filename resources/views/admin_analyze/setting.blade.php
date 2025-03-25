@@ -33,7 +33,7 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            <textarea class="form-control" id="description" name="description" placeholder="use $ for new line" rows="3"></textarea>
                         </div>
 
                         <div class="d-flex justify-content-end">
@@ -65,7 +65,7 @@
                         @foreach ($packs as $pack)
                             <tr>
                                 <td>{{ $pack->name_pack }}</td>
-                                <td>{{ $pack->price }}</td>
+                                <td>Rp.{{ number_format($pack->price, 0, ',', '.') }}</td>
                                 <td>{{ $pack->description }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editPackModal" 
@@ -116,7 +116,7 @@
 
                         <div class="mb-3">
                             <label for="editDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
+                            <textarea class="form-control" id="editDescription" placeholder="use $ for new line" name="description" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -133,7 +133,7 @@
         editPackModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
-            const name = button.getAttribute('data-name');
+            const namePack = button.getAttribute('data-name');
             const price = button.getAttribute('data-price');
             const description = button.getAttribute('data-description');
 
@@ -142,7 +142,7 @@
             document.getElementById('editForm').action = formAction;
 
             // Isi form dengan data
-            document.getElementById('editNamePack').value = name;
+            document.getElementById('editNamePack').value = namePack;
             document.getElementById('editPrice').value = price;
             document.getElementById('editDescription').value = description;
         });

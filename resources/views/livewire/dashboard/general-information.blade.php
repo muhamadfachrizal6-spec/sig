@@ -61,8 +61,10 @@
         </div>
         <div class="col-lg-6 d-flex">
             <div class="card p-3 border-2 w-100 #43654C shadow">
-                <h4 class="primary-color-text">Description</h4>
-                <p>{{ $company->description ?? 'Description not available.' }}</p>
+                <h4 class="primary-color-text align-self-start">Description</h4>
+                <div class="header-company d-flex flex-column gap-4 p-3 align-items-center rounded border primary-border shadow">
+                    <p class="text-justify">{!! nl2br(e($company->description ?? 'Description not available.')) !!}</p>
+                </div>
             </div>
         </div>
     </div>
