@@ -2,95 +2,127 @@
 @section('title', 'Payment and Package')
 @section('contents')
 
+    <style>
+        .floating-label {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            font-weight: 600;
+            z-index: 1;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fff;
+        }
+
+        .card-wrapper {
+            position: relative;
+            padding-top: 2.5rem;
+        }
+    </style>
+
     <div class="mt-5">
-        <h2 class="text-center mb-4">Payment Details</h2>
-        @if($order)
-            <div class="card shadow-sm p-4">
-                <div class="d-flex justify-content-between mb-3">
-                    <h4 class="card-title">Selected Package</h4>
+        <h2 class="text-center mb-5">Payment Details</h2>
+
+        @if ($order)
+            <div class="card shadow-sm p-4 rounded-4 card-wrapper">
+                <div class="floating-label text-white bg-success fs-6">
+                    Selected Package
                 </div>
-                <div class="list-group">
-                    <div class="list-group-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
-                        <strong>Package Name:</strong>
+                <div class="list-group mt-4 border rounded-3 overflow-hidden">
+                    <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row py-3">
+                        <strong>Package Name</strong>
                         <span>{{ ucfirst($namePack) }}</span>
                     </div>
-                    @if($order->selected_emiten !== "")
-                        <div class="list-group-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
-                            <strong>Item List :</strong>
+
+                    @if (!empty($order->selected_emiten))
+                        <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row py-3">
+                            <strong>Your Emiten List</strong>
                             <span>{{ $order->selected_emiten }}</span>
                         </div>
                     @endif
-                    <div class="list-group-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
-                        <strong>Price:</strong>
+
+                    <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row py-3">
+                        <strong>Price</strong>
                         <span>Rp.{{ number_format($order->total_price ?? 0, 2) }}</span>
                     </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
-                        <strong>Payment Status :</strong>
-                        @if($order->status === 'Paid')
-                            <span class="text-white bg-success p-2 rounded"><strong>{{ (strtoupper($order->status)) }}</strong></span>
-                        @elseif($order->status === 'Pending')
-                            <span class="text-white bg-warning p-2 rounded"><strong>{{ (strtoupper($order->status)) }}</strong></span>
-                        @else
-                            <span class="text-white bg-danger p-2 rounded"><strong>{{ (strtoupper($order->status)) }}</strong></span>
-                        @endif
+
+                    <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row py-3">
+                        <strong>Payment Status</strong>
+                        <span
+                            class="badge 
+                        @if ($order->status === 'Success') bg-success 
+                        @elseif($order->status === 'Pending') bg-warning 
+                        @else bg-danger @endif px-3 py-2 fs-6">
+                            {{ strtoupper($order->status) }}
+                        </span>
                     </div>
-                    @if($trxDetails['paymentType'] === 'bank_transfer' || $trxDetails['paymentType'] === 'cstore' || $trxDetails['paymentType'] === 'echannel')
-                        <div class="list-group-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
-                            <strong>Transaction Type :</strong>
-                            @if($trxDetails['paymentType'] === 'bank_transfer')
-                                <span class="text-white primary-color p-2 rounded">
-                                    <strong>{{ strtoupper(str_replace('_', ' ', $trxDetails['paymentType'])) ?? '' }}</strong>
-                                </span>
-                            @elseif($trxDetails['paymentType'] === 'cstore')
-                                <span class="text-white primary-color p-2 rounded">
-                                    <strong>{{ strtoupper(str_replace('_', ' ', $trxDetails['trxStore'])) ?? '' }}</strong>
-                                </span>
-                            @elseif($trxDetails['paymentType'] === 'echannel')
-                                <span class="text-white primary-color p-2 rounded">
-                                    <strong>{{ strtoupper(str_replace('_', ' ', 'BANK TRANSFER')) ?? '' }}</strong>
-                                </span>
-                            @endif
+
+                    @php
+                        $paymentType = $trxDetails['paymentType'] ?? null;
+                    @endphp
+
+                    @if (in_array($paymentType, ['bank_transfer', 'cstore', 'echannel', 'qris']))
+                        <div class="list-group-item d-flex justify-content-between flex-column flex-sm-row py-3">
+                            <strong>Transaction Type</strong>
+                            <span class="text-white text-center bg-primary px-3 py-1 rounded">
+                                <strong>
+                                    @if ($paymentType === 'cstore')
+                                        {{ strtoupper($trxDetails['trxStore'] ?? 'CSTORE') }}
+                                    @elseif($paymentType === 'echannel')
+                                        BANK TRANSFER
+                                    @else
+                                        {{ strtoupper(str_replace('_', ' ', $paymentType)) }}
+                                    @endif
+                                </strong>
+                            </span>
                         </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
-                            <strong>Virtual account number :</strong>
-                            @if($trxDetails['paymentType'] === 'bank_transfer')
-                                <span class="text-dark border-primary-color border-2 border p-2 rounded"><strong>{{ $trxDetails['trxVANumber'] ?? '' }}</strong></span>
-                            @elseif($trxDetails['paymentType'] === 'cstore')
-                                <span class="text-dark outline border-primary-color p-2 rounded"><strong>{{ $trxDetails['trxVANumberCStore'] ?? '' }}</strong></span>
-                            @elseif($trxDetails['paymentType'] === 'echannel')
-                                <span class="text-dark outline border-primary-color p-2 rounded"><strong>{{ $trxDetails['trxCompanyCode'] ?? '' }}</strong> <strong>{{ $trxDetails['trxVANumber'] ?? '' }}</strong></span>
-                            @endif
-                        </div>
-                    @elseif($trxDetails['paymentType'] === 'qris')
-                        <div class="list-group-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
-                            <strong>Transaction Type :</strong>
-                            @if($trxDetails['paymentType'] === 'qris')
-                                <span class="text-white primary-color p-2 rounded">
-                                    <strong>{{ strtoupper(str_replace('_', ' ', $trxDetails['paymentType'])) ?? '' }}</strong>
-                                </span>
-                            @endif
+
+                        <div
+                            class="list-group-item text-center d-flex justify-content-between flex-column flex-sm-row py-3">
+                            <strong>Virtual account number</strong>
+                            <span class="border border-2 border-primary px-3 py-1 rounded text-dark">
+                                <strong>
+                                    @if ($paymentType === 'bank_transfer')
+                                        {{ $trxDetails['trxVANumber'] ?? '' }}
+                                    @elseif($paymentType === 'cstore')
+                                        {{ $trxDetails['trxVANumberCStore'] ?? '' }}
+                                    @elseif($paymentType === 'echannel')
+                                        {{ $trxDetails['trxCompanyCode'] ?? '' }} {{ $trxDetails['trxVANumber'] ?? '' }}
+                                    @endif
+                                </strong>
+                            </span>
                         </div>
                     @endif
                 </div>
 
-                @if($order->status === 'Paid')
-                    <div class="text-center mt-4">
-                        <a href="/dashboard-core/" class="btn btn-custom2 btn-lg">Continue to Dashboard</a>
-                    </div>
-                @else
-                    <div class="d-flex flex-row flex-wrap justify-content-center align-center gap-2">
-                        <div class="text-center mt-2">
-                            <a href="/payment" class="btn btn-custom2 btn-md">Re-order</a>
-                        </div>
-                        <div class="text-center mt-2">
+                <div class="text-center mt-4">
+                    @if ($order->status === 'Success')
+                        <a href="/dashboard-core/" class="btn btn-success btn-lg px-4">Continue to Dashboard</a>
+                    @else
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                            <a href="/payment" class="btn btn-secondary btn-md">Re-order</a>
                             <form action="{{ route('myOrderIndex') }}" method="GET">
                                 @csrf
-                                <button typp="submit" class="btn btn-warning btn-md text-white">Check Payment Status</button>
+                                <button type="submit" class="btn btn-warning btn-md text-white">Check Payment
+                                    Status</button>
                             </form>
                         </div>
-                    </div>
-                @endif
+                    @endif
+                </div>
+            </div>
+        @else
+            <div class="card shadow-sm p-4 rounded-4 text-center">
+                <h4 class="mb-3 text-danger">Oops! Order not found.</h4>
+                <p class="mb-4">We couldn’t find your payment details. Please make sure you have placed an order.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/payment" class="btn btn-success">Get it Order</a>
+                    <a href="/dashboard-core" class="btn btn-outline-secondary">Back to Dashboard</a>
+                </div>
             </div>
         @endif
     </div>
+
 @endsection

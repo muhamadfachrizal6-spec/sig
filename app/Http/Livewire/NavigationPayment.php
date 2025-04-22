@@ -81,6 +81,7 @@ class NavigationPayment extends Component
         if ($packIdName) {
             $packName = Pack::where('id', $packIdName->pack_id)->first()->name_pack;
         }
+        $companyCount = collect($this->selectedEmiten)->count();
         $companyList = collect($this->selectedEmiten)->pluck('ticker')->implode(', ');
         $companyListclear = collect($this->selectedEmiten)->pluck('ticker')->implode(', ');
         $companyListMerge = $companyList = collect($this->selectedEmiten)->pluck('ticker');
@@ -100,7 +101,7 @@ class NavigationPayment extends Component
                 'user_id' => auth()->user()->id,
                 'selected_emiten' => $newSelectedEmiten,
                 'pack_id' => $this->selectedPack->id,
-                'total_price' => $this->selectedPack->price,
+                'total_price' => $this->selectedPack->price * $companyCount,
                 'status' => 'Success',
             ]);
             UserAnalyze::updateOrCreate(
@@ -114,7 +115,7 @@ class NavigationPayment extends Component
                 'user_id' => auth()->user()->id,
                 'selected_emiten' => $companyListclear,
                 'pack_id' => $this->selectedPack->id,
-                'total_price' => $this->selectedPack->price,
+                'total_price' => $this->selectedPack->price * $companyCount,
                 'status' => 'Success',
             ]);
             UserAnalyze::updateOrCreate(

@@ -10,7 +10,7 @@
         </div>
 
         <!-- Purchase Order Form -->
-        @if($packs->count() < 3)
+        @if ($packs->count() < 3)
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <h5 class="card-title">Purchase Order</h5>
@@ -68,14 +68,14 @@
                                 <td>Rp.{{ number_format($pack->price, 0, ',', '.') }}</td>
                                 <td>{{ $pack->description }}</td>
                                 <td class="text-center">
-                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editPackModal" 
-                                            data-id="{{ $pack->id }}"
-                                            data-name="{{ $pack->name_pack }}"
-                                            data-price="{{ $pack->price }}"
-                                            data-description="{{ $pack->description }}">
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#editPackModal" data-id="{{ $pack->id }}"
+                                        data-name="{{ $pack->name_pack }}" data-price="{{ $pack->price }}"
+                                        data-description="{{ $pack->description }}">
                                         Edit
                                     </button>
-                                    <form action="{{ route('admin_analyze.setting.destroy', $pack->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('admin_analyze.setting.destroy', $pack->id) }}" method="POST"
+                                        class="d-inline" onsubmit="return confirmDelete(event)">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -130,7 +130,7 @@
 
     <script>
         const editPackModal = document.getElementById('editPackModal');
-        editPackModal.addEventListener('show.bs.modal', function (event) {
+        editPackModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
             const namePack = button.getAttribute('data-name');
@@ -146,6 +146,28 @@
             document.getElementById('editPrice').value = price;
             document.getElementById('editDescription').value = description;
         });
+
+        function confirmDelete(event) {
+            event.preventDefault(); // Hentikan form dari submit secara default
+
+            const form = event.target; // Mendapatkan form yang di-submit
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will not be able to undo this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    form.submit(); // Submit the form manually if the user confirms
+                }
+            });
+
+            return false; // Kembalikan false untuk mencegah form dari submit secara default
+        }
     </script>
 
     <!-- SweetAlert2 Notifications -->

@@ -14,7 +14,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="d-flex justify-content-end mb-3">
-                            <button type="button" id="editButton" class="btn btn-light border rounded-circle">
+                            <button type="button" id="editButton" class="btn btn-light border rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </div>

@@ -26,7 +26,7 @@
                                                 <ul class="it-submenu submenu">
                                                     <li><a href="{{route('siginstitute')}}">Sertifikasi</a></li>
                                                     <li><a href="{{route('specialclass') }}">Special Class</a></li>
-                                                    <li>
+                                                    <li><a href="{{route('signin') }}">Data Provider</a></li>
                                                 </ul>
                                             </li>
                                         @if(Route::has('login'))
@@ -84,7 +84,7 @@
                         <div class="col-xl-3 col-6">
                             <div class="it-header-2-right d-flex align-items-center justify-content-end">
                                 <div class="it-header-2-button d-none d-md-block">
-                                    <a class="it-btn" href="{{route('signin')}}">
+                                    <a class="it-btn" href="{{route('login')}}">
                                         <i class="fas fa-user" style="margin-right:10px"></i>
                                         <span>
                                             Login

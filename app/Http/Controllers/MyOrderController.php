@@ -11,9 +11,16 @@ class MyOrderController extends Controller
 {
     public function index()
     {
-        $order = Transactions_Users::where('user_id', auth()->user()->id)->first();
+        $order = Transactions_Users::where('user_id', auth()->user()->id)
+            ->where('status', '!=', 'success')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if (!$order) {
+            $order = Transactions_Users::where('user_id', auth()->user()->id)->first();
+        }
         $packOrder = Transactions_Users::with('pack')->where('user_id', auth()->user()->id)->first();
-        $namePack = $packOrder->pack ? $packOrder->pack->name_pack : 'Pack not found';
+        $namePack = ($packOrder && $packOrder->pack) ? $packOrder->pack->name_pack : 'Pack not found';
 
         $trxDetails = $this->checkPaymentStatus();
     
@@ -54,15 +61,54 @@ class MyOrderController extends Controller
             $packIdTransaction = $order->pack_id;
             $packName = Pack::where('id', $packIdTransaction)->first()->name_pack;
 
+            $companyListPending = Transactions_Users::where('user_id', auth()->user()->id)->where('status', 'pending')->where('pack_id', $packIdTransaction)->get()->pluck('selected_emiten')->toArray();
+
+            $companyListExist = Transactions_Users::where('user_id', auth()->user()->id)->where('status', 'Success')->where('pack_id', $packIdTransaction)->get()->pluck('selected_emiten')->toArray();
+
+            $allCompanies = array_merge($companyListPending, $companyListExist);
+            $companyList = collect($allCompanies)
+                ->flatMap(function ($item) {
+                    return array_map('trim', explode(',', $item));
+                })
+                ->unique()
+                ->sort()
+                ->values()
+                ->implode(', ');
+
+            $userId = auth()->user()->id;
+
             // Update status based on the transaction details
             if ($packName == 'bundle' && $trxDetails['trxStatus'] == 'settlement') {
-                UserAnalyze::updateOrCreate(['id' => auth()->user()->id], ['user_type' => 'bundle']);
-                Transactions_Users::where('user_id', auth()->user()->id)->update(['status' => 'Success']);
+                UserAnalyze::updateOrCreate(['id' => $userId], ['user_type' => 'bundle']);
+                Transactions_Users::where('user_id', $userId)->update(['status' => 'Success']);
+
+                $transactions = Transactions_Users::where('user_id', $userId)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+                if ($transactions->count() > 1) {
+                    $transactionsToDelete = $transactions->slice(1);
+                    $idsToDelete = $transactionsToDelete->pluck('id')->toArray();
+
+                    Transactions_Users::whereIn('id', $idsToDelete)->delete();
+                }
             } else if ($packName == 'custom' && $trxDetails['trxStatus'] == 'settlement') {
-                UserAnalyze::updateOrCreate(['id' => auth()->user()->id], ['user_type' => 'custom']);
-                Transactions_Users::where('user_id', auth()->user()->id)->update(['status' => 'Success']);
+                UserAnalyze::updateOrCreate(['id' => $userId], ['user_type' => 'custom']);
+                Transactions_Users::where('user_id', $userId)->update(['status' => 'Success']);
+                Transactions_Users::where('user_id', $userId)->update(['selected_emiten' => $companyList]);
+
+                $transactions = Transactions_Users::where('user_id', $userId)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+                if ($transactions->count() > 1) {
+                    $transactionsToDelete = $transactions->slice(1);
+                    $idsToDelete = $transactionsToDelete->pluck('id')->toArray();
+
+                    Transactions_Users::whereIn('id', $idsToDelete)->delete();
+                }
             } else if ($trxDetails['trxStatus'] == 'expire') {
-                Transactions_Users::where('user_id', auth()->user()->id)->update(['status' => 'Expired']);
+                Transactions_Users::where('user_id', $userId)->update(['status' => 'Expired']);
             }
 
             return $trxDetails;
