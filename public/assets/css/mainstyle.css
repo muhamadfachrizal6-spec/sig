@@ -1,0 +1,391 @@
+:root {
+    --primary-color: #43654C;
+    /* Warna utama */
+}
+
+.custom-th {
+    font-family: 'Arial';
+    font-weight: 400;
+    color: #2e3b4e;
+    background-color: #f0f0f5;
+    padding: 12px;
+    letter-spacing: 0.5px;
+}
+
+.btn-hover:hover {
+    color: #ffffff !important;
+}
+
+.pagination .page-link {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background-color: #ffffff;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.pagination .active .page-link {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+.primary-color {
+    background-color: #43654C !important;
+}
+
+input[type="checkbox"]:checked, 
+input[type="radio"]:checked {
+    background-color: #43654C !important;
+    border-color: darkolivegreen;
+}
+
+.primary-border{
+    border: 2px solid #43654C !important;
+}
+
+.primary-color-text {
+    color: #43654C !important;
+}
+
+.spinner-container {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.bg-pack-card{
+    background-color: #b4f1c2 !important;
+}
+
+.secondary-bg {
+    background-color: #C0F2C0;
+}
+
+.third-bg {
+    background-color: #f8f9fa;
+}
+
+.secondary-color {
+    color: #043300;
+}
+
+.w-80 {
+    width: 80%;
+}
+
+.w-90 {
+    width: 90%;
+}
+
+.w-70 {
+    width: 70%;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.text-item-nav {
+    color: black;
+    text-decoration: none;
+}
+
+.text-item-nav:hover {
+    color: #43654C !important;
+}
+
+.img-logo {
+    max-height: 150px;
+    width: auto;
+}
+
+.signin-logo-img {
+    max-height: 50px;
+    width: auto;
+}
+
+.signup-logo-img {
+    max-height: 100px;
+    width: auto;
+}
+
+.signin-image img {
+    max-height: 70vh;
+    width: auto;
+}
+
+.btn-custom:hover {
+    background-color: #43654C !important;
+    color: white !important;
+}
+
+.btn-custom2 {
+    background-color: #43654C !important;
+    color: white !important;
+}
+
+.btn-custom2:hover {
+    background-color: white !important;
+    color: #43654C !important;
+}
+
+.about-us-image {
+    box-shadow: 0 0 105px rgb(0, 70, 21);
+}
+
+.nav-link {
+    position: relative;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    color: black;
+    text-decoration: none;
+}
+
+.form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.form-check-input {
+    border-color: #6c757d;
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: #43654C;
+    transition: width 0.3s;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.nav-link.active::after {
+    width: 100%;
+}
+
+.hover-item{
+    color: white;
+}
+
+.hover-item:hover {
+    color: #def606 !important;
+}
+
+.small-text{
+    font-size: x-small;
+}
+
+.containerNav {
+    display: flex;
+    min-height: 100vh;
+}
+
+.containerNav-admin {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.sidebarNav {
+    width: 80px;
+    padding: 15px;
+    border-right: 1px solid #c7c7c797;
+}
+
+.sidebarNav-admin {
+    min-width: 200px;
+    border-right: 1px solid #c7c7c797;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.navbarNav {
+    flex-grow: 1;
+    padding: 0;
+}
+
+.navbar {
+    border-bottom: 1px solid #c7c7c797;
+}
+
+.navbar-profile img {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 40px;
+    height: 40px;
+}
+
+.border-primary-black{
+    border: 1px solid rgba(0, 0, 0, 0.175) !important;
+}
+
+.border-primary-color{
+    border: 2px solid #43654C !important;
+}
+
+.modal-backdrop {
+    height: 100%;
+}
+
+.modal-fullscreen .modal-content {
+    height: 100%;
+    overflow: auto;
+}
+
+.navigation-core{
+    color: #43654C !important;
+}
+
+.hover-main:hover {
+    color: #43654C !important;
+}
+
+#loadingSpinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lds-dual-ring {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+}
+
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 5px solid #43654C;
+    border-color: #43654C transparent #43654C transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+
+.category-container {
+    display: inline-flex;
+    /* Or flex for a vertical layout */
+}
+
+.category-item {
+    padding: 3px 15px;
+    /* Adjust spacing as needed */
+    border-radius: 20px;
+    /* Adjust as needed for rounded corners */
+    background-color: #858585 !important;
+    /* Adjust background color */
+    color: white;
+    /* Adjust text color */
+    display: flex;
+    align-items: center;
+    /* Vertically center the icon and text */
+}
+
+.scrollable-list {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.auto {
+    background-color: #858585;
+}
+
+.tech {
+    background-color: #eee;
+}
+
+.energy {
+    background-color: #fff;
+}
+
+/* Add more styles as needed for specific categories */
+
+.category-item i {
+    margin-right: 5px;
+    /* Adjust spacing between icon and text */
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.custom-modal-chart{
+    max-width: 100% !important;
+}
+
+.custom-nav-tabs {
+    display: flex;
+    justify-content: start;
+    flex-wrap: nowrap;
+    gap: 15px;
+}
+
+.custom-nav-tabs .nav-item {
+    text-align: start;
+}
+
+.custom-nav-tabs .nav-link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 10px 5px;
+}
+
+.custom-nav-tabs .nav-link.active {
+    background-color: #43654C;
+    color: white;
+}
+
+.detail-navbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+    .custom-nav-tabs {
+        gap: 5px;
+        padding: 0 5px;
+        justify-content: space-between;
+    }
+}

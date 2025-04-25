@@ -26,7 +26,7 @@
                                                 <ul class="it-submenu submenu">
                                                     <li><a href="{{route('siginstitute')}}">Sertifikasi</a></li>
                                                     <li><a href="{{route('specialclass') }}">Special Class</a></li>
-                                                    <li>
+                                                    <li><a href="{{route('signin') }}">Data Provider</a></li>
                                                 </ul>
                                             </li>
                                         @if(Route::has('login'))

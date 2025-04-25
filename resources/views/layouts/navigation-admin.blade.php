@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/mainstyle.css') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/img/logo/logo.png') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/font-awesome-pro.css') }}">
+    <meta name="description" content>
+    <title>SIG Institute</title>
+    @livewireStyles
+</head>
+
+<body>
+    <div class="containerNav-admin">
+        <div class="navbarNav">
+            @include('components.navbar-admin', ['title' => $title ?? 'Dashboard'])
+        </div>
+        <div class="sidebarNav-admin bg-light">
+            @include('components.sidebar-admin')
+            <div class="content m-lg-4 w-100">
+                @yield('contents')
+            </div>
+        </div>
+    </div>
+    @livewireScripts
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{{ asset('assets/js/addons.js') }}"></script>
+</body>
+
+</html>
